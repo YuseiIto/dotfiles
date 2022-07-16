@@ -28,6 +28,9 @@ call plug#begin('~/.config/nvim/plugged')
   " todo-comments 
   Plug 'nvim-lua/plenary.nvim'
   Plug 'folke/todo-comments.nvim'
+  
+  " Rainbow parentheses
+  Plug 'luochen1990/rainbow'
 call plug#end()
 
 filetype plugin indent on
@@ -84,3 +87,7 @@ lua << EOF
     -- refer to the configuration section below
   }
 EOF
+
+" Rainbow parentheses
+let g:rainbow_active = 1
+

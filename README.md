@@ -5,3 +5,4 @@ My cockpit
 - Neovim
 - tmux
 - Hyper terminal (MacOS)
+- Homebrew

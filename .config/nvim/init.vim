@@ -9,12 +9,25 @@ if empty(glob(data_dir . '/autoload/plug.vim'))
 endif
 
 call plug#begin('~/.config/nvim/plugged')
+  " Languages
   Plug 'rust-lang/rust.vim'
+  
+  " LSP
   Plug 'neoclide/coc.nvim', {'branch': 'release'}
+  
+  " OneDark Appearance theme
   Plug 'joshdick/onedark.vim'
   Plug 'sheerun/vim-polyglot'
-  Plug 'itchyny/lightline.vim'
+  
+  " beautiful statusbar
+  Plug 'itchyny/lightline.vim'  
+  
+  " GitHub Copilot
   Plug 'github/copilot.vim'
+  
+  " todo-comments 
+  Plug 'nvim-lua/plenary.nvim'
+  Plug 'folke/todo-comments.nvim'
 call plug#end()
 
 filetype plugin indent on

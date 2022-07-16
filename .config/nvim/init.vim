@@ -22,8 +22,6 @@ filetype plugin indent on
 " Run rustfmt before save
 let g:rustfmt_autosave = 1
 
-
-
 set number "Display line number 
 set autoindent "Indent
 set hls "Highlight search

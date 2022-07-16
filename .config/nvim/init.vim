@@ -32,7 +32,7 @@ set noerrorbells " Don't ring the bell when any error occourd
 set showmatch " Show matching parentheses
 set history=10000 " Set the number of lines to be stored in the history
 set smartindent "Increase/decrease indent depending on the context
-
+set signcolumn=yes " Always show the sign column to avoid flickering
 
 " Remember the place of cursor
 if has("autocmd")

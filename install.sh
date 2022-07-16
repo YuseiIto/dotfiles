@@ -1,4 +1,9 @@
 #!/bin/zsh
-ln -s .zshrc ~/.zshrc
-ln -s .config/nvim ~/.config/nvim
-ln -s .hyper.js ~/.hyper.js 
+
+
+DOTFILES_DIR=$(cd $(dirname $0); pwd)
+echo $DOTFILES_DIR
+ln -fns $DOTFILES_DIR/.zshrc ~/.zshrc
+ln -fns $DOTFILES_DIR/.config/nvim ~/.config/nvim
+ln -fns $DOTFILES_DIR/.hyper.js ~/.hyper.js 
+ln -fns $DOTFILES_DIR/.tmux.conf ~/.tmux.conf

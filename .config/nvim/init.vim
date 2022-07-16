@@ -31,6 +31,9 @@ call plug#begin('~/.config/nvim/plugged')
   
   " Rainbow parentheses
   Plug 'luochen1990/rainbow'
+
+  " Close parentheses automatically
+  Plug 'windwp/nvim-autopairs'
 call plug#end()
 
 filetype plugin indent on
@@ -91,3 +94,7 @@ EOF
 " Rainbow parentheses
 let g:rainbow_active = 1
 
+" Close parentheses automatically
+lua << EOF
+require("nvim-autopairs").setup {}
+EOF

@@ -63,7 +63,6 @@ compinit
 # Custom Aliases
 alias doc="cd ~/GoogleDrive_Tsukuba/documents"
 alias t=task
+alias vim='nvim'
 export PATH="~/GoogleDrive_Tsukuba/documents/00_assets/utils:$PATH"
 source ~/GoogleDrive_Tsukuba/documents/00_assets/utils/enhancd/init.sh
-
-

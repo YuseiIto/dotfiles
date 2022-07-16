@@ -27,7 +27,27 @@ let g:rustfmt_autosave = 1
 set number "Display line number 
 set autoindent "Indent
 set hls "Highlight search
+set ignorecase " Ignore case for searching with only lowercase letters
+set smartcase " Do case-sensitive search if the pattern contains uppercase letters
+set incsearch " Search incrementally
+set noerrorbells " Don't ring the bell when any error occourd
+set showmatch " Show matching parentheses
+set history=10000 " Set the number of lines to be stored in the history
+set smartindent "Increase/decrease indent depending on the context
 
+
+" Remember the place of cursor
+if has("autocmd")
+  augroup redhat
+    " In text files, always limit the width of text to 78 characters
+    autocmd BufRead *.txt set tw=78
+    " When editing a file, always jump to the last cursor position
+    autocmd BufReadPost *
+    \ if line("'\"") > 0 && line ("'\"") <= line("$") |
+    \   exe "normal! g'\"" |
+    \ endif
+  augroup END
+endif
 
 " Configure 24-bit true color
 if (has("termguicolors"))
@@ -40,3 +60,5 @@ colorscheme onedark
 
 " Configure lightline to use onedark
 let g:lightline = { 'colorscheme': 'onedark' }
+
+source ~/.config/nvim/coc.vim

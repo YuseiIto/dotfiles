@@ -22,9 +22,11 @@ call plug#begin('~/.config/nvim/plugged') " Languages
   
   " GitHub Copilot
   Plug 'github/copilot.vim'
-  
-  " todo-comments 
+
+  " Plenary - common utility functions. Required for todo-comments and telescpose
   Plug 'nvim-lua/plenary.nvim'
+
+  " todo-comments 
   Plug 'folke/todo-comments.nvim'
   
   " Rainbow parentheses
@@ -34,7 +36,10 @@ call plug#begin('~/.config/nvim/plugged') " Languages
   Plug 'windwp/nvim-autopairs'
   " Display git status
   Plug 'airblade/vim-gitgutter'
-call plug#end()
+  
+  " Powerful fuzzy search and navigation
+  Plug 'nvim-telescope/telescope.nvim', { 'tag': '0.1.0' }
+  call plug#end()
 
 filetype plugin indent on
 

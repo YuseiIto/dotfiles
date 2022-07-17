@@ -73,6 +73,10 @@ set history=10000 " Set the number of lines to be stored in the history
 set smartindent "Increase/decrease indent depending on the context
 set signcolumn=yes " Always show the sign column to avoid flickering
 
+"Set control characters visible
+set listchars=tab:>.,trail:_
+set list
+
 " Remember the place of cursor
 if has("autocmd")
   augroup redhat

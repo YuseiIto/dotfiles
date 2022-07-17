@@ -133,3 +133,9 @@ augroup my-glyph-palette
   autocmd FileType nerdtree,startify call glyph_palette#apply()
 augroup END
 
+" Display hidden files on fern
+let g:fern#show_hidden = 1
+
+" Show file tree with Ctrl+n
+nnoremap <C-n> :Fern . -reveal=% -drawer -toggle -width=40<CR>
+

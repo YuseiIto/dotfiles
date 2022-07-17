@@ -7,9 +7,7 @@ if empty(glob(data_dir . '/autoload/plug.vim'))
   silent execute '!curl -fLo '.data_dir.'/autoload/plug.vim --create-dirs  https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
   autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
-
-call plug#begin('~/.config/nvim/plugged')
-  " Languages
+call plug#begin('~/.config/nvim/plugged') " Languages
   Plug 'rust-lang/rust.vim'
   
   " LSP
@@ -34,6 +32,8 @@ call plug#begin('~/.config/nvim/plugged')
 
   " Close parentheses automatically
   Plug 'windwp/nvim-autopairs'
+  " Display git status
+  Plug 'airblade/vim-gitgutter'
 call plug#end()
 
 filetype plugin indent on

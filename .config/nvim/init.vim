@@ -53,7 +53,7 @@ call plug#begin('~/.config/nvim/plugged') " Languages
   Plug 'lambdalisue/glyph-palette.vim'
 
   " Use fern instead of default filer
-  Plug 'lambdalisiue/fern-hijack'
+  Plug 'lambdalisue/fern-hijack.vim'
  call plug#end()
 
 filetype plugin indent on

@@ -41,8 +41,20 @@ call plug#begin('~/.config/nvim/plugged') " Languages
   Plug 'nvim-telescope/telescope.nvim', { 'tag': '0.1.0' }
 
   " Git commands from vim (add, commit, pluh, blame etc...)
-   Plug 'tpope/vim-fugitive'
-  call plug#end()
+  Plug 'tpope/vim-fugitive'
+
+  " Directory tree that is said to be faster than nerdtree
+  Plug 'lambdalisue/fern.vim'
+  " Display fit status on fern file tree
+  Plug 'lambdalisue/fern-git-status.vim'
+  " For richer icon at fern
+  Plug 'lambdalisue/nerdfont.vim'
+  Plug 'lambdalisue/fern-renderer-nerdfont.vim'
+  Plug 'lambdalisue/glyph-palette.vim'
+
+  " Use fern instead of default filer
+  Plug 'lambdalisiue/fern-hijack'
+ call plug#end()
 
 filetype plugin indent on
 
@@ -106,3 +118,14 @@ let g:rainbow_active = 1
 lua << EOF
 require("nvim-autopairs").setup {}
 EOF
+
+" Enable nerdfont icons for fern
+let g:fern#renderer = 'nerdfont'
+
+" Enable individual color for fern icons
+augroup my-glyph-palette
+  autocmd! *
+  autocmd FileType fern call glyph_palette#apply()
+  autocmd FileType nerdtree,startify call glyph_palette#apply()
+augroup END
+

@@ -39,6 +39,9 @@ call plug#begin('~/.config/nvim/plugged') " Languages
   
   " Powerful fuzzy search and navigation
   Plug 'nvim-telescope/telescope.nvim', { 'tag': '0.1.0' }
+
+  " Git commands from vim (add, commit, pluh, blame etc...)
+   Plug 'tpope/vim-fugitive'
   call plug#end()
 
 filetype plugin indent on

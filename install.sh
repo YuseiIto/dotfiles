@@ -14,3 +14,7 @@ if [[ $OSTYPE == 'darwin'* ]]; then
 	ln -fns $DOTFILES_DIR/Brewfile ~/Brewfile
 	brew bundle
 fi
+
+if [[ $OSTYPE == 'linux-gnu'* ]]; then
+	source $DOTFILES_DIR/install_linux.sh
+fi

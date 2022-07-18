@@ -4,3 +4,6 @@
 [submodule "powerline-shell"]
 	path = powerline-shell
 	url = https://github.com/b-ryan/powerline-shell
+[submodule "anyenv"]
+	path = anyenv
+	url = https://github.com/anyenv/anyenv

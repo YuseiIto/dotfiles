@@ -10,5 +10,7 @@ ln -fns $DOTFILES_DIR/.tmux.conf ~/.tmux.conf
 ln -fns $DOTFILES_DIR/.config/git ~/.config/git
 ln -fns $DOTFILES_DIR/.tmux ~/.tmux
 
-ln -fns $DOTFILES_DIR/Brewfile ~/Brewfile
-brew bundle
+if [[ $OSTYPE == 'darwin'* ]]; then
+	ln -fns $DOTFILES_DIR/Brewfile ~/Brewfile
+	brew bundle
+fi

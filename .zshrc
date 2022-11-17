@@ -23,6 +23,8 @@ if [ "$TERM" != "linux" ]; then
 fi
 
 
+export PATH="$PYENV_ROOT/bin:$PATH"
+
 # EB CLI on Docker
 alias eb='docker run  --rm -it -v ~/.aws:/root/.aws -v $(pwd):/work -w /work coxauto/aws-ebcli eb'
 
@@ -62,8 +64,8 @@ autoload -U compinit
 compinit
 
 # Custom Aliases
-alias doc="cd ~/GoogleDrive_Tsukuba/documents"
+alias doc="cd ~/SynologyDrive/documents"
 alias t=task
 alias vim='nvim'
-export PATH="~/GoogleDrive_Tsukuba/documents/00_assets/utils:$PATH"
-source ~/GoogleDrive_Tsukuba/documents/00_assets/utils/enhancd/init.sh
+export PATH="~/SynologyDrive/documents/00_assets/utils:$PATH"
+source ~/SynologyDrive/documents/00_assets/utils/enhancd/init.sh

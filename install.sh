@@ -1,6 +1,7 @@
 #!/bin/zsh
 
 
+
 DOTFILES_DIR=$(cd $(dirname $0); pwd)
 echo $DOTFILES_DIR
 ln -fns $DOTFILES_DIR/.zshrc ~/.zshrc
@@ -9,6 +10,10 @@ ln -fns $DOTFILES_DIR/.hyper.js ~/.hyper.js
 ln -fns $DOTFILES_DIR/.tmux.conf ~/.tmux.conf
 ln -fns $DOTFILES_DIR/.config/git ~/.config/git
 ln -fns $DOTFILES_DIR/.tmux ~/.tmux
+
+
+cd $DOTFILES_DIR && git submodule init && git submodule update
+cd $DOTFILES_DIR/powerline-shell && python3 setup.py install
 
 if [[ $OSTYPE == 'darwin'* ]]; then
 	ln -fns $DOTFILES_DIR/Brewfile ~/Brewfile

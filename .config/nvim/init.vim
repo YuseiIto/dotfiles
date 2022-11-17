@@ -12,7 +12,6 @@ call plug#begin('~/.config/nvim/plugged') " Languages
   
   " LSP
   Plug 'neoclide/coc.nvim', {'branch': 'release'}
-  
   " OneDark Appearance theme
   Plug 'joshdick/onedark.vim'
   Plug 'sheerun/vim-polyglot'
@@ -54,6 +53,7 @@ call plug#begin('~/.config/nvim/plugged') " Languages
 
   " Use fern instead of default filer
   Plug 'lambdalisue/fern-hijack.vim'
+  
  call plug#end()
 
 filetype plugin indent on
@@ -126,6 +126,9 @@ EOF
 " Enable nerdfont icons for fern
 let g:fern#renderer = 'nerdfont'
 
+" Display hidden files on fern
+let g:fern#show_hidden = 1
+
 " Enable individual color for fern icons
 augroup my-glyph-palette
   autocmd! *
@@ -133,9 +136,25 @@ augroup my-glyph-palette
   autocmd FileType nerdtree,startify call glyph_palette#apply()
 augroup END
 
-" Display hidden files on fern
-let g:fern#show_hidden = 1
-
 " Show file tree with Ctrl+n
 nnoremap <C-n> :Fern . -reveal=% -drawer -toggle -width=40<CR>
+
+" Disable arrow keys
+noremap <Up> <Nop>
+noremap <Down> <Nop>
+noremap <Left> <Nop>
+noremap <Right> <Nop>
+inoremap <Up> <Nop>
+inoremap <Down> <Nop>
+inoremap <Left> <Nop>
+inoremap <Right> <Nop>
+
+" Telescope
+nnoremap <leader>gb <cmd>Telescope git_branches theme=get_dropdown<cr>
+nnoremap <C-p> <cmd>Telescope find_files<cr>
+nnoremap <C-g> <cmd>Telescope live_grep<cr>
+
+"Remap Copilot tab to Ctrl-J to avoid conflict with coc
+imap <silent><script><expr> <C-c> copilot#Accept("\<CR>")
+let g:copilot_no_tab_map = v:true
 

@@ -23,3 +23,7 @@ fi
 if [[ $OSTYPE == 'linux-gnu'* ]]; then
 	source $DOTFILES_DIR/install_linux.sh
 fi
+
+
+# Install Poetry. This line is placed after package installation because it requires python
+curl -sSL https://install.python-poetry.org | python3 -

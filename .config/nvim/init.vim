@@ -129,7 +129,7 @@ EOF
 let g:fern#renderer = 'nerdfont'
 
 " Display hidden files on fern
-let g:fern#show_hidden = 1
+let g:fern#default_hidden = 1
 
 " Enable individual color for fern icons
 augroup my-glyph-palette

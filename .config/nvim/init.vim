@@ -97,7 +97,7 @@ endif
 
 " Configure Color scheme
 syntax on
-colorscheme onedark
+colorscheme koehler
 
 " Configure lightline to use onedark
 let g:lightline = { 'colorscheme': 'onedark' }
@@ -157,4 +157,3 @@ nnoremap <C-g> <cmd>Telescope live_grep<cr>
 "Remap Copilot tab to Ctrl-J to avoid conflict with coc
 imap <silent><script><expr> <C-c> copilot#Accept("\<CR>")
 let g:copilot_no_tab_map = v:true
-

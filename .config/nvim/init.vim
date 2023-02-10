@@ -54,6 +54,8 @@ call plug#begin('~/.config/nvim/plugged') " Languages
   " Use fern instead of default filer
   Plug 'lambdalisue/fern-hijack.vim'
   
+  " Display terminal in easy manner
+  Plug 'akinsho/toggleterm.nvim', {'tag' : '*'}
  call plug#end()
 
 filetype plugin indent on
@@ -157,3 +159,15 @@ nnoremap <C-g> <cmd>Telescope live_grep<cr>
 "Remap Copilot tab to Ctrl-J to avoid conflict with coc
 imap <silent><script><expr> <C-c> copilot#Accept("\<CR>")
 let g:copilot_no_tab_map = v:true
+
+" Toggle terminal
+" It must be explicitly set up
+" https://github.com/akinsho/toggleterm.nvim#setup
+lua require("toggleterm").setup()
+
+command T ToggleTerm<CR>
+command Tt ToggleTerm direction="tab"<CR>
+command Tf ToggleTerm direction="float"<CR>
+
+" Escape from terminal INSERT mode to NORMAL mode with ESC
+:tnoremap <Esc> <C-\><C-n>

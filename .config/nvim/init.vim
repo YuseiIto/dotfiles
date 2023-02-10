@@ -1,6 +1,8 @@
 "Share clipboard with system
 set clipboard=unnamed
 
+let mapleader = "\<Space>"
+
 " vim-plug autoinstall
 let data_dir = has('nvim') ? stdpath('data') . '/site' : '~/.vim'
 if empty(glob(data_dir . '/autoload/plug.vim'))

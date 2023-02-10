@@ -170,6 +170,5 @@ command Tt ToggleTerm direction="tab"<CR>
 command Tf ToggleTerm direction="float"<CR>
 
 " Open lazygit
-command Lg :TermExec direction=tab cmd=lazygit&&exit<CR> go_back=0
-
 lua require('lazygit')
+

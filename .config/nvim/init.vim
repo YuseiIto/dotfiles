@@ -169,5 +169,7 @@ command T ToggleTerm<CR>
 command Tt ToggleTerm direction="tab"<CR>
 command Tf ToggleTerm direction="float"<CR>
 
-" Escape from terminal INSERT mode to NORMAL mode with ESC
-:tnoremap <Esc> <C-\><C-n>
+" Open lazygit
+command Lg :TermExec direction=tab cmd=lazygit&&exit<CR> go_back=0
+
+lua require('lazygit')

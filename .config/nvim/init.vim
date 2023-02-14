@@ -58,6 +58,9 @@ call plug#begin('~/.config/nvim/plugged') " Languages
   
   " Display terminal in easy manner
   Plug 'akinsho/toggleterm.nvim', {'tag' : '*'}
+  
+  " Prisma
+  Plug 'prisma/vim-prisma'
  call plug#end()
 
 filetype plugin indent on

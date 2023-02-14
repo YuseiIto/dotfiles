@@ -172,7 +172,7 @@ command Tt ToggleTerm direction="tab"<CR>
 command Tf ToggleTerm direction="float"<CR>
 
 " Exit from Terminal insert mode with Ctrl-Esc
-tnoremap <C-Esc> <C-\><C-n>
+tnoremap <Leader><C-[> <C-\><C-n>
 
 " Open lazygit
 lua require('lazygit')

@@ -180,3 +180,6 @@ tnoremap <Leader><C-[> <C-\><C-n>
 " Open lazygit
 lua require('lazygit')
 
+" Run Prettier
+command! -nargs=0 Prettier :CocCommand prettier.forceFormatDocument
+

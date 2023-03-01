@@ -65,6 +65,9 @@ export PATH="/Users/yuseiito/.local/bin:$PATH"
 autoload -U compinit
 compinit
 
+export EDITOR=nvim
+eval "$(direnv hook zsh)"
+
 # Custom Aliases
 alias doc="cd ~/SynologyDrive/documents"
 alias t=task

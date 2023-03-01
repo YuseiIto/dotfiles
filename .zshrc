@@ -45,8 +45,9 @@ export CPPFLAGS="-I/usr/local/opt/openssl@1.1/include $CPPFLAGS"
 # Flutter
 export PATH="/Users/yuseiito/flutter/flutter/bin:$PATH"
 
-#AWS CLI on Docker
-alias aws='docker run --rm -it -v ~/.aws:/root/.aws -v $(pwd):/aws amazon/aws-cli'
+# AWS CLI
+export PATH="/Users/yuseiito/dotfiles/scripts:$PATH"
+
 #Ruby(brew)
 export PATH="/opt/homebrew/opt/ruby/bin:$PATH"
 

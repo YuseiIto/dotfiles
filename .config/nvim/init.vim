@@ -61,6 +61,9 @@ call plug#begin('~/.config/nvim/plugged') " Languages
   
   " Prisma
   Plug 'prisma/vim-prisma'
+ 
+  " Discord Rich presense
+  Plug 'andweeb/presence.nvim'
  call plug#end()
 
 filetype plugin indent on
@@ -98,13 +101,14 @@ if has("autocmd")
 endif
 
 " Configure 24-bit true color
-if (has("termguicolors"))
-  set termguicolors
+if(has("termguicolors"))
+ set termguicolors
 endif
 
 " Configure Color scheme
 syntax on
-colorscheme koehler
+" set background=dark
+colorscheme onedark
 
 " Configure lightline to use onedark
 let g:lightline = { 'colorscheme': 'onedark' }
@@ -157,9 +161,11 @@ inoremap <Left> <Nop>
 inoremap <Right> <Nop>
 
 " Telescope
-nnoremap <leader>gb <cmd>Telescope git_branches theme=get_dropdown<cr>
-nnoremap <C-p> <cmd>Telescope find_files<cr>
-nnoremap <C-g> <cmd>Telescope live_grep<cr>
+" Find files using Telescope command-line sugar.
+nnoremap <leader>ff <cmd>Telescope find_files hidden=true<cr>
+nnoremap <leader>fg <cmd>Telescope live_grep<cr>
+nnoremap <leader>fb <cmd>Telescope buffers<cr>
+nnoremap <leader>fh <cmd>Telescope help_tags<cr>
 
 "Remap Copilot tab to Ctrl-J to avoid conflict with coc
 imap <silent><script><expr> <C-c> copilot#Accept("\<CR>")
@@ -177,9 +183,30 @@ command Tf ToggleTerm direction="float"<CR>
 " Exit from Terminal insert mode with Ctrl-Esc
 tnoremap <Leader><C-[> <C-\><C-n>
 
+" Discord Rich presense 
+"
+lua require('presence_setup')
+
 " Open lazygit
 lua require('lazygit')
 
 " Run Prettier
 command! -nargs=0 Prettier :CocCommand prettier.forceFormatDocument
+
+" Buffer operations
+nnoremap <silent> [b :bprevious<CR>
+nnoremap <silent> ]b :bnext<CR>
+nnoremap <silent> [B :bfirst<CR>
+nnoremap <silent> ]B :blast<CR>
+
+" tab operations
+cnoreabbrev tn tabnew
+
+" Use Tab key to move between tabs
+" http://blog.remora.cx/2012/09/use-tabpage.html
+nnoremap <S-Tab> gt
+nnoremap <Tab><Tab> gT
+for i in range(1, 9)
+	execute 'nnoremap <Tab>' . i . ' ' . i . 'gt'
+endfor
 

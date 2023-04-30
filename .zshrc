@@ -59,6 +59,9 @@ export PATH="/opt/homebrew/opt/mysql-client/bin:$PATH"
 export LDFLAGS="-L/opt/homebrew/opt/mysql-client/lib"
 export CPPFLAGS="-I/opt/homebrew/opt/mysql-client/include"
 
+# Use GNU utils from homebrew
+export PATH="$HOMEBREW_PREFIX/opt/make/libexec/gnubin:$PATH"
+
 # Poetry and others
 export PATH="/Users/yuseiito/.local/bin:$PATH"
 

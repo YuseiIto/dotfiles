@@ -12,8 +12,6 @@ endif
 call plug#begin('~/.config/nvim/plugged') " Languages
   Plug 'rust-lang/rust.vim'
   
-  " LSP
-  Plug 'neoclide/coc.nvim', {'branch': 'release'}
   " OneDark Appearance theme
   Plug 'joshdick/onedark.vim'
   Plug 'sheerun/vim-polyglot'
@@ -64,6 +62,10 @@ call plug#begin('~/.config/nvim/plugged') " Languages
  
   " Discord Rich presense
   Plug 'andweeb/presence.nvim'
+
+  " Language Server Configurations
+  Plug 'neovim/nvim-lspconfig'
+
  call plug#end()
 
 filetype plugin indent on
@@ -112,9 +114,6 @@ colorscheme onedark
 
 " Configure lightline to use onedark
 let g:lightline = { 'colorscheme': 'onedark' }
-
-" Coc
-source ~/.config/nvim/coc.vim
 
 " todo comments
 
@@ -187,11 +186,12 @@ tnoremap <Leader><C-[> <C-\><C-n>
 "
 lua require('presence_setup')
 
+" LSP Configurations
+lua require("lsp/lsp")
+
+
 " Open lazygit
 lua require('lazygit')
-
-" Run Prettier
-command! -nargs=0 Prettier :CocCommand prettier.forceFormatDocument
 
 " Buffer operations
 nnoremap <silent> [b :bprevious<CR>

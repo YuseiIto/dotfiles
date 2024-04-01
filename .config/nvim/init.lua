@@ -1,8 +1,8 @@
 require "base"
-require "key" -- Key bindings
-require "plugins" -- Load plugins
-require "color"   -- Colors
-require "presence"  -- Discord Rich presense
+require "key"      -- Key bindings
+require "plugins"  -- Load plugins
+require "color"    -- Colors
+require "presence" -- Discord Rich presense
 require "lsp/lsp"  -- LSP Configurations
 require "lazygit"  -- Open lazygit
 

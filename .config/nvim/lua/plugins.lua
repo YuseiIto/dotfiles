@@ -17,7 +17,11 @@ local packer = require("packer")
 packer.startup(
   function(use)
     use 'wbthomason/packer.nvim'
-    use 'rust-lang/rust.vim'
+    use { 'rust-lang/rust.vim',
+      config = function()
+        vim.g.rustfmt_autosave = 1
+      end
+    }
     -- OneDark Appearance theme
     use 'joshdick/onedark.vim'
     use 'sheerun/vim-polyglot'

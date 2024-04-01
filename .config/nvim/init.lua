@@ -18,7 +18,7 @@ vim.g.rustfmt_autosave = 1
 
 require "plugins" -- Load plugins
 require "color"   -- Colors
-require "presence_setup"  -- Discord Rich presense
+require "presence"  -- Discord Rich presense
 require "lsp/lsp"  -- LSP Configurations
 require "lazygit"  -- Open lazygit
 

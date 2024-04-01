@@ -109,7 +109,8 @@ endif
 
 " Configure Color scheme
 syntax on
-" set background=dark
+
+set background=dark
 colorscheme onedark
 
 " Configure lightline to use onedark

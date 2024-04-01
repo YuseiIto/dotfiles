@@ -23,8 +23,8 @@ packer.startup(
       end
     }
     -- OneDark Appearance theme
-    use 'joshdick/onedark.vim'
-    use 'sheerun/vim-polyglot'
+    use { 'joshdick/onedark.vim',
+      requires = 'sheerun/vim-polyglot' }
 
     -- beautiful statusbar
     use 'itchyny/lightline.vim'
@@ -32,14 +32,12 @@ packer.startup(
     -- GitHub Copilot
     use 'github/copilot.vim'
 
-    -- Plenary - common utility functions. Required for todo-comments and telescpose
-    use 'nvim-lua/plenary.nvim'
-
     -- todo-comments
     use { 'folke/todo-comments.nvim',
       config = function()
         require('todo-comments').setup()
-      end
+      end,
+      requires = { 'nvim-lua/plenary.nvim' }
     }
 
     -- Rainbow parentheses
@@ -60,8 +58,9 @@ packer.startup(
     use 'airblade/vim-gitgutter'
 
     -- Powerful fuzzy search and navigation
-    use { 'nvim-telescope/telescope.nvim', tag = '0.1.0'
-    ,
+    use { 'nvim-telescope/telescope.nvim',
+      tag = '*',
+      requires = { 'nvim-lua/plenary.nvim' },
       config = function()
         --  Find files using Telescope command-line sugar
         vim.api.nvim_set_keymap('n', '<leader>ff', '<cmd>Telescope find_files hidden=true<cr>', { noremap = true })
@@ -90,8 +89,8 @@ packer.startup(
     -- Display fit status on fern file tree
     use 'lambdalisue/fern-git-status.vim'
     -- For richer icon at fern
-    use 'lambdalisue/nerdfont.vim'
     use { 'lambdalisue/fern-renderer-nerdfont.vim',
+      requires = { 'lambdalisue/nerdfont.vim' },
       config = function()
         vim.g["fern#renderer"] = 'nerdfont' -- Enable nerdfont icons for fern
       end
@@ -119,7 +118,8 @@ packer.startup(
       end }
 
     -- Use fern instead of default filer
-    use 'lambdalisue/fern-hijack.vim'
+    use { 'lambdalisue/fern-hijack.vim',
+      requires = "lambdalisue/fern.vim" }
 
     -- Display terminal in easy manner
     use { 'akinsho/toggleterm.nvim', tag = '*' }

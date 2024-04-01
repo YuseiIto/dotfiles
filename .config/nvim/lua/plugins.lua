@@ -153,8 +153,12 @@ packer.startup(
       'hrsh7th/nvim-cmp',
       config = function() require 'nvim_cmp_setup' end,
       requires = {
-        'hrsh7th/cmp-nvim-lsp', -- LSP source for nvim-cmp
-        'hrsh7th/cmp-nvim-lua'  -- Neovim Lua source for nvim-cmp
+        'hrsh7th/vim-vsnip',                   -- Snippet engine
+        'hrsh7th/cmp-vsnip',                   -- Snippet source for nvim-cmp
+        'hrsh7th/cmp-nvim-lsp',                -- LSP source for nvim-cmp
+        'hrsh7th/cmp-nvim-lua',                -- Neovim Lua source for nvim-cmp
+        'hrsh7th/cmp-nvim-lsp-signature-help', -- Displaying function signatures with the current parameter emphasized
+        'hrsh7th/cmp-calc'
       }
     }
   end)

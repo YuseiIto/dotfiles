@@ -5,7 +5,7 @@ vim.opt.clipboard = "unnamed"
 vim.g.mapleader = " "
 
 vim.g.rustfmt_autosave = 1
-vim.opt.number = true      -- Display lien number
+vim.opt.number = true      -- Display line number
 vim.opt.autoindent = true  -- Indent automatically
 vim.opt.hls = true         -- Highlight search
 vim.opt.ignorecase = true  -- Ignore case for searching with only lowercase letters

@@ -23,33 +23,15 @@ vim.opt.list = true
 
 require "plugins" -- Load plugins
 require "color"   -- Colors
-
-
--- Rainbow parentheses
-vim.g.rainbow_active = 1
-
+require "presence_setup"  -- Discord Rich presense
+require "lsp/lsp"  -- LSP Configurations
+require "lazygit"  -- Open lazygit
 
 -- Enable nerdfont icons for fern
 vim.g["fern#renderer"] = 'nerdfont'
 
 -- Display hidden files on fern
 vim.g["fern#default_hidden"] = 1
-
-
--- Discord Rich presense
-require "presence_setup"
-
--- LSP Configurations
-require "lsp/lsp"
-
--- Open lazygit
-require "lazygit"
-
-vim.api.nvim_create_autocmd("BufWritePost", {
-  pattern = { "plugins.lua" },
-  command = "PackerCompile",
-})
-
 
 -- Remember the place of cursor
 vim.api.nvim_create_autocmd("BufReadPost", {

@@ -1,4 +1,4 @@
-.config/nvim/plugged
+.config/nvim/plugin
 
 .tmux/plugins
 .tmux/resurrect/

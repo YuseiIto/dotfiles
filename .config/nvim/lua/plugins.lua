@@ -76,6 +76,9 @@ packer.startup(
         --  Show file tree with Ctrl+n
         vim.api.nvim_set_keymap('n', '<C-n>', ':Fern . -reveal=% -drawer -toggle -width=40<CR>',
           { noremap = true, silent = true })
+
+        -- Display hidden files on fern
+        vim.g["fern#default_hidden"] = 1
       end
     }
 
@@ -84,7 +87,12 @@ packer.startup(
     use 'lambdalisue/fern-git-status.vim'
     -- For richer icon at fern
     use 'lambdalisue/nerdfont.vim'
-    use 'lambdalisue/fern-renderer-nerdfont.vim'
+    use { 'lambdalisue/fern-renderer-nerdfont.vim',
+      config = function()
+        vim.g["fern#renderer"] = 'nerdfont' -- Enable nerdfont icons for fern
+      end
+    }
+
     use {
       'lambdalisue/glyph-palette.vim',
       config = function()

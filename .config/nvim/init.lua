@@ -1,10 +1,4 @@
--- Share clipboard with system
-vim.opt.clipboard = "unnamed"
-
--- Remap Leader to <Space>
-vim.g.mapleader = " "
-
-vim.g.rustfmt_autosave = 1
+vim.opt.clipboard = "unnamed"  -- Share clipboard with system
 vim.opt.number = true      -- Display line number
 vim.opt.autoindent = true  -- Indent automatically
 vim.opt.hls = true         -- Highlight search
@@ -16,10 +10,11 @@ vim.opt.showmatch = true   -- Show matching parentheses
 vim.opt.history = 10000    -- Set the number of lines to be stored in the history
 vim.opt.smartindent = true -- Increase/decrease indent depending on the context
 vim.opt.signcolumn = "yes" -- Always show the sign column to avoid flickering
-
--- Set control characters visible
-vim.opt.listchars = "tab:>.,trail:_"
+vim.opt.listchars = "tab:>.,trail:_" -- Set control characters visible
 vim.opt.list = true
+
+vim.g.mapleader = " "  -- Remap Leader to <Space>
+vim.g.rustfmt_autosave = 1
 
 require "plugins" -- Load plugins
 require "color"   -- Colors
@@ -27,11 +22,6 @@ require "presence_setup"  -- Discord Rich presense
 require "lsp/lsp"  -- LSP Configurations
 require "lazygit"  -- Open lazygit
 
--- Enable nerdfont icons for fern
-vim.g["fern#renderer"] = 'nerdfont'
-
--- Display hidden files on fern
-vim.g["fern#default_hidden"] = 1
 
 -- Remember the place of cursor
 vim.api.nvim_create_autocmd("BufReadPost", {
@@ -39,8 +29,6 @@ vim.api.nvim_create_autocmd("BufReadPost", {
   pattern = "*",
   command = [[silent! normal! g`"zv]]
 })
-
-
 
 -- Compile packer configuration file when saved
 vim.api.nvim_create_autocmd("BufWritePost", {

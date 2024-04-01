@@ -148,4 +148,13 @@ packer.startup(
 
     -- Language Server Configurations
     use 'neovim/nvim-lspconfig'
+
+    use {
+      'hrsh7th/nvim-cmp',
+      config = function() require 'nvim_cmp_setup' end,
+      requires = {
+        'hrsh7th/cmp-nvim-lsp', -- LSP source for nvim-cmp
+        'hrsh7th/cmp-nvim-lua'  -- Neovim Lua source for nvim-cmp
+      }
+    }
   end)

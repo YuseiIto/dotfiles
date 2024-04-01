@@ -1,0 +1,41 @@
+# Colors (Everforest Dark)
+# Downloaeded from https://github.com/alacritty/alacritty-theme/blob/master/themes/everforest_dark.yaml
+# Copyright 2019-2023 indrajit
+# Copyright 2023-     The Alacritty Project
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#	http://www.apache.org/licenses/LICENSE-2.0
+
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+colors:
+  # Default colors
+  primary:
+    background: '0x2d353b'
+    foreground: '0xd3c6aa'
+
+  # Normal colors
+  normal:
+    black:   '0x475258'
+    red:     '0xe67e80'
+    green:   '0xa7c080'
+    yellow:  '0xdbbc7f'
+    blue:    '0x7fbbb3'
+    magenta: '0xd699b6'
+    cyan:    '0x83c092'
+    white:   '0xd3c6aa'
+
+  # Bright colors
+  bright:
+    black:   '0x475258'
+    red:     '0xe67e80'
+    green:   '0xa7c080'
+    yellow:  '0xdbbc7f'
+    blue:    '0x7fbbb3'
+    magenta: '0xd699b6'
+    cyan:    '0x83c092'
+    white:   '0xd3c6aa'

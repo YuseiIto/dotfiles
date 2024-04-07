@@ -23,3 +23,6 @@ lspconfig.terraform_lsp.setup{}
 -- python-lsp-server
 -- https://github.com/python-lsp/python-lsp-server
 lspconfig.pylsp.setup {}
+
+
+lspconfig.nil_ls.setup {}

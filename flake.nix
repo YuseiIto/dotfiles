@@ -22,6 +22,7 @@
         forAllSystems (system: nixpkgs.legacyPackages.${system}.nixfmt);
       darwinConfigurations = {
         belle = darwin.lib.darwinSystem {
+          system = "aarch64-darwin";
           modules = [
             ./hosts/belle
             home-manager.darwinModules.home-manager
@@ -31,7 +32,6 @@
               home-manager.users.${username} = import ./home/darwin;
             }
           ];
-          system = "aarch64-darwin";
 
         };
       };

@@ -24,6 +24,21 @@
     firebase-tools
     go
     lazygit
+    bison
+    terraform-lsp
+    tmux
+    tree
+    alacritty
+    imagemagick
+    lua-language-server
+    starship
+    fzy
+    terraform
+    mattermost
+    wireshark
+    zoom-us
+    marp-cli
+    gtkwave
   ];
 
   programs = {

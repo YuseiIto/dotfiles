@@ -123,7 +123,10 @@ packer.startup(
       requires = "lambdalisue/fern.vim" }
 
     -- Display terminal in easy manner
-    use { 'akinsho/toggleterm.nvim', tag = '*' }
+    use { 'akinsho/toggleterm.nvim', tag = '*',
+      config = function()
+        require('toggleterm').setup()
+      end }
 
     -- Prisma
     use 'prisma/vim-prisma'

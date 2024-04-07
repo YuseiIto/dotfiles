@@ -1,5 +1,6 @@
 { pkgs, ... }: {
-  programs.home-manager.enable = true;
   home.stateVersion = "23.11";
-  home.packages = with pkgs; [ discord ];
+  home.packages = with pkgs; [ discord bat eza ocaml ];
+
+  programs = { home-manager.enable = true; };
 }

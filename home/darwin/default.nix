@@ -1,5 +1,11 @@
 { pkgs, ... }: {
   home.stateVersion = "23.11";
+
+   home.file."./.config/nvim" = {
+     source = ../../.config/nvim;
+     recursive = true;
+   };
+
   home.packages = with pkgs; [
     discord
     bat
@@ -39,6 +45,13 @@
     zoom-us
     marp-cli
     gtkwave
+    wget
+    xorriso
+    asciinema
+    clang-tools
+    ffmpeg
+    ghostscript
+    pandoc
   ];
 
   programs = {
@@ -46,6 +59,10 @@
     direnv = {
       enable = true;
       enableZshIntegration = true;
+    };
+    neovim = {
+      enable = true;
+      defaultEditor = true;
     };
   };
 }

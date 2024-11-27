@@ -26,3 +26,9 @@ lspconfig.pylsp.setup {}
 
 
 lspconfig.nil_ls.setup {}
+
+lspconfig.biome.setup{}
+
+lspconfig.tsserver.setup{}
+
+lspconfig.jsonls.setup{}

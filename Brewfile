@@ -72,7 +72,6 @@ brew "netpbm"
 brew "nmap"
 brew "nodenv"
 brew "ocaml", link: false
-brew "opam"
 brew "pmix"
 brew "open-mpi"
 brew "openjdk"

@@ -1,7 +1,7 @@
 { pkgs, ... }: {
   home.stateVersion = "23.11";
 
-   home.file."./.config/nvim" = {
+  home.file."./.config/nvim" = {
      source = ../../.config/nvim;
      recursive = true;
    };
@@ -52,6 +52,9 @@
     ffmpeg
     ghostscript
     pandoc
+    openscad
+    sequelpro
+    appcleaner
   ];
 
   programs = {

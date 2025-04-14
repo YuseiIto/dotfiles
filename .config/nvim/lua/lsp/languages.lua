@@ -29,6 +29,6 @@ lspconfig.nil_ls.setup {}
 
 lspconfig.biome.setup{}
 
-lspconfig.tsserver.setup{}
+lspconfig.ts_ls.setup{}
 
 lspconfig.jsonls.setup{}

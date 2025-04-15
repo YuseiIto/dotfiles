@@ -32,3 +32,7 @@ lspconfig.biome.setup{}
 lspconfig.ts_ls.setup{}
 
 lspconfig.jsonls.setup{}
+
+-- prismals
+-- https://github.com/prisma/language-tools
+lspconfig.prismals.setup{}

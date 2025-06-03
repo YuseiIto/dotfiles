@@ -21,7 +21,6 @@
     ripgrep
     deno
     jq
-    utm
     gimp
     drawio
     inkscape

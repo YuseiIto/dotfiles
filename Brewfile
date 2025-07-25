@@ -94,6 +94,7 @@ brew "xorriso"
 brew "armmbed/formulae/arm-none-eabi-gcc"
 brew "tnishinaga/sigrok/sigrok-firmware-fx2lafw", link: false
 brew "tomoyanonymous/flatcam/flatcam-evo"
+cask "alacritty"
 cask "alfred"
 cask "arduino"
 cask "blackhole-2ch"

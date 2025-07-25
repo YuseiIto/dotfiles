@@ -29,8 +29,59 @@ packer.startup(
     -- beautiful statusbar
     use 'itchyny/lightline.vim'
 
+
+    -- Treesitter
+    use { "nvim-treesitter/nvim-treesitter", branch = 'master', lazy = false, build = ":TSUpdate" }
+
+    -- Render Markdown
+    use {
+      'MeanderingProgrammer/render-markdown.nvim',
+      after = { 'nvim-treesitter' },
+      requires = { 'echasnovski/mini.nvim', opt = true },
+      config = function()
+        require('render-markdown').setup({
+          file_types = { 'markdown', 'codecompanion' },
+        })
+        vim.treesitter.language.register('markdown', 'codecompanion')
+      end,
+    }
+
+
     -- GitHub Copilot
     use 'github/copilot.vim'
+
+    -- Code Companion
+    use {
+      'olimorris/codecompanion.nvim',
+      config = function()
+        require("codecompanion").setup({
+          strategies = {
+            chat = {
+              adapter = "copilot",
+              roles = {
+                llm = function(adapter)
+                  return "  CodeCompanion (" .. adapter.formatted_name .. ")"
+                end,
+                user = "  Me",
+              },
+            },
+            inline = {
+              adapter = "copilot",
+            },
+            agent = {
+              adapter = "copilot",
+            },
+          },
+          display = {
+            chat = {
+              show_header_separator = true,
+            }
+          },
+        })
+        vim.cmd([[cab cc CodeCompanion]])
+        vim.keymap.set('n', '<leader>fa', ':CodeCompanionActions<CR>', {})
+      end
+    }
 
     -- todo-comments
     use { 'folke/todo-comments.nvim',

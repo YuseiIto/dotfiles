@@ -23,3 +23,16 @@ lspconfig.terraform_lsp.setup{}
 -- python-lsp-server
 -- https://github.com/python-lsp/python-lsp-server
 lspconfig.pylsp.setup {}
+
+
+lspconfig.nil_ls.setup {}
+
+lspconfig.biome.setup{}
+
+lspconfig.ts_ls.setup{}
+
+lspconfig.jsonls.setup{}
+
+-- prismals
+-- https://github.com/prisma/language-tools
+lspconfig.prismals.setup{}

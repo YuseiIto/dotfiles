@@ -73,7 +73,7 @@ brew "mysql-client"
 brew "netpbm"
 brew "nmap"
 brew "nodenv"
-brew "ocaml", link: false
+brew "ocaml"
 brew "pmix"
 brew "open-mpi"
 brew "openjdk"

@@ -96,6 +96,7 @@ brew "tnishinaga/sigrok/sigrok-firmware-fx2lafw", link: false
 brew "tomoyanonymous/flatcam/flatcam-evo"
 cask "alacritty"
 cask "alfred"
+cask "appcleaner"
 cask "arduino"
 cask "blackhole-2ch"
 cask "cinder"

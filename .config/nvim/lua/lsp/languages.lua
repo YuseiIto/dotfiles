@@ -1,6 +1,6 @@
 -- LSPの設定のうち、各言語に固有の部分
 -- メジャーなものはneovim/lspconfig にあるものを使う
--- https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md
+-- https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md
 
 local lspconfig = require("lspconfig")
 

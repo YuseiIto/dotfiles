@@ -36,3 +36,6 @@ lspconfig.jsonls.setup{}
 -- prismals
 -- https://github.com/prisma/language-tools
 lspconfig.prismals.setup{}
+
+-- Rust
+vim.lsp.enable('rust_analyzer')

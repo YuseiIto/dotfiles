@@ -19,7 +19,8 @@ packer.startup(
     use 'wbthomason/packer.nvim'
     use { 'rust-lang/rust.vim',
       config = function()
-        vim.g.rustfmt_autosave = 1
+        -- Disable autosave because it can interfere with rust_analyzer
+        vim.g.rustfmt_autosave = 0
       end
     }
     -- OneDark Appearance theme

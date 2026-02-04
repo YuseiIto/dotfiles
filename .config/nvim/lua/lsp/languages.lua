@@ -6,36 +6,36 @@ local lspconfig = require("lspconfig")
 
 -- Lua Language Server
 -- https://github.com/LuaLS/lua-language-server
-lspconfig.lua_ls.setup {}
+vim.lsp.enable('lua_ls')
 
 -- ocamllsp
 -- https://github.com/ocaml/ocaml-lsp
-lspconfig.ocamllsp.setup {}
+vim.lsp.enable('ocamllsp')
 
 -- ccls
 -- https://github.com/MaskRay/ccls
-lspconfig.ccls.setup {}
+vim.lsp.enable('ccls')
 
 -- terraform-lsp
 -- https://github.com/juliosueiras/terraform-lsp
-lspconfig.terraform_lsp.setup{}
+vim.lsp.enable('terraform_lsp')
 
 -- python-lsp-server
 -- https://github.com/python-lsp/python-lsp-server
-lspconfig.pylsp.setup {}
+vim.lsp.enable('pylsp')
 
 
-lspconfig.nil_ls.setup {}
+vim.lsp.enable('nil_ls')
 
-lspconfig.biome.setup{}
+vim.lsp.enable('biome')
 
-lspconfig.ts_ls.setup{}
+vim.lsp.enable('ts_ls')
 
-lspconfig.jsonls.setup{}
+vim.lsp.enable('jsonls')
 
 -- prismals
 -- https://github.com/prisma/language-tools
-lspconfig.prismals.setup{}
+vim.lsp.enable('prismals')
 
 -- Rust
 vim.lsp.enable('rust_analyzer')

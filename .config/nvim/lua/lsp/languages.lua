@@ -14,9 +14,8 @@ vim.lsp.enable('ocamllsp')
 -- https://github.com/MaskRay/ccls
 vim.lsp.enable('ccls')
 
--- terraform-lsp
--- https://github.com/juliosueiras/terraform-lsp
-vim.lsp.enable('terraform_lsp')
+-- terraformls
+vim.lsp.enable('terraformls')
 
 -- python-lsp-server
 -- https://github.com/python-lsp/python-lsp-server

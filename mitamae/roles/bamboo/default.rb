@@ -46,3 +46,15 @@ include_recipe '../../cookbooks/opencode'
 # Data & Document Processing
 include_recipe '../../cookbooks/sqlite'
 include_recipe '../../cookbooks/mysql-client'
+
+# Development Tools & LSPs
+include_recipe '../../cookbooks/llvm'
+include_recipe '../../cookbooks/terraform-ls'
+include_recipe '../../cookbooks/pylsp'
+include_recipe '../../cookbooks/nil'
+include_recipe '../../cookbooks/typescript-language-server'
+include_recipe '../../cookbooks/vscode-langservers-extracted'
+include_recipe '../../cookbooks/biome'
+include_recipe '../../cookbooks/prisma-language-server'
+include_recipe '../../cookbooks/ocaml'
+include_recipe '../../cookbooks/lua-language-server'

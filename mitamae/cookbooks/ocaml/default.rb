@@ -6,11 +6,21 @@ if %w[ubuntu debian].include?(node[:platform])
   package 'opam' do
     user 'root'
   end
+
+  execute "Init opam" do
+  command 'opam init --auto-setup --quiet'
+  not_if 'opam config env'
+
   execute 'Install ocaml-lsp-server via opam' do
     command 'opam install -y ocaml-lsp-server'
     not_if 'command -v ocamllsp'
   end
 elsif node[:platform] == 'darwin'
   package 'ocaml'
+
+  execute "Init opam" do
+  command 'opam init --auto-setup --quiet'
+  not_if 'opam config env'
+
   package 'ocaml-lsp'
 end

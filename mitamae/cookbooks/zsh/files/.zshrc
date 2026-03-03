@@ -25,8 +25,21 @@ if command -v starship > /dev/null 2>&1; then
   eval "$(starship init zsh)"
 fi
 
+
+# Check if "$HOME/.nodenv" exists (i.e. containers)
+if [ -d "$HOME/.nodenv" ]; then
+  export PATH="$HOME/.nodenv/shims:$HOME/.nodenv/bin:${PATH}"
+fi
+
+# Initialize nodenv if it's installed
 if command -v nodenv > /dev/null 2>&1; then
   eval "$(nodenv init -)"
+fi
+
+
+# uv-based tools etc..
+if [ -d "$HOME/.local/bin" ]; then
+  export PATH="$HOME/.local/bin:${PATH}"
 fi
 
 # THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!

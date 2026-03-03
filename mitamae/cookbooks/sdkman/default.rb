@@ -1,19 +1,19 @@
 
-if node[:platform] == "ubuntu" || node[:platform] == "debian"
-  home = ENV["HOME"]
+if node[:platform] == 'ubuntu' || node[:platform] == 'debian'
+  home = ENV['HOME']
   sdkman_dir = "#{home}/.sdkman"
 
   # Dependencies for SDKMAN! and Java-based tools
-  package "zip" do
-    user "root"
+  package 'zip' do
+    user 'root'
   end
 
-  package "unzip" do
-    user "root"
+  package 'unzip' do
+    user 'root'
   end
 
   # Install SDKMAN!
-  execute "Install SDKMAN!" do
+  execute 'Install SDKMAN!' do
     command "curl -s 'https://get.sdkman.io' | bash"
     not_if "test -d #{sdkman_dir}"
   end

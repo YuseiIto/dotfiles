@@ -1,5 +1,5 @@
 # Fonts
-if node[:platform] == "darwin"
+if node[:platform] == 'darwin'
   casks = %w[
     font-eb-garamond
     font-hack-nerd-font

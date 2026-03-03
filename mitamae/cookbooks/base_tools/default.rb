@@ -12,9 +12,9 @@ base_packages = %w[
 ]
 
 base_packages.each do |pkg|
-  if node[:platform] == "ubuntu" || node[:platform] == "debian"
+  if node[:platform] == 'ubuntu' || node[:platform] == 'debian'
     package pkg do
-      user "root"
+      user 'root'
     end
   else
     # macOS, Arch Linux
@@ -23,6 +23,6 @@ base_packages.each do |pkg|
 end
 
 # Install coreutils on macOS for GNU versions of common utilities (e.g., greadlink)
-package "coreutils" if node[:platform] == "darwin"
+package 'coreutils' if node[:platform] == 'darwin'
 
-include_recipe "../git"
+include_recipe '../git'

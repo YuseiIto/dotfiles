@@ -1,5 +1,5 @@
 # Chat and communication
-if node[:platform] == "darwin"
+if node[:platform] == 'darwin'
   casks = %w[
     slack
     discord

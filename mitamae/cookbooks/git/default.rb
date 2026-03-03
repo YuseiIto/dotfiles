@@ -1,14 +1,14 @@
-if node[:platform] == "ubuntu" || node[:platform] == "debian"
-  package "git" do
-    user "root"
+if node[:platform] == 'ubuntu' || node[:platform] == 'debian'
+  package 'git' do
+    user 'root'
   end
 else
   # macOS, Arch Linux
-  package "git"
+  package 'git'
 end
 
-home = ENV["HOME"]
-repo_root = File.expand_path("../../..", File.dirname(__FILE__))
+home = ENV['HOME']
+repo_root = File.expand_path('../../..', File.dirname(__FILE__))
 
 directory "#{home}/.config"
 

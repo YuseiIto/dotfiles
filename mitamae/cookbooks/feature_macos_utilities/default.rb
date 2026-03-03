@@ -1,5 +1,5 @@
 # System utilities, file management, remote access
-if node[:platform] == "darwin"
+if node[:platform] == 'darwin'
   casks = %w[
     alfred
     appcleaner

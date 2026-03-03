@@ -1,11 +1,11 @@
-if node[:platform] == "darwin"
-  package "awscli"
-elsif node[:platform] == "ubuntu" || node[:platform] == "debian"
-  package "unzip" do
-    user "root"
+if node[:platform] == 'darwin'
+  package 'awscli'
+elsif node[:platform] == 'ubuntu' || node[:platform] == 'debian'
+  package 'unzip' do
+    user 'root'
   end
 
-  execute "Install AWS CLI v2" do
+  execute 'Install AWS CLI v2' do
     command <<~EOC
       arch=$(uname -m)
       case "$arch" in
@@ -17,7 +17,7 @@ elsif node[:platform] == "ubuntu" || node[:platform] == "debian"
       /tmp/aws/install --update
       rm -rf /tmp/awscliv2.zip /tmp/aws
     EOC
-    user "root"
-    not_if "command -v aws"
+    user 'root'
+    not_if 'command -v aws'
   end
 end

@@ -1,5 +1,5 @@
 # Writing and documentation tools
-if node[:platform] == "darwin"
+if node[:platform] == 'darwin'
   casks = %w[
     obsidian
     drawio

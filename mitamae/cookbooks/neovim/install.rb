@@ -1,39 +1,39 @@
-nvim_version = "0.11.6"
+nvim_version = '0.11.6'
 
 case node[:platform]
-when "darwin"
-  package "neovim"
-when "ubuntu", "debian"
+when 'darwin'
+  package 'neovim'
+when 'ubuntu', 'debian'
 
   # Ensure curl is installed for downloading Neovim tarball
-  package "curl" do
-    user "root"
+  package 'curl' do
+    user 'root'
   end
 
   nvim_release = "nvim-linux-#{node[:os_arch]}"
   nvim_archive = "#{nvim_release}.tar.gz"
   url = "https://github.com/neovim/neovim/releases/download/v#{nvim_version}/#{nvim_archive}"
 
-  execute "Install neovim binary" do
+  execute 'Install neovim binary' do
     command <<~EOC
       curl -fsSLO #{url}
       tar -C /opt -xzf #{nvim_archive}
       rm #{nvim_archive}
     EOC
-    user "root"
+    user 'root'
     not_if "/opt/#{nvim_release}/bin/nvim --version | grep -q 'NVIM v#{nvim_version}'" # Skip if the correct version is already installed
   end
 
   # Create a symlink to make nvim accessible for all users
-  link "/usr/local/bin/nvim" do
+  link '/usr/local/bin/nvim' do
     to "/opt/#{nvim_release}/bin/nvim"
-    user "root"
+    user 'root'
     force true
   end
 
-when "arch"
-  package "neovim" do
-    user "root"
+when 'arch'
+  package 'neovim' do
+    user 'root'
   end
 else
   MItamae.logger.error "unsupported platform #{node[:platform]}: #{__FILE__}:#{__LINE__}"

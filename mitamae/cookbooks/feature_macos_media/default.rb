@@ -1,5 +1,5 @@
 # Media creation and playback
-if node[:platform] == "darwin"
+if node[:platform] == 'darwin'
   casks = %w[
     obs
     vlc

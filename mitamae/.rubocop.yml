@@ -18,3 +18,7 @@ Style/FrozenStringLiteralComment:
 # EOC are EOCs, period. It doesn't have to be "meaningful".
 Naming/HeredocDelimiterNaming:
   Enabled: false
+
+# Set max line length to 150
+Layout/LineLength:
+  Max: 150

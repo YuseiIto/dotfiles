@@ -1,0 +1,35 @@
+FROM ubuntu:24.04
+
+# Supress interactive prompts during package installation
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Minimal setup before running setup.sh
+RUN apt-get update && \
+    apt-get install -y sudo curl ca-certificates tar
+
+# Allow passwordless sudo for the ubuntu user
+RUN echo "ubuntu ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/ubuntu && \
+    chmod 0440 /etc/sudoers.d/ubuntu
+
+USER ubuntu
+ENV HOME=/home/ubuntu
+ENV USER=ubuntu
+ENV LOGNAME=ubuntu
+ENV LANG=C.UTF-8
+ENV TZ=Asia/Tokyo
+ENV SHELL=/usr/bin/zsh
+
+COPY --chown=ubuntu:ubuntu ./ /home/ubuntu/dotfiles/
+WORKDIR /home/ubuntu/dotfiles/
+
+
+# Workaround for setup.sh to find the correct paths for uv and nodenv
+ARG PATH="/home/ubuntu/.local/bin:${PATH}"
+ARG PATH="/home/ubuntu/.nodenv/shims:/home/ubuntu/.nodenv/bin:${PATH}"
+
+ENV DOTFILES_ROLE=bamboo
+RUN bash setup.sh
+
+WORKDIR /home/ubuntu
+
+CMD ["/usr/bin/zsh"]

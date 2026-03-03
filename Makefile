@@ -1,7 +1,10 @@
 DOCKER:=docker
 IMAGE_NAME:=yuseiito-dev
 
-.PHONY: build-pine
+.PHONY: build-pine build-bamboo
 
 build-pine:
 	$(DOCKER) build -t $(IMAGE_NAME):pine -f docker/Dockerfile.pine .
+
+build-bamboo:
+	$(DOCKER) build -t $(IMAGE_NAME):bamboo -f docker/Dockerfile.bamboo .

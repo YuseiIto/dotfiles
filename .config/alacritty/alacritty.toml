@@ -26,3 +26,9 @@ history = 20000
 
 [window]
 opacity = 0.8
+
+# Newline with Shift+Return in Claude Code
+[[keyboard.bindings]]
+key = "Return"
+mods = "Shift"
+chars = "\u001B\r"

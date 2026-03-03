@@ -6,6 +6,7 @@ normalized_arch = case node[:kernel][:machine]
 node.reverse_merge!(
   variant: 'bamboo',
   os_arch: normalized_arch,
+  is_container: true,
   editor_features: {
     lsp: true,
     basic_amenities: true,

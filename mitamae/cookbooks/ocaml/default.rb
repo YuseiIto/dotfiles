@@ -1,4 +1,11 @@
 # Install OCaml compiler and package manager
+
+disable_sandboxing = if node[:is_container]
+                       '--disable-sandboxing'
+                     else
+                       ''
+                     end
+
 if %w[ubuntu debian].include?(node[:platform])
   package 'ocaml' do
     user 'root'
@@ -8,7 +15,7 @@ if %w[ubuntu debian].include?(node[:platform])
   end
 
   execute 'Init opam' do
-    command 'opam init --auto-setup --quiet'
+    command "opam init --auto-setup --quiet #{disable_sandboxing}"
     not_if 'opam config env'
   end
 
@@ -21,7 +28,7 @@ elsif node[:platform] == 'darwin'
   package 'ocaml'
 
   execute 'Init opam' do
-    command 'opam init --auto-setup --quiet'
+    command "opam init --auto-setup --quiet #{disable_sandboxing}"
     not_if 'opam config env'
   end
 

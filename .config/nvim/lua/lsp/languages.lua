@@ -10,9 +10,8 @@ vim.lsp.enable('lua_ls')
 -- https://github.com/ocaml/ocaml-lsp
 vim.lsp.enable('ocamllsp')
 
--- ccls
--- https://github.com/MaskRay/ccls
-vim.lsp.enable('ccls')
+-- clangd
+vim.lsp.enable('clangd')
 
 -- terraformls
 vim.lsp.enable('terraformls')

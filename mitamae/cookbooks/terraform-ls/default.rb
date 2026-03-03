@@ -7,8 +7,11 @@ elsif %w[ubuntu debian].include?(node[:platform])
     user 'root'
     not_if 'test -f /usr/share/keyrings/hashicorp-archive-keyring.gpg'
   end
+
   execute 'Add HashiCorp repo' do
-    command 'echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/hashicorp.list'
+    keyring_path = '/usr/share/keyrings/hashicorp-archive-keyring.gpg'
+    repo_url = 'https://apt.releases.hashicorp.com'
+    command "echo \"deb [signed-by=#{keyring_path}] #{repo_url} $(lsb_release -cs) main\" | tee /etc/apt/sources.list.d/hashicorp.list"
     user 'root'
     not_if 'test -f /etc/apt/sources.list.d/hashicorp.list'
   end

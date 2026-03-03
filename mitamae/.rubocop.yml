@@ -5,12 +5,8 @@ AllCops:
 # Exclude them from the BlockLength check to avoid unnecessary warnings,
 # since cookbooks, roles, and custom resources often contain long blocks.
   Exclude:
-    - 'cookbooks/**/*.rb'
-    - 'roles/**/*.rb'
-    - 'custom_resources/**/*.rb'
-
-Style/StringLiterals:
-  EnforcedStyle: double_quotes
+    - "cookbooks/**/*.rb"
+    - "roles/**/*.rb"
 
 Lint/ShadowingOuterLocalVariable:
   Enabled: false

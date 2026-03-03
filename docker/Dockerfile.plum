@@ -1,0 +1,37 @@
+FROM debian:bookworm-slim
+
+# Supress interactive prompts during package installation
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Minimal setup before running setup.sh
+RUN apt-get update && \
+    apt-get install -y sudo curl ca-certificates tar
+
+# Allow passwordless sudo for the debian user
+ARG USER_UID=1000
+ARG USER_GID=$USER_UID
+RUN groupadd --gid $USER_GID debian && \
+    useradd --uid $USER_UID --gid $USER_GID -m -s /bin/bash debian && \
+    echo "debian ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/debian && \
+    chmod 0440 /etc/sudoers.d/debian
+
+
+USER debian
+ENV HOME=/home/debian
+ENV USER=debian
+ENV LOGNAME=debian
+ENV LANG=C.UTF-8
+ENV TZ=Asia/Tokyo
+ENV SHELL=/usr/bin/zsh
+
+COPY --chown=debian:debian ./ /home/debian/dotfiles/
+WORKDIR /home/debian/dotfiles/
+
+RUN sudo apt-get update
+
+ENV DOTFILES_ROLE=plum
+RUN bash ./setup.sh
+
+WORKDIR /home/debian
+
+CMD ["/usr/bin/zsh"]

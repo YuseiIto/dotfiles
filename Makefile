@@ -8,3 +8,6 @@ build-pine:
 
 build-bamboo:
 	$(DOCKER) build -t $(IMAGE_NAME):bamboo -f docker/Dockerfile.bamboo .
+
+build-plum:
+	$(DOCKER) build -t $(IMAGE_NAME):plum -f docker/Dockerfile.plum .

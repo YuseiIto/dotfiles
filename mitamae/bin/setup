@@ -10,19 +10,7 @@ arch=$(uname -m)
 
 # Check if the mitamae binary is already present in the bin directory
 if ! [ -f "bin/${mitamae_bin}" ]; then
-  case "$(uname)" in
-    "Linux")
-      mitamae_bin="mitamae-x86_64-linux"
-      ;;
-    "Darwin")
-      mitamae_bin="mitamae-aarch64-darwin"
-      ;;
-    *)
-      echo "unexpected uname: $(uname)"
-      exit 1
-      ;;
-  esac
-
+  mitamae_bin="mitamae-${arch}-${platform}"
 	mitamae_archive_name="${mitamae_bin}.tar.gz"
 	mitamae_archive_url="https://github.com/itamae-kitchen/mitamae/releases/latest/download/${mitamae_bin}.tar.gz"
 	mitamae_archive_path="bin/${mitamae_archive_name}"

@@ -26,8 +26,6 @@ vim.lsp.enable('terraformls')
 -- https://github.com/python-lsp/python-lsp-server
 vim.lsp.enable('pylsp')
 
-vim.lsp.enable('nil_ls')
-
 -- ts_ls
 -- Disable formatting for ts_ls (Leave it to biome)
 vim.lsp.config('ts_ls', {

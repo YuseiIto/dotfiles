@@ -5,7 +5,6 @@ AllCops:
 # since cookbooks, roles, and custom resources often contain long blocks.
   Exclude:
     - "cookbooks/**/*.rb"
-    - "roles/**/*.rb"
 
 Lint/ShadowingOuterLocalVariable:
   Enabled: false

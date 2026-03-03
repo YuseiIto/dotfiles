@@ -1,4 +1,4 @@
-if node[:platform] == 'ubuntu' || node[:platform] == 'debian'
+if ['ubuntu', 'debian'].include?(node[:platform])
   package 'build-essential' do
     user 'root'
   end

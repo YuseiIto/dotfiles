@@ -3,7 +3,7 @@ if node[:platform] == 'darwin'
     command 'brew install --cask firefox'
     not_if 'brew list --cask firefox'
   end
-elsif node[:platform] == 'ubuntu' || node[:platform] == 'debian'
+elsif ['ubuntu', 'debian'].include?(node[:platform])
   execute 'Add Mozilla APT repository' do
     command <<~EOC
       install -d -m 0755 /etc/apt/keyrings

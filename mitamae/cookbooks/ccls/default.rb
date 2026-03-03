@@ -1,5 +1,5 @@
 # Install ccls - C/C++/ObjC language server
-if node[:platform] == 'ubuntu' || node[:platform] == 'debian'
+if ['ubuntu', 'debian'].include?(node[:platform])
   package 'ccls' do
     user 'root'
   end

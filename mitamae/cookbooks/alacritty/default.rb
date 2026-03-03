@@ -3,7 +3,7 @@ if node[:platform] == 'darwin'
     command 'brew install --cask alacritty'
     not_if 'brew list --cask alacritty'
   end
-elsif node[:platform] == 'ubuntu' || node[:platform] == 'debian'
+elsif ['ubuntu', 'debian'].include?(node[:platform])
   package 'snapd' do
     user 'root'
   end

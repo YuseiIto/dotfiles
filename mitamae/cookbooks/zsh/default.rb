@@ -1,7 +1,7 @@
 # Install zsh
 if node[:platform] == 'darwin'
   package 'zsh'
-elsif node[:platform] == 'ubuntu' || node[:platform] == 'debian'
+elsif ['ubuntu', 'debian'].include?(node[:platform])
   package 'zsh' do
     user 'root'
   end

@@ -1,5 +1,5 @@
 # Install direnv - directory-level environment variable loader
-if node[:platform] == 'ubuntu' || node[:platform] == 'debian'
+if ['ubuntu', 'debian'].include?(node[:platform])
   package 'direnv' do
     user 'root'
   end

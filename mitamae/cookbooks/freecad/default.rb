@@ -3,7 +3,7 @@ if node[:platform] == 'darwin'
     command 'brew install --cask freecad'
     not_if 'brew list --cask freecad'
   end
-elsif node[:platform] == 'ubuntu' || node[:platform] == 'debian'
+elsif ['ubuntu', 'debian'].include?(node[:platform])
   package 'freecad' do
     user 'root'
   end

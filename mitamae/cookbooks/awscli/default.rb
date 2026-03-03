@@ -1,6 +1,6 @@
 if node[:platform] == 'darwin'
   package 'awscli'
-elsif node[:platform] == 'ubuntu' || node[:platform] == 'debian'
+elsif ['ubuntu', 'debian'].include?(node[:platform])
   package 'unzip' do
     user 'root'
   end

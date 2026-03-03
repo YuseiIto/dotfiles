@@ -1,5 +1,5 @@
 # Install ImageMagick - image manipulation tools
-if node[:platform] == 'ubuntu' || node[:platform] == 'debian'
+if ['ubuntu', 'debian'].include?(node[:platform])
   package 'imagemagick' do
     user 'root'
   end

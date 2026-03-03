@@ -1,5 +1,5 @@
 # Install nikto - web server vulnerability scanner
-if node[:platform] == 'ubuntu' || node[:platform] == 'debian'
+if ['ubuntu', 'debian'].include?(node[:platform])
   package 'nikto' do
     user 'root'
   end

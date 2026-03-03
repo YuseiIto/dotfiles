@@ -3,7 +3,7 @@ if node[:platform] == 'darwin'
     command 'brew install --cask google-chrome'
     not_if 'brew list --cask google-chrome'
   end
-elsif node[:platform] == 'ubuntu' || node[:platform] == 'debian'
+elsif ['ubuntu', 'debian'].include?(node[:platform])
   execute 'Add Google Chrome APT repository' do
     command <<~EOC
       curl -fsSL https://dl.google.com/linux/linux_signing_key.pub | gpg --dearmor -o /usr/share/keyrings/google-chrome.gpg

@@ -1,5 +1,5 @@
 # Install cloc - count lines of code
-if node[:platform] == 'ubuntu' || node[:platform] == 'debian'
+if ['ubuntu', 'debian'].include?(node[:platform])
   package 'cloc' do
     user 'root'
   end

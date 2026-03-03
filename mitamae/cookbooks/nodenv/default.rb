@@ -2,7 +2,7 @@ global_nodejs_version = '24.14.0'
 
 if node[:platform] == 'darwin'
   package 'nodenv'
-elsif node[:platform] == 'ubuntu' || node[:platform] == 'debian'
+elsif ['ubuntu', 'debian'].include?(node[:platform])
   home = ENV['HOME']
   nodenv_root = "#{home}/.nodenv"
 

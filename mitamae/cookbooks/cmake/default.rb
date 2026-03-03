@@ -1,5 +1,5 @@
 # Install CMake - cross-platform build system
-if node[:platform] == 'ubuntu' || node[:platform] == 'debian'
+if ['ubuntu', 'debian'].include?(node[:platform])
   package 'cmake' do
     user 'root'
   end

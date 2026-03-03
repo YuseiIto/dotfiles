@@ -1,6 +1,6 @@
 if node[:platform] == 'darwin'
   package 'zstd'
-elsif node[:platform] == 'ubuntu' || node[:platform] == 'debian'
+elsif ['ubuntu', 'debian'].include?(node[:platform])
   package 'zstd' do
     user 'root'
   end

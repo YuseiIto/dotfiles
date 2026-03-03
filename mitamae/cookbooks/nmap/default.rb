@@ -1,5 +1,5 @@
 # Install nmap - network discovery and security auditing tool
-if node[:platform] == 'ubuntu' || node[:platform] == 'debian'
+if ['ubuntu', 'debian'].include?(node[:platform])
   package 'nmap' do
     user 'root'
   end

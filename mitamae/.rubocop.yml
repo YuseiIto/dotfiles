@@ -1,11 +1,6 @@
 AllCops:
   NewCops: enable # Enable new cops by default when RuboCop is updated.
 
-# Exclude them from the BlockLength check to avoid unnecessary warnings,
-# since cookbooks, roles, and custom resources often contain long blocks.
-  Exclude:
-    - "cookbooks/**/*.rb"
-
 Lint/ShadowingOuterLocalVariable:
   Enabled: false
 
@@ -18,3 +13,8 @@ Style/FetchEnvVar:
 # Disable since it's the trsansitional feature for ruby 3.0 and it doesn't matter for mruby.
 Style/FrozenStringLiteralComment:
     Enabled: false
+
+# Configurations contain lots of heredocs for scripts.
+# EOC are EOCs, period. It doesn't have to be "meaningful".
+Naming/HeredocDelimiterNaming:
+  Enabled: false

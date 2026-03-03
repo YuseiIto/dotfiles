@@ -22,6 +22,7 @@ ENV SHELL=/usr/bin/zsh
 COPY --chown=ubuntu:ubuntu ./ /home/ubuntu/dotfiles/
 WORKDIR /home/ubuntu/dotfiles/
 
+ENV PATH="/home/ubuntu/.local/bin:${PATH}"
 ENV DOTFILES_ROLE=pine
 RUN bash setup.sh
 

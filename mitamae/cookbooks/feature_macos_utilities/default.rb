@@ -1,6 +1,6 @@
 # System utilities, file management, remote access
 if node[:platform] == "darwin"
-  casks = %w(
+  casks = %w[
     alfred
     appcleaner
     cyberduck
@@ -11,7 +11,7 @@ if node[:platform] == "darwin"
     vnc-viewer
     raspberry-pi-imager
     zap
-  )
+  ]
 
   casks.each do |cask|
     execute "install #{cask} via homebrew cask" do

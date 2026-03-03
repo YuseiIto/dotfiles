@@ -1,8 +1,9 @@
 nvim_version = "0.11.6"
 
-if node[:platform] == "darwin"
+case node[:platform]
+when "darwin"
   package "neovim"
-elsif node[:platform] == "ubuntu" || node[:platform] == "debian"
+when "ubuntu", "debian"
 
   # Ensure curl is installed for downloading Neovim tarball
   package "curl" do
@@ -12,7 +13,7 @@ elsif node[:platform] == "ubuntu" || node[:platform] == "debian"
   nvim_release = "nvim-linux-#{node[:os_arch]}"
   nvim_archive = "#{nvim_release}.tar.gz"
   url = "https://github.com/neovim/neovim/releases/download/v#{nvim_version}/#{nvim_archive}"
-  
+
   execute "Install neovim binary" do
     command <<~EOC
       curl -fsSLO #{url}
@@ -30,7 +31,7 @@ elsif node[:platform] == "ubuntu" || node[:platform] == "debian"
     force true
   end
 
-elsif node[:platform] == "arch"
+when "arch"
   package "neovim" do
     user "root"
   end

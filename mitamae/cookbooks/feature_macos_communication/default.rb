@@ -1,10 +1,10 @@
 # Chat and communication
 if node[:platform] == "darwin"
-  casks = %w(
+  casks = %w[
     slack
     discord
     keybase
-  )
+  ]
 
   casks.each do |cask|
     execute "install #{cask} via homebrew cask" do

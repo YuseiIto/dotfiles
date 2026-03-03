@@ -1,10 +1,10 @@
 # Media creation and playback
 if node[:platform] == "darwin"
-  casks = %w(
+  casks = %w[
     obs
     vlc
     krita
-  )
+  ]
 
   casks.each do |cask|
     execute "install #{cask} via homebrew cask" do

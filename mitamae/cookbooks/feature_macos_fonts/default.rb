@@ -1,9 +1,9 @@
 # Fonts
 if node[:platform] == "darwin"
-  casks = %w(
+  casks = %w[
     font-eb-garamond
     font-hack-nerd-font
-  )
+  ]
 
   casks.each do |cask|
     execute "install #{cask} via homebrew cask" do

@@ -1,7 +1,7 @@
 # Essential utility. Keep it simple and minimal.
 
 # packages that are named the same across platforms.
-base_packages = %w(
+base_packages = %w[
   curl
   wget
   tmux
@@ -9,7 +9,7 @@ base_packages = %w(
   fzy
   tree
   jq
-)
+]
 
 base_packages.each do |pkg|
   if node[:platform] == "ubuntu" || node[:platform] == "debian"
@@ -23,8 +23,6 @@ base_packages.each do |pkg|
 end
 
 # Install coreutils on macOS for GNU versions of common utilities (e.g., greadlink)
-if node[:platform] == "darwin"
-  package "coreutils"
-end
+package "coreutils" if node[:platform] == "darwin"
 
 include_recipe "../git"

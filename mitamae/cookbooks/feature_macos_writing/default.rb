@@ -1,10 +1,10 @@
 # Writing and documentation tools
 if node[:platform] == "darwin"
-  casks = %w(
+  casks = %w[
     obsidian
     drawio
     mactex-no-gui
-  )
+  ]
 
   casks.each do |cask|
     execute "install #{cask} via homebrew cask" do

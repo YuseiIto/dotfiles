@@ -6,7 +6,16 @@ normalized_arch = case node[:kernel][:machine]
 node.reverse_merge!(
   variant: 'plum',
   os_arch: normalized_arch,
-  features: {}
+  editor_features: {
+    lsp: false,
+    basic_amenities: false,
+    lazygit: false,
+    rust_dev: false,
+    prisma_dev: false,
+    render_md: false,
+    ai: false,
+    rich_presence: false
+  }
 )
 
 # Shell & Terminal

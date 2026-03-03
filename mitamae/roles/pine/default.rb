@@ -6,7 +6,16 @@ normalized_arch = case node[:kernel][:machine]
 node.reverse_merge!(
   variant: 'pine',
   os_arch: normalized_arch,
-  features: {}
+  editor_features: {
+    lsp: true,
+    basic_amenities: true,
+    lazygit: true,
+    rust_dev: true,
+    prisma_dev: true,
+    render_md: true,
+    ai: true,
+    rich_presence: true
+  }
 )
 
 # Infrastructure

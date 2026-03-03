@@ -32,4 +32,5 @@ To manage variety of configurations, this repository is organized into three :
     - Use `not_if` or `only_if` guards to prevent unnecessary installations if the package is already installed.
     - If the package requires associated configuration files, create those inside the `file` directory of each cookbook.
     - Always use `uv tool` than `pip` to manage python-based tools.
+    - Be aware that mItamae is based on mruby. It does **NOT** support full ruby features. (e.g. Use `ENV["HOME"]` instead of `Dir.home` )
 3. Add the package to the appropriate role(s) in `roles/` directory by adding `include_recipe` statement in the role's `default.rb` file.

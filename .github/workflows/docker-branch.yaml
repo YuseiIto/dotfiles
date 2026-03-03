@@ -24,11 +24,11 @@ jobs:
 
       - name: Set lower usernname
         id: owner
-        run: echo "name=$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_OUTPUT"
+        run: echo "name=$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
 
       - name: Set Image name
         id: image_name
-        run: echo "name=${{ steps.owner.outputs.name }}/${{ steps.owner.outputs.name }}-dev" >> $GITHUB_ENV
+        run: echo "name=${{ steps.owner.outputs.name }}/${{ steps.owner.outputs.name }}-dev" >> $GITHUB_OUTPUT
 
       - name: Set up QEMU for multi-arch build
         uses: docker/setup-qemu-action@v3

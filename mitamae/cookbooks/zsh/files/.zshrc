@@ -25,5 +25,9 @@ if command -v starship > /dev/null 2>&1; then
   eval "$(starship init zsh)"
 fi
 
+if command -v nodenv > /dev/null 2>&1; then
+  eval "$(nodenv init -)"
+fi
+
 # Enable Ctrl-a and other keybindings in tmux
 bindkey -e

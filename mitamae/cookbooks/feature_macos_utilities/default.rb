@@ -1,7 +1,6 @@
 # System utilities, file management, remote access
 if node[:platform] == "darwin"
   casks = %w(
-    alacritty
     alfred
     appcleaner
     cyberduck

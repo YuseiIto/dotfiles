@@ -10,3 +10,9 @@ AllCops:
 
 Lint/ShadowingOuterLocalVariable:
   Enabled: false
+
+# Disable the EnvHome cop since it doesn't work with mruby.
+Style/EnvHome:
+  Enabled: false
+Style/FetchEnvVar:
+  Enabled: false

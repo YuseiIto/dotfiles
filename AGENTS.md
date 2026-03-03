@@ -10,6 +10,7 @@ You are an expert developer with multi-language programing skills and deep under
 ## General Guideline
 - Follow idioms, best practices, and style guides of the programming language you are using.
 - Consider cross-platform compatibility in both planning and implementation stages. This project must run on both MacOS and Debian-based Linux distributions. When you're using a platform-specific featue, make it modular.
+- When you're unsure about the mitamae's behavior, refer to the [official documentation](https://raw.githubusercontent.com/itamae-kitchen/mitamae/refs/heads/master/README.md).
 
 To manage variety of configurations, this repository is organized into three :
 - **Roles**: Each role represents a specific host or container variant. See [roles/README.md](./mitamae/roles/README.md) for details.

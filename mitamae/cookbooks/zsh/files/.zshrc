@@ -29,5 +29,9 @@ if command -v nodenv > /dev/null 2>&1; then
   eval "$(nodenv init -)"
 fi
 
+# THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
+export SDKMAN_DIR="$HOME/.sdkman"
+[[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
+
 # Enable Ctrl-a and other keybindings in tmux
 bindkey -e

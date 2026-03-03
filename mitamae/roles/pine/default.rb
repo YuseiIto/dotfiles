@@ -19,3 +19,4 @@ node.reverse_merge!(
 include_recipe "../../cookbooks/neovim"
 include_recipe "../../cookbooks/base_tools"
 include_recipe "../../cookbooks/binutils"
+include_recipe "../../cookbooks/cloudflared"

@@ -20,3 +20,13 @@ To manage variety of configurations, this repository is organized into three :
 
 ### Creating new role
 // TBD
+
+## Adding new package
+1. Create @mitamae/cookbooks/`<package-name>` directory.
+2. Create `default.rb` file in the directory and add the installation logic for the package.
+    - If the package is available in the system package manager, use `package` resource to install it.
+    - If the package is not available in the system package manager, use `execute` resource to run the installation command (e.g., using `curl` or `wget` to download and install the package).
+    - Make sure to handle platform-specific installation logic if necessary (e.g., different commands for MacOS and Debian-based Linux).
+    - Use `not_if` or `only_if` guards to prevent unnecessary installations if the package is already installed.
+    - If the package requires associated configuration files, create those inside the `file` directory of each cookbook.
+3. Add the package to the appropriate role(s) in `roles/` directory by adding `include_recipe` statement in the role's `default.rb` file.

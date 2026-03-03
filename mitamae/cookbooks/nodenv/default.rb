@@ -10,6 +10,7 @@ elsif node[:platform] == "ubuntu" || node[:platform] == "debian"
   end
 
   execute "Compile nodenv dynamic bash extension" do
+    include_recipe "../../cookbooks/build-essential"
     command "cd #{nodenv_root} && src/configure && make -C src"
     not_if "test -f #{nodenv_root}/src/realpath.dynlib"
   end

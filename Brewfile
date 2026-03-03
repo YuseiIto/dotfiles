@@ -92,7 +92,7 @@ brew "xorriso"
 brew "armmbed/formulae/arm-none-eabi-gcc"
 brew "mac-cleanup/mac-cleanup-py/mac-cleanup-py"
 brew "osx-cross/avr/avr-gcc@9"
-brew "tnishinaga/sigrok/sigrok-firmware-fx2lafw"
+brew "sigrok-firmware-fx2lafw"
 brew "tomoyanonymous/flatcam/flatcam-evo"
 
 cask "alacritty"

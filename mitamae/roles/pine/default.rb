@@ -17,3 +17,4 @@ node.reverse_merge!(
 
 # Load Recipes
 include_recipe "../../cookbooks/neovim"
+include_recipe "../../cookbooks/base_tools"

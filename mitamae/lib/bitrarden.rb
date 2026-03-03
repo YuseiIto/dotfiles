@@ -1,13 +1,15 @@
-require "English"
-require "json"
+require 'English'
+require 'json'
 
+# Bitwarden CLI integration module.
+# Provides methods to check vault status and retrieve secrents.
 module Bitwarden
   class << self
     # Check if Bitwarden CLI is available and the vault is unlocked.
     def unlocked?
       return @unlocked if defined?(@unlocked)
 
-      has_cmd = system("command -v bw > /dev/null 2>&1")
+      has_cmd = system('command -v bw > /dev/null 2>&1')
       if has_cmd
         status_json = `bw status 2>/dev/null`
         @unlocked = $CHILD_STATUS.success? && status_json.include?('"status":"unlocked"')
@@ -31,16 +33,16 @@ module Bitwarden
     # Notes retrieval helper
     def get_notes(item_name)
       item = get_item(item_name)
-      item ? item["notes"] : nil
+      item ? item['notes'] : nil
     end
 
     # Custom field retrieval helper
     def get_custom_field(item_name, field_name)
       item = get_item(item_name)
-      return nil unless item && item["fields"]
+      return nil unless item && item['fields']
 
-      field = item["fields"].find { |f| f["name"] == field_name }
-      field ? field["value"] : nil
+      field = item['fields'].find { |f| f['name'] == field_name }
+      field ? field['value'] : nil
     end
   end
 end

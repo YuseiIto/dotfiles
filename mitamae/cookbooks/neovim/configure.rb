@@ -7,8 +7,6 @@ directory "#{home}/.config/nvim/lua"
 template "#{home}/.config/nvim/lua/features.lua" do
   source 'templates/features.lua.erb'
   variables(
-    variant: node[:variant],
-    ai_enabled: node[:features][:ai],
-    web_enabled: node[:features][:web]
+    editor_features: node[:editor_features]
   )
 end

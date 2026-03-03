@@ -12,7 +12,7 @@ base_packages = %w[
 ]
 
 base_packages.each do |pkg|
-  if ['ubuntu', 'debian'].include?(node[:platform])
+  if %w[ubuntu debian].include?(node[:platform])
     package pkg do
       user 'root'
     end

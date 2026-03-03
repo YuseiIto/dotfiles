@@ -1,5 +1,5 @@
 
-if ['ubuntu', 'debian'].include?(node[:platform])
+if %w[ubuntu debian].include?(node[:platform])
   home = ENV['HOME']
   sdkman_dir = "#{home}/.sdkman"
 

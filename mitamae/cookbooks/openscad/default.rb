@@ -3,7 +3,7 @@ if node[:platform] == 'darwin'
     command 'brew install --cask openscad'
     not_if 'brew list --cask openscad'
   end
-elsif ['ubuntu', 'debian'].include?(node[:platform])
+elsif %w[ubuntu debian].include?(node[:platform])
   package 'openscad' do
     user 'root'
   end

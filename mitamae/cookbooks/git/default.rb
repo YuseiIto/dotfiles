@@ -1,4 +1,4 @@
-if ['ubuntu', 'debian'].include?(node[:platform])
+if %w[ubuntu debian].include?(node[:platform])
   package 'git' do
     user 'root'
   end

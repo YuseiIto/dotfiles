@@ -1,5 +1,5 @@
 # Install SQLite
-if ['ubuntu', 'debian'].include?(node[:platform])
+if %w[ubuntu debian].include?(node[:platform])
   package 'sqlite3' do
     user 'root'
   end

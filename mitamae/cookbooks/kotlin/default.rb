@@ -1,6 +1,6 @@
 if node[:platform] == 'darwin'
   package 'kotlin'
-elsif ['ubuntu', 'debian'].include?(node[:platform])
+elsif %w[ubuntu debian].include?(node[:platform])
   include_recipe '../sdkman'
 
   execute 'Install Kotlin via sdkman' do

@@ -1,5 +1,5 @@
 # Install pandoc - universal document converter
-if ['ubuntu', 'debian'].include?(node[:platform])
+if %w[ubuntu debian].include?(node[:platform])
   package 'pandoc' do
     user 'root'
   end

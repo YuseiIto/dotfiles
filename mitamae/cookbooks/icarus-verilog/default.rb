@@ -1,4 +1,4 @@
-if ['ubuntu', 'debian'].include?(node[:platform])
+if %w[ubuntu debian].include?(node[:platform])
   package 'iverilog' do
     user 'root'
   end

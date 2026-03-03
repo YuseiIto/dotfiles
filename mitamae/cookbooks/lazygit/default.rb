@@ -1,6 +1,6 @@
 if node[:platform] == 'darwin'
   package 'lazygit'
-elsif ['ubuntu', 'debian'].include?(node[:platform])
+elsif %w[ubuntu debian].include?(node[:platform])
   lazygit_version = '0.59.0'
 
   execute 'Install lazygit' do

@@ -3,7 +3,7 @@ if node[:platform] == 'darwin'
     command 'brew install --cask cncjs'
     not_if 'brew list --cask cncjs'
   end
-elsif ['debian', 'ubuntu'].include?(node[:platform])
+elsif %w[debian ubuntu].include?(node[:platform])
   include_recipe '../../cookbooks/nodenv'
 
   execute 'Install cncjs via npm' do

@@ -3,7 +3,7 @@ if node[:platform] == 'darwin'
     command 'brew install --cask kicad'
     not_if 'brew list --cask kicad'
   end
-elsif ['ubuntu', 'debian'].include?(node[:platform])
+elsif %w[ubuntu debian].include?(node[:platform])
   package 'kicad' do
     user 'root'
   end

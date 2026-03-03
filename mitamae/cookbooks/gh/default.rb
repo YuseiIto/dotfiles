@@ -1,6 +1,6 @@
 if node[:platform] == 'darwin'
   package 'gh'
-elsif ['ubuntu', 'debian'].include?(node[:platform])
+elsif %w[ubuntu debian].include?(node[:platform])
   execute 'Add GitHub CLI apt repository' do
     command <<~EOC
       curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg \

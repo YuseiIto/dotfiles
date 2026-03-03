@@ -1,6 +1,6 @@
 if node[:platform] == 'darwin'
   package 'lua-language-server'
-elsif ['ubuntu', 'debian'].include?(node[:platform])
+elsif %w[ubuntu debian].include?(node[:platform])
   lls_version = '3.13.5'
 
   arch = case node[:os_arch]

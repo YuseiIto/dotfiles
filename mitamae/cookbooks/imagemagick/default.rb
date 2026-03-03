@@ -1,5 +1,5 @@
 # Install ImageMagick - image manipulation tools
-if ['ubuntu', 'debian'].include?(node[:platform])
+if %w[ubuntu debian].include?(node[:platform])
   package 'imagemagick' do
     user 'root'
   end

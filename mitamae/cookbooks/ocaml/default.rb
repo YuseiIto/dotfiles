@@ -1,5 +1,5 @@
 # Install OCaml compiler and package manager
-if ['ubuntu', 'debian'].include?(node[:platform])
+if %w[ubuntu debian].include?(node[:platform])
   package 'ocaml' do
     user 'root'
   end

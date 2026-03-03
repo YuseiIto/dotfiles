@@ -1,5 +1,5 @@
 # Install aria2 - lightweight multi-protocol download utility
-if ['ubuntu', 'debian'].include?(node[:platform])
+if %w[ubuntu debian].include?(node[:platform])
   package 'aria2' do
     user 'root'
   end

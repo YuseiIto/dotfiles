@@ -1,4 +1,6 @@
 home = ENV["HOME"]
+directory "#{home}/.config"
+directory "#{home}/.config/nvim"
 directory "#{home}/.config/nvim/lua"
 
 # Roleで定義されたフラグを元に features.lua を生成

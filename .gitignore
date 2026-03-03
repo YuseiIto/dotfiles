@@ -6,3 +6,4 @@
 # Automatically created by mitamae/bin/setup
 mitamae/bin/mitamae
 mitamae/bin/mitamae-*
+mitamae/bin/rubocop

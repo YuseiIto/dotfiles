@@ -1,6 +1,5 @@
 AllCops:
-  NewCops: enable
-
+  NewCops: enable # Enable new cops by default when RuboCop is updated.
 
 # Exclude them from the BlockLength check to avoid unnecessary warnings,
 # since cookbooks, roles, and custom resources often contain long blocks.

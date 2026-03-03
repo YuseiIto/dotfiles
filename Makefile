@@ -1,11 +1,7 @@
-.PHONY: apply-system
-apply-system:
-	darwin-rebuild switch --flake .#belle
+DOCKER:=docker
+IMAGE_NAME:=yuseiito-dev
 
-.PHONY: install-nix-darwin
-install-nix-darwin:
-	nix run nix-darwin -- switch --flake .#belle
+.PHONY: build-pine
 
-.PHONY: gc
-gc:
-	nix-collect-garbage -d
+build-pine:
+	$(DOCKER) build -t $(IMAGE_NAME):pine -f docker/Dockerfile.pine .

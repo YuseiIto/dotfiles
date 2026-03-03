@@ -35,13 +35,6 @@ vim.lsp.config('ts_ls', {
 })
 vim.lsp.enable('ts_ls')
 
--- jsonls
--- Disable formatting for jsonls (Leave it to biome)
-vim.lsp.config('ts_ls', {
-  on_attach = disable_formatting,
-})
-vim.lsp.enable('jsonls')
-
 -- biome
 vim.lsp.enable('biome')
 

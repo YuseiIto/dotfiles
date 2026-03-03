@@ -1,0 +1,40 @@
+#!/bin/bash
+set -eu
+
+mitamae_version="1.14.1"
+
+mitamae_bin="mitamae-${mitamae_version}"
+
+# Check if the mitamae binary is already present in the bin directory
+if ! [ -f "bin/${mitamae_bin}" ]; then
+  case "$(uname)" in
+    "Linux")
+      mitamae_bin="mitamae-x86_64-linux"
+      ;;
+    "Darwin")
+      mitamae_bin="mitamae-aarch64-darwin"
+      ;;
+    *)
+      echo "unexpected uname: $(uname)"
+      exit 1
+      ;;
+  esac
+
+	mitamae_archive_name="${mitamae_bin}.tar.gz"
+	mitamae_archive_url="https://github.com/itamae-kitchen/mitamae/releases/latest/download/${mitamae_bin}.tar.gz"
+	mitamae_archive_path="bin/${mitamae_archive_name}"
+
+	curl -o $mitamae_archive_path -fL $mitamae_archive_url
+
+  tar xvzf $mitamae_archive_path -C bin
+
+	# Cleanup the downloaded archive
+  rm $mitamae_archive_path 
+
+	# Make the mitamae binary executable
+  chmod +x "bin/${mitamae_bin}"
+fi
+
+# Create a symbolic link to the mitamae binary in the bin directory
+ln -sf "${mitamae_bin}" bin/mitamae
+

@@ -5,6 +5,9 @@ mitamae_version="1.14.1"
 
 mitamae_bin="mitamae-${mitamae_version}"
 
+platform=$(uname | tr '[:upper:]' '[:lower:]')
+arch=$(uname -m)
+
 # Check if the mitamae binary is already present in the bin directory
 if ! [ -f "bin/${mitamae_bin}" ]; then
   case "$(uname)" in

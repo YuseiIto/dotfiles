@@ -4,7 +4,6 @@
 base_packages = %w(
   curl
   wget
-  git
   tmux
   ripgrep
   fzy
@@ -27,3 +26,5 @@ end
 if node[:platform] == "darwin"
   package "coreutils"
 end
+
+include_recipe "../git"

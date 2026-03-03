@@ -1,5 +1,4 @@
 tap "armmbed/formulae"
-tap "aws/tap"
 tap "cartr/qt4"
 tap "cloudflare/cloudflare"
 tap "gcenx/wine"
@@ -13,6 +12,7 @@ tap "tnishinaga/sigrok"
 tap "tomoyanonymous/flatcam"
 
 brew "agg"
+brew "awscli"
 brew "gcc"
 brew "sqlite"
 brew "aider"

@@ -7,7 +7,8 @@ elsif %w[ubuntu debian].include?(node[:platform])
     not_if 'command -v rustc'
   end
   execute 'Install rust-analyzer via rustup' do
-    command 'rustup component add rust-analyzer'
-    not_if 'command -v rust-analyzer'
+    home = ENV['HOME']
+    command "bash -c 'source #{home}/.cargo/env && rustup component add rust-analyzer'"
+    not_if "bash -c 'source #{home}/.cargo/env && command -v rust-analyzer'"
   end
 end

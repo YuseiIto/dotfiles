@@ -1,6 +1,9 @@
 # macOS metadata files
 .DS_Store
 
+# Sisyphus planning artifacts
+.sisyphus/
+
 .config/nvim/plugin
 
 .tmux/plugins

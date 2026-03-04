@@ -25,14 +25,5 @@ To manage variety of configurations, this repository is organized into three :
 // TBD
 
 ## Adding new package
-1. Create @mitamae/cookbooks/`<package-name>` directory.
-2. Create `default.rb` file in the directory and add the installation logic for the package.
-    - If the package is available in the system package manager, use `package` resource to install it.
-    - If the package is not available in the system package manager, use `execute` resource to run the installation command (e.g., using `curl` or `wget` to download and install the package).
-    - Make sure to handle platform-specific installation logic if necessary (e.g., different commands for MacOS and Debian-based Linux).
-    - Take care of multiple platforms. Both aarch64 and x86_64. Both debian/ubundu and macos.
-    - Use `not_if` or `only_if` guards to prevent unnecessary installations if the package is already installed.
-    - If the package requires associated configuration files, create those inside the `file` directory of each cookbook.
-    - Always use `uv tool` than `pip` to manage python-based tools.
-    - Be aware that mItamae is based on mruby. It does **NOT** support full ruby features. (e.g. Use `ENV["HOME"]` instead of `Dir.home` )
-3. Add the package to the appropriate role(s) in `roles/` directory by adding `include_recipe` statement in the role's `default.rb` file.
+
+Use the `dotfiles-add-cookbook` skill (`.claude/skills/add-cookbook/SKILL.md`) for step-by-step guidance on installation patterns, platform handling, and role assignment.

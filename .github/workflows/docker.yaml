@@ -1,9 +1,7 @@
-name: Build and Push Docker Images (Main)
+name: Build and Push Docker Images
 
 on:
   push:
-    branches:
-      - main
 
 env:
   REGISTRY: ghcr.io
@@ -20,7 +18,7 @@ jobs:
         variant: [pine, bamboo, plum]
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Set lower usernname
         id: owner
@@ -45,9 +43,17 @@ jobs:
 
       - name: Extract short commit SHA
         id: vars
+        if: github.ref == 'refs/heads/main'
         run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
 
-      - name: Build and push
+      # Replace slashes in branch name to hyphens to ensure valid Docker tag
+      - name: Sanitize branch name
+        id: branch_name
+        if: github.ref != 'refs/heads/main'
+        run: echo "branch=${GITHUB_REF_NAME//\//-}" >> $GITHUB_OUTPUT
+
+      - name: Build and push (main)
+        if: github.ref == 'refs/heads/main'
         uses: docker/build-push-action@v5
         with:
           context: .
@@ -57,3 +63,14 @@ jobs:
           tags: |
             ${{ env.REGISTRY }}/${{ steps.image_name.outputs.name }}:${{ matrix.variant }}-latest
             ${{ env.REGISTRY }}/${{ steps.image_name.outputs.name }}:${{ matrix.variant }}-${{ steps.vars.outputs.sha_short }}
+
+      - name: Build and push (branch)
+        if: github.ref != 'refs/heads/main'
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: docker/Dockerfile.${{ matrix.variant }}
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ steps.image_name.outputs.name }}:${{ matrix.variant }}-${{ steps.branch_name.outputs.branch }}

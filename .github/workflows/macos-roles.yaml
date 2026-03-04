@@ -17,23 +17,19 @@ jobs:
 
       - name: Free disk space
         run: |
-          # Show available disk space before cleanup
           df -h /
-          # Remove Xcode simulator runtimes (iOS/tvOS/watchOS/visionOS) - ~10-20 GB
-          sudo rm -rf /Library/Developer/CoreSimulator/Profiles/Runtimes
-          # Remove Android SDK - ~10-15 GB
-          sudo rm -rf /usr/local/lib/android
-          # Remove .NET SDK - ~1-2 GB
-          sudo rm -rf /usr/local/share/dotnet
-          # Show available disk space after cleanup
+          # Switch to CLI tools before removing Xcode apps
+          sudo xcode-select -s /Library/Developer/CommandLineTools
+          # Remove all Xcode app versions - ~38 GB
+          sudo rm -rf /Applications/Xcode*.app
+          # Remove Xcode simulator runtimes - ~51 GB
+          sudo rm -rf /Library/Developer/CoreSimulator
+          # Remove other Xcode developer files (keep CommandLineTools)
+          sudo rm -rf /Library/Developer/DeveloperDiskImages
+          sudo rm -rf /Library/Developer/CoreDevice
+          sudo rm -rf /Library/Developer/PrivateFrameworks
+          sudo rm -rf /Library/Developer/DeviceKit
           df -h /
-          # Show largest directories to identify further cleanup targets
-          echo "--- /Applications ---"
-          sudo du -sh /Applications/* 2>/dev/null | sort -rh | head -20
-          echo "--- /Library ---"
-          sudo du -sh /Library/* 2>/dev/null | sort -rh | head -10
-          echo "--- /Library/Developer ---"
-          sudo du -sh /Library/Developer/* 2>/dev/null | sort -rh | head -10
 
       - name: Update Homebrew
         # workaround: macOS runners ship with a stale Homebrew tap, causing

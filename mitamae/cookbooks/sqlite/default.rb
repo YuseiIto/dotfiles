@@ -1,8 +1,4 @@
 # Install SQLite
-if %w[ubuntu debian].include?(node[:platform])
-  package 'sqlite3' do
-    user 'root'
-  end
-elsif node[:platform] == 'darwin'
-  package 'sqlite'
+cross_platform_package 'sqlite' do
+  debian_name 'sqlite3'
 end

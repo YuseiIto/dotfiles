@@ -1,7 +1,3 @@
-if %w[ubuntu debian].include?(node[:platform])
-  package 'openocd' do
-    user 'root'
-  end
-elsif node[:platform] == 'darwin'
-  package 'open-ocd'
+cross_platform_package 'openocd' do
+  darwin_name 'open-ocd'
 end

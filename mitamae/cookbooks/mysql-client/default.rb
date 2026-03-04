@@ -1,7 +1,3 @@
-if %w[ubuntu debian].include?(node[:platform])
-  package 'default-mysql-client' do
-    user 'root'
-  end
-elsif node[:platform] == 'darwin'
-  package 'mysql-client'
+cross_platform_package 'mysql-client' do
+  debian_name 'default-mysql-client'
 end

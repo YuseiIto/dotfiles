@@ -27,6 +27,9 @@ jobs:
           sudo rm -rf /usr/local/share/dotnet
           # Show available disk space after cleanup
           df -h /
+          # Show largest directories to identify further cleanup targets
+          echo "--- Largest directories ---"
+          sudo du -sh /* 2>/dev/null | sort -rh | head -20
 
       - name: Update Homebrew
         # workaround: macOS runners ship with a stale Homebrew tap, causing

@@ -15,6 +15,19 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
+      - name: Free disk space
+        run: |
+          # Show available disk space before cleanup
+          df -h /
+          # Remove Xcode simulator runtimes (iOS/tvOS/watchOS/visionOS) - ~10-20 GB
+          sudo rm -rf /Library/Developer/CoreSimulator/Profiles/Runtimes
+          # Remove Android SDK - ~10-15 GB
+          sudo rm -rf /usr/local/lib/android
+          # Remove .NET SDK - ~1-2 GB
+          sudo rm -rf /usr/local/share/dotnet
+          # Show available disk space after cleanup
+          df -h /
+
       - name: Update Homebrew
         # workaround: macOS runners ship with a stale Homebrew tap, causing
         # 404 errors on casks whose upstream removed old versions (e.g. mactex).

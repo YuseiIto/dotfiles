@@ -24,7 +24,7 @@ lint: mitamae/bin/rubocop
 format: mitamae/bin/rubocop
 	cd mitamae && $(BUNDLER) exec rubocop -a
 
-.PHONY: shellcheck dry-run dry-run-plum dry-run-bamboo dry-run-pine dry-run-belle
+.PHONY: shellcheck dry-run
 
 shellcheck:
 	shellcheck setup.sh mitamae/bin/setup

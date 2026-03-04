@@ -6,7 +6,6 @@
   "remoteEnv": {
     "DOTFILES_ROLE": "bamboo"
   },
-  "postCreateCommand": "./setup.sh",
   "mounts": [
     "source=dotfiles-zsh-history,target=/home/ubuntu/.zsh_history,type=volume",
     "source=${localEnv:HOME}/.ssh,target=/home/ubuntu/.ssh,type=bind,consistency=cached,readonly=true"
@@ -20,14 +19,6 @@
       "version": "latest"
     }
   },
-  "runArgs": [
-    "--cap-add=SYS_RAWIO",
-    "--cap-add=PTRACE",
-    "--security-opt",
-    "seccomp=unconfined",
-    "--device",
-    "/dev/bus/usb:/dev/bus/usb"
-  ],
   "hostRequirements": {
     "gpu": "optional"
   },

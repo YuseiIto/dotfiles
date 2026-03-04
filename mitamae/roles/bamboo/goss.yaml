@@ -1,0 +1,25 @@
+gossfile:
+  ../plum/goss.yaml: {}
+  ../../cookbooks/rust/goss.yaml: {}
+  ../../cookbooks/uv/goss.yaml: {}
+  ../../cookbooks/nodenv/goss.yaml: {}
+  ../../cookbooks/starship/goss.yaml: {}
+  ../../cookbooks/lazygit/goss.yaml: {}
+  ../../cookbooks/awscli/goss.yaml: {}
+  ../../cookbooks/gh/goss.yaml: {}
+  ../../cookbooks/docker/goss.yaml: {}
+  ../../cookbooks/huggingface-cli/goss.yaml: {}
+  ../../cookbooks/aider/goss.yaml: {}
+  ../../cookbooks/claude-code/goss.yaml: {}
+  ../../cookbooks/gemini-cli/goss.yaml: {}
+  ../../cookbooks/opencode/goss.yaml: {}
+  ../../cookbooks/sqlite/goss.yaml: {}
+  ../../cookbooks/mysql-client/goss.yaml: {}
+  ../../cookbooks/llvm/goss.yaml: {}
+  ../../cookbooks/terraform-ls/goss.yaml: {}
+  ../../cookbooks/pylsp/goss.yaml: {}
+  ../../cookbooks/typescript-language-server/goss.yaml: {}
+  ../../cookbooks/biome/goss.yaml: {}
+  ../../cookbooks/prisma-language-server/goss.yaml: {}
+  ../../cookbooks/ocaml/goss.yaml: {}
+  ../../cookbooks/lua-language-server/goss.yaml: {}

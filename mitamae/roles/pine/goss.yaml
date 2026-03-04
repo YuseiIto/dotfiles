@@ -1,0 +1,22 @@
+gossfile:
+  ../bamboo/goss.yaml: {}
+  ../../cookbooks/binutils/goss.yaml: {}
+  ../../cookbooks/cloudflared/goss.yaml: {}
+  ../../cookbooks/aria2/goss.yaml: {}
+  ../../cookbooks/nmap/goss.yaml: {}
+  ../../cookbooks/nikto/goss.yaml: {}
+  ../../cookbooks/cfn-lint/goss.yaml: {}
+  ../../cookbooks/ollama/goss.yaml: {}
+  ../../cookbooks/kotlin/goss.yaml: {}
+  ../../cookbooks/cmake/goss.yaml: {}
+  ../../cookbooks/ccls/goss.yaml: {}
+  ../../cookbooks/cloc/goss.yaml: {}
+  ../../cookbooks/ffmpeg/goss.yaml: {}
+  ../../cookbooks/imagemagick/goss.yaml: {}
+  ../../cookbooks/pandoc/goss.yaml: {}
+  ../../cookbooks/asciinema/goss.yaml: {}
+  ../../cookbooks/arduino-cli/goss.yaml: {}
+  ../../cookbooks/avrdude/goss.yaml: {}
+  ../../cookbooks/icarus-verilog/goss.yaml: {}
+  ../../cookbooks/openocd/goss.yaml: {}
+  ../../cookbooks/platformio/goss.yaml: {}

@@ -1,0 +1,8 @@
+gossfile:
+  ../../cookbooks/goss/goss.yaml: {}
+  ../../cookbooks/zsh/goss.yaml: {}
+  ../../cookbooks/neovim/goss.yaml: {}
+  ../../cookbooks/base_tools/goss.yaml: {}
+  ../../cookbooks/git/goss.yaml: {}
+  ../../cookbooks/tmux/goss.yaml: {}
+  ../../cookbooks/direnv/goss.yaml: {}

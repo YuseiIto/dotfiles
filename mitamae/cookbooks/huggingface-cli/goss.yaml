@@ -1,3 +1,4 @@
-file:
-  "{{.Env.HOME}}/.local/bin/huggingface-cli":
-    exists: true
+command:
+  hf ---version:
+    exit-status: 0
+    timeout: 5000

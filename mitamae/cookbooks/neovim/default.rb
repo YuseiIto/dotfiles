@@ -51,3 +51,8 @@ template "#{home}/.config/nvim/lua/features.lua" do
     editor_features: node[:editor_features]
   )
 end
+
+execute 'Install neovim plugins via PackerSync' do
+  command 'nvim --headless +PackerSync +qa'
+  not_if "test -d #{home}/.local/share/nvim/site/pack/packer/start/onedark.vim"
+end

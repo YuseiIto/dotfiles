@@ -27,3 +27,5 @@
 - [ ] Idempotent: running the recipe twice produces no changes on the second run
 - [ ] Platform guards (`only_if` / `not_if`) are in place where needed
 - [ ] No secrets or personal tokens are included
+- [ ] Documentation updated (if applicable)
+- [ ] Self-checked with `/review` or similar coding agent command

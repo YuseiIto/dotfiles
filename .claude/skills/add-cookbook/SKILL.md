@@ -31,6 +31,7 @@ Use WebSearch to find:
 | 3rd | `uv_tool_package` | A Python CLI tool |
 | 4th | `npm_global_package` | A Node.js CLI tool |
 | 5th | `execute` + official installer script | When package managers give stale versions or the tool isn't packaged |
+| 6th | `snap` (Linux only) | Tool is officially distributed via Snap Store; macOS uses brew/cask |
 | Last | sdkman or other version managers | Only when absolutely necessary |
 
 If the apt/brew package is significantly outdated, note this explicitly and fall back to the next method.
@@ -138,6 +139,26 @@ dotconfig 'mytool'
 
 Source must live at `.config/mytool/` in the repo root.
 
+### `snap` — Linux snap packages (macOS: use brew/cask instead)
+
+Install `snapd` first, then `snap install`. Always specify `--classic` when the tool requires it (check the Snap Store page).
+
+```ruby
+if node[:platform] == 'darwin'
+  brew_cask 'mytool'  # or package/brew equivalent
+elsif %w[ubuntu debian].include?(node[:platform])
+  package 'snapd' do
+    user 'root'
+  end
+
+  execute 'Install mytool via snap' do
+    command 'snap install mytool --classic'
+    user 'root'
+    not_if 'snap list | grep -q mytool'
+  end
+end
+```
+
 ### `execute` — custom install commands
 
 Use when none of the helpers above apply. Always add a `not_if` guard.
@@ -211,6 +232,63 @@ mitamae runs on mruby, not full Ruby. Common gotchas:
 
 ---
 
+## Goss assertion
+
+Every cookbook must have a `goss.yaml` for health-check validation. **Prefer `command` checks over `file` checks** — command checks work identically on macOS and Linux regardless of installation path differences.
+
+```yaml
+# Preferred: verify the binary is runnable (platform-agnostic)
+command:
+  mytool --version:
+    exit-status: 0
+    timeout: 5000
+```
+
+Only use `file` checks for non-executable artifacts (symlinked dotfiles, config directories, etc.) that have no runnable command.
+
+The goss validate step exports these directories to PATH automatically, so command checks will find binaries installed by any method:
+- `~/.cargo/bin` (cargo_package)
+- `~/.local/bin` (uv_tool_package)
+- `~/.nodenv/shims` and `~/.nodenv/bin` (npm_global_package)
+
+After creating `cookbooks/<name>/goss.yaml`, register it in the role's goss.yaml:
+
+```yaml
+# mitamae/roles/<variant>/goss.yaml
+gossfile:
+  ../../cookbooks/<name>/goss.yaml: {}
+```
+
+---
+
+## LSP server registration
+
+When the cookbook installs an LSP server binary, also register it in `.config/nvim/lua/lsp/languages.lua`.
+
+**Step 1:** Look up the server name in the nvim-lspconfig docs:
+`https://raw.githubusercontent.com/neovim/nvim-lspconfig/refs/heads/master/doc/configs.md`
+
+**Step 2:** Add the minimal registration at the bottom of the file:
+
+```lua
+-- mytool LSP
+-- https://github.com/example/mytool-lsp
+vim.lsp.enable('mytool_lsp')
+```
+
+**Step 3:** If the LSP conflicts with a formatter (e.g., ts_ls + biome), disable its formatting capability:
+
+```lua
+vim.lsp.config('mytool_lsp', {
+  on_attach = disable_formatting,
+})
+vim.lsp.enable('mytool_lsp')
+```
+
+The `disable_formatting` helper is already defined at the top of the file.
+
+---
+
 ## Checklist before finishing
 
 - [ ] `not_if` guard on every `execute` block
@@ -219,6 +297,8 @@ mitamae runs on mruby, not full Ruby. Common gotchas:
 - [ ] Both `arm64` and `x86_64` covered in any download URLs
 - [ ] Version number verified against latest release (not assumed from training data)
 - [ ] Cookbook added to the appropriate role(s) with `include_recipe '../../cookbooks/<name>'`
+- [ ] `goss.yaml` created and registered in the role's `goss.yaml`
+- [ ] If an LSP server: registered in `.config/nvim/lua/lsp/languages.lua`
 - [ ] Run `cd mitamae && bundle exec rubocop` and fix any warnings
 
 ---

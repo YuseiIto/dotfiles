@@ -164,6 +164,21 @@ packer.startup(
         config = function()
           require('toggleterm').setup()
         end }
+
+      if features.render_md then
+        -- Render Markdown
+        use {
+          'MeanderingProgrammer/render-markdown.nvim',
+          after = { 'nvim-treesitter' },
+          requires = { 'echasnovski/mini.nvim', opt = true },
+          config = function()
+            require('render-markdown').setup({
+              file_types = { 'markdown', 'codecompanion' },
+            })
+            vim.treesitter.language.register('markdown', 'codecompanion')
+          end,
+        }
+      end
     end
 
     if features.prisma_dev then
@@ -215,22 +230,6 @@ packer.startup(
           'hrsh7th/cmp-nvim-lsp-signature-help', -- Displaying function signatures with the current parameter emphasized
           'hrsh7th/cmp-calc'
         }
-      }
-    end
-
-
-    if features.render_md then
-      -- Render Markdown
-      use {
-        'MeanderingProgrammer/render-markdown.nvim',
-        after = { 'nvim-treesitter' },
-        requires = { 'echasnovski/mini.nvim', opt = true },
-        config = function()
-          require('render-markdown').setup({
-            file_types = { 'markdown', 'codecompanion' },
-          })
-          vim.treesitter.language.register('markdown', 'codecompanion')
-        end,
       }
     end
   end)

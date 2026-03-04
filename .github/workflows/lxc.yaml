@@ -84,8 +84,8 @@ jobs:
 
           # Create user if not ubuntu (ubuntu user exists in ubuntu base)
           if [[ "${USER}" == "debian" ]]; then
-            sudo chroot "${ROOTFS}" useradd --uid 1000 --gid 1000 -m -s /bin/bash debian
             sudo chroot "${ROOTFS}" groupadd --gid 1000 debian 2>/dev/null || true
+            sudo chroot "${ROOTFS}" useradd --uid 1000 --gid 1000 -m -s /bin/bash debian
           fi
 
           # Passwordless sudo

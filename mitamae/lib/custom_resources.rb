@@ -77,7 +77,7 @@ define :npm_global_package, version: nil, bin_name: nil do
 
   # Rehash nodenv shims after installing a new global package (`notifies`)
   execute "nodenv rehash for #{pkg_name}" do
-    command 'nodenv rehash'
+    command "rm -f #{ENV['HOME']}/.nodenv/shims/.nodenv-shim && nodenv rehash"
     action :nothing
   end
 end

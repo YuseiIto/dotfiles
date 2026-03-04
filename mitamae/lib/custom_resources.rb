@@ -1,3 +1,9 @@
+# Normalize architecture naming across all roles
+node[:os_arch] = case node[:kernel][:machine]
+                 when 'aarch64', 'arm64' then 'arm64'
+                 else 'x86_64'
+                 end
+
 # Symlink dotfiles to the user's home directory
 # Pass `cookbook_dir: __dir__` from the calling cookbook so the files/ path resolves correctly.
 define :dotfile, source: nil, cookbook_dir: nil do
@@ -79,5 +85,18 @@ define :npm_global_package, version: nil, bin_name: nil do
   execute "nodenv rehash for #{pkg_name}" do
     command "rm -f #{ENV['HOME']}/.nodenv/shims/.nodenv-shim && nodenv rehash"
     action :nothing
+  end
+end
+
+# Install a system package with platform-specific name overrides
+# Automatically handles debian/ubuntu vs darwin platform differences.
+# Supports packages with the same name across platforms (e.g., ffmpeg)
+# or different names (e.g., sqlite3 on debian, sqlite on darwin).
+define :cross_platform_package, darwin_name: nil, debian_name: nil do
+  pkg = params[:name]
+  if %w[ubuntu debian].include?(node[:platform])
+    package(params[:debian_name] || pkg) { user 'root' }
+  elsif node[:platform] == 'darwin'
+    package(params[:darwin_name] || pkg)
   end
 end

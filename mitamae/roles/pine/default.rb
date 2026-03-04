@@ -1,11 +1,6 @@
-normalized_arch = case node[:kernel][:machine]
-                  when 'aarch64', 'arm64' then 'arm64'
-                  else 'x86_64'
-                  end
-
 node.reverse_merge!(
   variant: 'pine',
-  os_arch: normalized_arch,
+  os_arch: node[:os_arch],
   is_container: true,
 
   editor_features: {
@@ -88,5 +83,3 @@ include_recipe '../../cookbooks/pylsp'
 include_recipe '../../cookbooks/typescript-language-server'
 include_recipe '../../cookbooks/biome'
 include_recipe '../../cookbooks/prisma-language-server'
-include_recipe '../../cookbooks/ocaml'
-include_recipe '../../cookbooks/lua-language-server'

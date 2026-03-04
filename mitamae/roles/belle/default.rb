@@ -1,11 +1,6 @@
-normalized_arch = case node[:kernel][:machine]
-                  when 'aarch64', 'arm64' then 'arm64'
-                  else 'x86_64'
-                  end
-
 node.reverse_merge!(
   variant: 'belle',
-  os_arch: normalized_arch,
+  os_arch: node[:os_arch],
   is_container: false,
 
   editor_features: {

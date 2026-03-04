@@ -13,7 +13,6 @@ if %w[ubuntu debian].include?(node[:platform])
     user 'root'
     command <<~EOC
       curl -L -o /tmp/cloudflared.deb #{archive_url}
-      apt-get update
       apt-get install -y /tmp/cloudflared.deb
       rm /tmp/cloudflared.deb
     EOC

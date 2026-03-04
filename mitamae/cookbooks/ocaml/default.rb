@@ -22,7 +22,7 @@ end
 
 execute 'Init opam' do
   command "opam init --auto-setup --quiet #{disable_sandboxing}"
-  not_if 'opam config env'
+  not_if "test -d #{ENV['HOME']}/.opam"
 end
 
 execute 'Install ocaml-lsp-server via opam' do

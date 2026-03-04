@@ -24,3 +24,25 @@ define :dotconfig, source: nil do
     force true
   end
 end
+
+# Install a Node.js package globally via npm
+define :npm_global_package, version: nil, bin_name: nil do
+  include_recipe File.expand_path('../cookbooks/nodenv', File.dirname(__FILE__))
+
+  pkg_name = params[:name]
+  version_suffix = params[:version] ? "@#{params[:version]}" : ''
+
+  # Package name and binary name may differ (e.g., opencode-ai -> opencode)
+  cmd_name = params[:bin_name] || pkg_name
+
+  execute "npm install -g #{pkg_name}#{version_suffix}" do
+    not_if "command -v #{cmd_name} >/dev/null 2>&1"
+    notifies :run, "execute[nodenv rehash for #{pkg_name}]"
+  end
+
+  # Rehash nodenv shims after installing a new global package (`notifies`)
+  execute "nodenv rehash for #{pkg_name}" do
+    command 'nodenv rehash'
+    action :nothing
+  end
+end

@@ -1,7 +1,8 @@
 # Normalize architecture naming across all roles
 node[:os_arch] = case node[:kernel][:machine]
                  when 'aarch64', 'arm64' then 'arm64'
-                 else 'x86_64'
+                 when 'x86_64' then 'x86_64'
+                 else raise "Unsupported architecture: #{node[:kernel][:machine]}"
                  end
 
 # Symlink dotfiles to the user's home directory

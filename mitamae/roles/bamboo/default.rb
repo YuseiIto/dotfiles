@@ -14,6 +14,8 @@ node.reverse_merge!(
   }
 )
 
+include_recipe '../plum'
+
 # Infrastructure
 include_recipe '../../cookbooks/git'
 include_recipe '../../cookbooks/rust'
@@ -21,11 +23,7 @@ include_recipe '../../cookbooks/uv'
 include_recipe '../../cookbooks/nodenv'
 
 # Shell & Terminal
-include_recipe '../../cookbooks/zsh'
-include_recipe '../../cookbooks/neovim'
-include_recipe '../../cookbooks/base_tools'
 include_recipe '../../cookbooks/starship'
-include_recipe '../../cookbooks/direnv'
 include_recipe '../../cookbooks/lazygit'
 
 # Cloud & DevOps

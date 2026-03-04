@@ -1,6 +1,5 @@
 node.reverse_merge!(
   variant: 'belle',
-  os_arch: node[:os_arch],
   is_container: false,
 
   editor_features: {

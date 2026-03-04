@@ -1,6 +1,5 @@
 node.reverse_merge!(
   variant: 'pine',
-  os_arch: node[:os_arch],
   is_container: true,
 
   editor_features: {

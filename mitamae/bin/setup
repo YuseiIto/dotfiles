@@ -8,6 +8,15 @@ mitamae_bin="mitamae-${mitamae_version}"
 platform=$(uname | tr '[:upper:]' '[:lower:]')
 arch=$(uname -m)
 
+if [ "$arch" = "amd64" ] || [ "$arch" = "x86_64" ]; then
+	arch="x86_64"
+elif [ "$arch" = "arm64" ] || [ "$arch" = "aarch64" ]; then
+	arch="aarch64"
+else
+	echo "Unsupported architecture: $arch"
+	exit 1
+fi
+
 # Check if the mitamae binary is already present in the bin directory
 if ! [ -f "bin/${mitamae_bin}" ]; then
   mitamae_bin="mitamae-${arch}-${platform}"

@@ -1,0 +1,48 @@
+name: Bug Report
+description: Something is broken during provisioning or in the resulting environment
+labels: ["bug"]
+body:
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      options:
+        - macOS (Apple Silicon)
+        - Debian / Ubuntu (aarch64)
+        - Debian / Ubuntu (x86_64)
+        - Docker (pine, bamboo, plum)
+        - devcontainer
+    validations:
+      required: true
+
+  - type: input
+    id: cookbook
+    attributes:
+      label: Cookbook / Recipe
+      description: Which cookbook is failing? (e.g. `neovim`, `zsh`, `docker`)
+      placeholder: e.g. neovim
+    validations:
+      required: false
+
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: Describe the issue clearly.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: false
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs / error output
+      render: shell
+    validations:
+      required: false

@@ -1,0 +1,49 @@
+name: New Package Request
+description: Request a new tool or package to be added as a cookbook
+labels: ["enhancement", "new-cookbook"]
+body:
+  - type: input
+    id: package_name
+    attributes:
+      label: Package / Tool name
+      placeholder: e.g. ripgrep, lazygit, mise
+    validations:
+      required: true
+
+  - type: input
+    id: homepage
+    attributes:
+      label: Homepage / Repository URL
+      placeholder: https://github.com/...
+    validations:
+      required: false
+
+  - type: dropdown
+    id: target_variant
+    attributes:
+      label: Target variant(s)
+      description: Which tier(s) should include this package?
+      multiple: true
+      options:
+        - Pine
+        - Bamboo
+        - Plum
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: reason
+    attributes:
+      label: Why should this be included?
+      description: Brief justification for adding this tool.
+    validations:
+      required: true
+
+  - type: textarea
+    id: install_notes
+    attributes:
+      label: Installation notes
+      description: Any platform-specific quirks, dependencies, or non-obvious installation steps.
+    validations:
+      required: false

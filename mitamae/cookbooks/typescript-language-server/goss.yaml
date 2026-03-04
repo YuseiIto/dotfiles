@@ -1,0 +1,3 @@
+file:
+  "{{.Env.HOME}}/.nodenv/shims/typescript-language-server":
+    exists: true

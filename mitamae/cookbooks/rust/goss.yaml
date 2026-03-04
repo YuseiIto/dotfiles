@@ -1,0 +1,5 @@
+file:
+  "{{.Env.HOME}}/.cargo/bin/rustc":
+    exists: true
+  "{{.Env.HOME}}/.cargo/bin/cargo":
+    exists: true

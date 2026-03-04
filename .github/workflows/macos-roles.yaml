@@ -25,3 +25,8 @@ jobs:
           DOTFILES_ROLE: ${{ matrix.role }}
         run: |
           ./setup.sh
+
+      - name: Validate role ${{ matrix.role }} with goss
+        run: |
+          export PATH="$HOME/.local/bin:$HOME/.cargo/bin:$HOME/.nodenv/shims:$HOME/.nodenv/bin:$HOME/.sdkman/candidates/kotlin/current/bin:$HOME/.opam/default/bin:$PATH"
+          goss --gossfile mitamae/roles/${{ matrix.role }}/goss.yaml validate

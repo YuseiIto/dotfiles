@@ -52,6 +52,22 @@ jobs:
         if: github.ref != 'refs/heads/main'
         run: echo "branch=${GITHUB_REF_NAME//\//-}" >> $GITHUB_OUTPUT
 
+      - name: Build test image (amd64 only)
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: docker/Dockerfile.${{ matrix.variant }}
+          platforms: linux/amd64
+          load: true
+          push: false
+          tags: test-${{ matrix.variant }}:local
+
+      - name: Run goss validation
+        run: |
+          home=$([[ "${{ matrix.variant }}" == "plum" ]] && echo "/home/debian" || echo "/home/ubuntu")
+          docker run --rm test-${{ matrix.variant }}:local \
+            goss --gossfile ${home}/dotfiles/mitamae/roles/${{ matrix.variant }}/goss.yaml validate
+
       - name: Build and push (main)
         if: github.ref == 'refs/heads/main'
         uses: docker/build-push-action@v5

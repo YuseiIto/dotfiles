@@ -26,6 +26,7 @@ if %w[ubuntu debian].include?(node[:platform])
 
 elsif node[:platform] == 'darwin'
   package 'ocaml'
+  package 'opam'
 
   execute 'Init opam' do
     command "opam init --auto-setup --quiet #{disable_sandboxing}"

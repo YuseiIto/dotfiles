@@ -1,5 +1,9 @@
 FROM debian:bookworm-slim
 
+LABEL org.opencontainers.image.source=https://github.com/yuseiito/dotfiles
+LABEL org.opencontainers.image.description="Yusei's dotfiles Container. Variant `plum`"
+LABEL org.opencontainers.image.licenses=MIT
+
 # Supress interactive prompts during package installation
 ENV DEBIAN_FRONTEND=noninteractive
 

@@ -1,5 +1,6 @@
 DOCKER:=docker
 IMAGE_NAME:=yuseiito-dev
+BUNDLER:=bundle
 
 .PHONY: build-pine build-bamboo build-plum
 
@@ -11,3 +12,14 @@ build-bamboo:
 
 build-plum:
 	$(DOCKER) build -t $(IMAGE_NAME):plum -f docker/Dockerfile.plum .
+
+
+mitamae/bin/rubocop:
+	cd mitamae && $(BUNDLER) install
+
+.PHONY: lint format
+lint: mitamae/bin/rubocop
+	cd mitamae && $(BUNDLER) exec rubocop
+
+format: mitamae/bin/rubocop
+	cd mitamae && $(BUNDLER) exec rubocop -a

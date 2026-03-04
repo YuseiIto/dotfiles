@@ -7,4 +7,6 @@ else
   package 'tmux'
 end
 
-dotfile '.tmux.conf'
+dotfile '.tmux.conf' do
+  cookbook_dir File.dirname(__FILE__)
+end

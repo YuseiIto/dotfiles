@@ -13,6 +13,11 @@ build-bamboo:
 build-plum:
 	$(DOCKER) build -t $(IMAGE_NAME):plum -f docker/Dockerfile.plum .
 
+.PHONY: build-lxc-pine build-lxc-bamboo build-lxc-plum
+
+build-lxc-%:
+	sudo scripts/build-lxc.sh $*
+
 
 mitamae/bin/rubocop:
 	cd mitamae && $(BUNDLER) install

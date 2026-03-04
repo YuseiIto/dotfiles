@@ -1,0 +1,197 @@
+name: Build and Push LXC Images
+
+on:
+  push:
+
+env:
+  REGISTRY: ghcr.io
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      matrix:
+        variant: [plum, bamboo, pine]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set lowercase owner
+        id: owner
+        run: echo "name=$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
+
+      - name: Set image name
+        id: image_name
+        run: echo "name=${{ steps.owner.outputs.name }}/${{ steps.owner.outputs.name }}-dev-lxc" >> $GITHUB_OUTPUT
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y debootstrap squashfs-tools xz-utils
+          # Install oras
+          ORAS_VERSION="1.2.0"
+          curl -sLO "https://github.com/oras-project/oras/releases/download/v${ORAS_VERSION}/oras_${ORAS_VERSION}_linux_amd64.tar.gz"
+          sudo tar -xzf "oras_${ORAS_VERSION}_linux_amd64.tar.gz" -C /usr/local/bin oras
+          rm "oras_${ORAS_VERSION}_linux_amd64.tar.gz"
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract short commit SHA
+        id: vars
+        if: github.ref == 'refs/heads/main'
+        run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Sanitize branch name
+        id: branch_name
+        if: github.ref != 'refs/heads/main'
+        run: echo "branch=${GITHUB_REF_NAME//\//-}" >> $GITHUB_OUTPUT
+
+      - name: Set variant metadata
+        id: meta
+        run: |
+          if [[ "${{ matrix.variant }}" == "plum" ]]; then
+            echo "suite=bookworm" >> $GITHUB_OUTPUT
+            echo "os=debian" >> $GITHUB_OUTPUT
+            echo "release=bookworm" >> $GITHUB_OUTPUT
+            echo "user=debian" >> $GITHUB_OUTPUT
+          else
+            echo "suite=noble" >> $GITHUB_OUTPUT
+            echo "os=ubuntu" >> $GITHUB_OUTPUT
+            echo "release=24.04" >> $GITHUB_OUTPUT
+            echo "user=ubuntu" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Build rootfs with debootstrap
+        run: |
+          ROOTFS="/tmp/rootfs-${{ matrix.variant }}"
+          sudo debootstrap \
+            --include=systemd,systemd-sysv,dbus,sudo,curl,ca-certificates,tar,openssh-server \
+            ${{ steps.meta.outputs.suite }} \
+            "${ROOTFS}"
+
+      - name: Configure rootfs
+        run: |
+          ROOTFS="/tmp/rootfs-${{ matrix.variant }}"
+          USER="${{ steps.meta.outputs.user }}"
+
+          # Create user if not ubuntu (ubuntu user exists in ubuntu base)
+          if [[ "${USER}" == "debian" ]]; then
+            sudo chroot "${ROOTFS}" useradd --uid 1000 --gid 1000 -m -s /bin/bash debian
+            sudo chroot "${ROOTFS}" groupadd --gid 1000 debian 2>/dev/null || true
+          fi
+
+          # Passwordless sudo
+          echo "${USER} ALL=(ALL) NOPASSWD:ALL" | sudo tee "${ROOTFS}/etc/sudoers.d/${USER}"
+          sudo chmod 0440 "${ROOTFS}/etc/sudoers.d/${USER}"
+
+          # Set hostname
+          echo "${{ matrix.variant }}" | sudo tee "${ROOTFS}/etc/hostname"
+
+          # Enable systemd services
+          sudo chroot "${ROOTFS}" systemctl enable ssh || true
+
+      - name: Copy dotfiles into rootfs
+        run: |
+          ROOTFS="/tmp/rootfs-${{ matrix.variant }}"
+          USER="${{ steps.meta.outputs.user }}"
+          DEST="${ROOTFS}/home/${USER}/dotfiles"
+
+          sudo mkdir -p "${DEST}"
+          sudo rsync -a --exclude='.git' ./ "${DEST}/"
+          sudo chown -R 1000:1000 "${DEST}"
+
+      - name: Run setup.sh inside rootfs
+        run: |
+          ROOTFS="/tmp/rootfs-${{ matrix.variant }}"
+          USER="${{ steps.meta.outputs.user }}"
+
+          sudo systemd-nspawn \
+            --directory="${ROOTFS}" \
+            --bind-ro=/etc/resolv.conf \
+            --user="${USER}" \
+            --setenv=HOME="/home/${USER}" \
+            --setenv=USER="${USER}" \
+            --setenv=DOTFILES_ROLE="${{ matrix.variant }}" \
+            --setenv=LANG=C.UTF-8 \
+            --setenv=DEBIAN_FRONTEND=noninteractive \
+            --chdir="/home/${USER}/dotfiles" \
+            bash setup.sh
+
+      - name: Validate with goss
+        run: |
+          ROOTFS="/tmp/rootfs-${{ matrix.variant }}"
+          USER="${{ steps.meta.outputs.user }}"
+          GOSSFILE="/home/${USER}/dotfiles/mitamae/roles/${{ matrix.variant }}/goss.yaml"
+
+          sudo systemd-nspawn \
+            --directory="${ROOTFS}" \
+            --user="${USER}" \
+            --setenv=HOME="/home/${USER}" \
+            --setenv=USER="${USER}" \
+            goss --gossfile "${GOSSFILE}" validate
+
+      - name: Cleanup rootfs
+        run: |
+          ROOTFS="/tmp/rootfs-${{ matrix.variant }}"
+          sudo rm -rf "${ROOTFS}/var/cache/apt"
+          sudo rm -rf "${ROOTFS}/var/log"
+          sudo find "${ROOTFS}/tmp" -mindepth 1 -delete
+
+      - name: Create squashfs rootfs
+        run: |
+          ROOTFS="/tmp/rootfs-${{ matrix.variant }}"
+          sudo mksquashfs "${ROOTFS}" "rootfs-${{ matrix.variant }}.squashfs" \
+            -comp xz \
+            -noappend \
+            -no-progress
+
+      - name: Create lxd.tar.xz metadata
+        run: |
+          CREATION_DATE=$(date +%s)
+          ARCH="amd64"
+
+          sed \
+            -e "s/__ARCH__/${ARCH}/g" \
+            -e "s/__CREATION_DATE__/${CREATION_DATE}/g" \
+            -e "s/__VARIANT__/${{ matrix.variant }}/g" \
+            -e "s/__OS__/${{ steps.meta.outputs.os }}/g" \
+            -e "s/__RELEASE__/${{ steps.meta.outputs.release }}/g" \
+            lxc/metadata.yaml.template > metadata.yaml
+
+          mkdir -p lxd-meta
+          mv metadata.yaml lxd-meta/metadata.yaml
+          tar -cJf "lxd-${{ matrix.variant }}.tar.xz" -C lxd-meta metadata.yaml
+
+      - name: Push to GHCR (main)
+        if: github.ref == 'refs/heads/main'
+        run: |
+          IMAGE_BASE="${{ env.REGISTRY }}/${{ steps.image_name.outputs.name }}"
+          VARIANT="${{ matrix.variant }}"
+          SHA="${{ steps.vars.outputs.sha_short }}"
+
+          oras push "${IMAGE_BASE}:${VARIANT}-latest" \
+            "lxd-${VARIANT}.tar.xz:application/vnd.oci.image.layer.v1.tar+gzip" \
+            "rootfs-${VARIANT}.squashfs:application/vnd.oci.image.layer.v1.tar+gzip"
+
+          oras push "${IMAGE_BASE}:${VARIANT}-${SHA}" \
+            "lxd-${VARIANT}.tar.xz:application/vnd.oci.image.layer.v1.tar+gzip" \
+            "rootfs-${VARIANT}.squashfs:application/vnd.oci.image.layer.v1.tar+gzip"
+
+      - name: Push to GHCR (branch)
+        if: github.ref != 'refs/heads/main'
+        run: |
+          IMAGE_BASE="${{ env.REGISTRY }}/${{ steps.image_name.outputs.name }}"
+          VARIANT="${{ matrix.variant }}"
+          BRANCH="${{ steps.branch_name.outputs.branch }}"
+
+          oras push "${IMAGE_BASE}:${VARIANT}-${BRANCH}" \
+            "lxd-${VARIANT}.tar.xz:application/vnd.oci.image.layer.v1.tar+gzip" \
+            "rootfs-${VARIANT}.squashfs:application/vnd.oci.image.layer.v1.tar+gzip"

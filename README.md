@@ -1,82 +1,53 @@
-# dotfiles
+# 🏯 dotfiles
 
-This is my cockpit.
+Welcome to my cockpit. This repository is more than just a collection of config files; it's a meticulously crafted environment for software engineering, embedded development, and AI-assisted productivity.
 
-## Installation
+## 🍱 The Variants (松竹梅)
 
+I categorize my environments using the Japanese *Sho-Chiku-Bai* (Pine, Bamboo, Plum) tiers. This classification helps in choosing the right tool density for the job at hand.
 
-### Try NOW with prebuilt docker image
+| Variant | Name | Description | Best For |
+| :--- | :--- | :--- | :--- |
+| **Pine** (松) | Full House | The ultimate development environment. Includes all compilers, LSPs, hardware tools, and AI agents. | High-performance workstations and comprehensive development. |
+| **Bamboo** (竹) | Balanced | A curated set of essential engineering tools. Efficient and fast without the overhead of niche packages. | Daily coding and standard DevOps tasks. |
+| **Plum** (梅) | Minimal | The bare essentials. A high-performance terminal, shell, and editor with minimal dependencies. | Remote servers and resource-constrained environments. |
 
-This repository continuously maintains a prebuilt docker imgae [`yuseiito-dev`](https://github.com/YuseiIto/dotfiles/pkgs/container/yuseiito-dev).
+---
 
-There are three variants of images, called `pine`,  `bamboo`, `plum`. (Named after the Japanese word "松竹梅" which means "pine, bamboo, plum", representing different levels of quality or luxury.)
+## 🚀 Quick Start
 
+### 🐳 Try NOW with Prebuilt Docker Images
 
-
-If you are unsure about which one to choose, see [VARIANTS.md](./docs/VARIANTS.md) for more details about the differences between the three variants.
-You can pull and run it with the following command:
-
-**Pine (Full featured)**
-
-_This image consumes **large** disk space so if you're just looking for a quick try, `bamboo` is recommended._
-
-
-```zsh
-docker run --rm -it ghcr.io/yuseiito/yuseiito-dev:pine-latest
-
-```
-
-
-**Bamboo (Basic feature)**
+I maintain prebuilt images so you can jump into my environment without messing up your own.
 
 ```zsh
-docker run --rm -it ghcr.io/yuseiito/yuseiito-dev:pine-latest
-
+# Pick your variant:
+docker run --rm -it ghcr.io/yuseiito/yuseiito-dev:pine-latest   # Everything included
+docker run --rm -it ghcr.io/yuseiito/yuseiito-dev:bamboo-latest # The daily driver
+docker run --rm -it ghcr.io/yuseiito/yuseiito-dev:plum-latest   # Fast and light
 ```
 
+> **Note:** `pine` is quite substantial in size. For a quick trial, the `bamboo` variant is usually the sweet spot.
 
-**Plum (Minimum featured)**
+---
 
-```zsh
-docker run --rm -it ghcr.io/yuseiito/yuseiito-dev:pine-latest
+## 🤖 AI-First Development
 
-```
+This repository is designed to be navigated and enhanced by **Coding Agents** (like Claude Code, Codex, Gemini CLI, or OpenCode).
 
+- **Agent Integration:** Predefined recipes and clear instructions ar prepared. It allows AI agents to act as first-class contributors.
+- **Self-Documenting:** If you're exploring the repository, your AI agent can navigate the `mitamae` cookbooks to explain exactly what's being installed.
 
-### Build container image from source
- 
-**Building from source requires Docker, GNU Make, and Git to be installed on your system.**
+---
 
-```zsh
-git clone https://github.com/YuseiIto/dotfiles.git
-cd dotfiles
-make build-$variant
+## 🏗 Structure
 
-```
+- `.config/`: XDG-style configurations (Neovim, Alacritty, etc.).
+- `mitamae/`: Idempotent provisioning via [mItamae](https://github.com/itamae-kitchen/mitamae).
+  - `cookbooks/`: Individual tool recipes.
+  - `roles/`: Collections of cookbooks (Pine, Bamboo, Plum, Belle).
+- `docker/`: Dockerfiles for the containerized environments.
 
-`variant`  is one of `pine`, `bamboo`, or `plum` depending on the level of features you want in your container image.
+---
 
-### Applying to brand new system
-
-
-
-### Linux Containers (LXC/LXD)
-
-// Comming soon!
-
-
-
-## Development
-
-These are basic steps to enhance this repository by adding new tools, packages, files, or configurations. 
-
-Since this repository contains a (relatively) a lot number of tools and configurations, **it is recommended to ask your Coding Agent to navigate you through the process**.
-
-It will make you grasp the structure of this repository and the development process much faster, and you can also ask it to generate code snippets for you.
-This repository invites coding agents as a first-class contributor as well as human developers, there are predefined skills and tools for coding agents. It enables even a tiny local models to be helpful for you.
-
-### Adding new tools/packages
-
-
-### Adding new files/configurations
-
+*Handcrafted with ❤️ and a lot of ☕ by [yuseiito](https://yuseiito.com/).*

@@ -7,11 +7,4 @@ elsif %w[ubuntu debian].include?(node[:platform])
   end
 end
 
-# Symlink ".zshrc" to
-cookbook_dir = File.expand_path('.', File.dirname(__FILE__))
-home = ENV['HOME']
-
-link "#{home}/.zshrc" do
-  to File.join(cookbook_dir, 'files', '.zshrc')
-  force true
-end
+dotfile '.zshrc'

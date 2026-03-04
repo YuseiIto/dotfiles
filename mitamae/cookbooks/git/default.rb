@@ -7,12 +7,4 @@ else
   package 'git'
 end
 
-home = ENV['HOME']
-repo_root = File.expand_path('../../..', File.dirname(__FILE__))
-
-directory "#{home}/.config"
-
-link "#{home}/.config/git" do
-  to "#{repo_root}/.config/git"
-  force true
-end
+dotconfig 'git'

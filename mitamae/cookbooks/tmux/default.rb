@@ -7,12 +7,4 @@ else
   package 'tmux'
 end
 
-# Configure tmux
-cookbook_dir = File.expand_path('.', File.dirname(__FILE__))
-home = ENV['HOME']
-
-# Symlink ".tmux.conf".
-link "#{home}/.tmux.conf" do
-  to File.join(cookbook_dir, 'files', '.tmux.conf')
-  force true
-end
+dotfile '.tmux.conf'

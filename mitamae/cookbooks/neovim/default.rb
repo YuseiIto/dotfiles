@@ -41,12 +41,8 @@ else
 end
 
 home = ENV['HOME']
-directory "#{home}/.config"
 
-cookbook_dir = File.expand_path('.', File.dirname(__FILE__))
-link "#{home}/.config/nvim" do
-  to File.join(cookbook_dir, '../../..', '.config/nvim')
-end
+dotconfig 'nvim'
 
 # Roleで定義されたフラグを元に features.lua を生成
 template "#{home}/.config/nvim/lua/features.lua" do

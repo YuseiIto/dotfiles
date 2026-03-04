@@ -11,3 +11,5 @@ elsif %w[ubuntu debian].include?(node[:platform])
     not_if 'snap list | grep -q alacritty'
   end
 end
+
+dotconfig 'alacritty'

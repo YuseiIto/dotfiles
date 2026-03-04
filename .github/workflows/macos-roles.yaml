@@ -15,6 +15,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
+      - name: Update Homebrew
+        # workaround: macOS runners ship with a stale Homebrew tap, causing
+        # 404 errors on casks whose upstream removed old versions (e.g. mactex).
+        run: brew update
+
       - name: Run mitamae for role ${{ matrix.role }}
         env:
           DOTFILES_ROLE: ${{ matrix.role }}

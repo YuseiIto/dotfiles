@@ -23,7 +23,7 @@ elsif %w[ubuntu debian].include?(node[:platform])
     command "echo \"deb [arch=$(dpkg --print-architecture) signed-by=#{key}] #{url} #{codename} main\" >> #{sources_list}"
     user 'root'
     not_if 'test -f /etc/apt/sources.list.d/hashicorp.list'
-    notifies :run, 'execute[apt-get update for hashicorp]'
+    notifies :run, 'execute[apt-get update for hashicorp]', :immediately
   end
 
   execute 'apt-get update for hashicorp' do

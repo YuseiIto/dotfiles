@@ -18,4 +18,4 @@ if [ ! -f "${ROLE_PATH}" ]; then
 fi
 
 echo "Running mitamae for target: ${ROLE}"
-bin/mitamae local $@ "${ROLE_PATH}"
+bin/mitamae local $@ "lib/custom_resources.rb" "${ROLE_PATH}"

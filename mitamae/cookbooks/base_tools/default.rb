@@ -1,24 +1,14 @@
 # Essential utility. Keep it simple and minimal.
 
-# packages that are named the same across platforms.
-base_packages = %w[
+%w[
   curl
   wget
   ripgrep
   fzy
   tree
   jq
-]
-
-base_packages.each do |pkg|
-  if %w[ubuntu debian].include?(node[:platform])
-    package pkg do
-      user 'root'
-    end
-  else
-    # macOS, Arch Linux
-    package pkg
-  end
+].each do |pkg|
+  cross_platform_package pkg
 end
 
 # Install coreutils on macOS for GNU versions of common utilities (e.g., greadlink)

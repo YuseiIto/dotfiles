@@ -1,0 +1,17 @@
+name: devcontainer (Branch):
+
+on:
+  push:
+
+jobs:
+  test-devcontainer:
+      name: Test Dev Container
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout repository
+          uses: actions/checkout@v6
+
+        - name: Build and start Dev Container
+          uses: devcontainers/ci@v0.3
+          with:
+            runCmd: zsh -c "echo 'Dev container built and started successfully!'"

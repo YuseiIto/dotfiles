@@ -28,8 +28,10 @@ jobs:
           # Show available disk space after cleanup
           df -h /
           # Show largest directories to identify further cleanup targets
-          echo "--- Largest directories ---"
-          sudo du -sh /* 2>/dev/null | sort -rh | head -20
+          echo "--- /Applications ---"
+          sudo du -sh /Applications/* 2>/dev/null | sort -rh | head -20
+          echo "--- /Library ---"
+          sudo du -sh /Library/* 2>/dev/null | sort -rh | head -10
 
       - name: Update Homebrew
         # workaround: macOS runners ship with a stale Homebrew tap, causing

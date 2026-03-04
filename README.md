@@ -12,6 +12,8 @@ I categorize my environments using the Japanese *Sho-Chiku-Bai* (Pine, Bamboo, P
 | **Bamboo** (竹) | Balanced | A curated set of essential engineering tools. Efficient and fast without the overhead of niche packages. | Daily coding and standard DevOps tasks. |
 | **Plum** (梅) | Minimal | The bare essentials. A high-performance terminal, shell, and editor with minimal dependencies. | Remote servers and resource-constrained environments. |
 
+For detailed variant specifications, see [VARIANTS.md](docs/VARIANTS.md).
+
 ---
 
 ## 🚀 Quick Start

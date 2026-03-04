@@ -32,6 +32,8 @@ jobs:
           sudo du -sh /Applications/* 2>/dev/null | sort -rh | head -20
           echo "--- /Library ---"
           sudo du -sh /Library/* 2>/dev/null | sort -rh | head -10
+          echo "--- /Library/Developer ---"
+          sudo du -sh /Library/Developer/* 2>/dev/null | sort -rh | head -10
 
       - name: Update Homebrew
         # workaround: macOS runners ship with a stale Homebrew tap, causing

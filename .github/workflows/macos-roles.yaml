@@ -1,0 +1,25 @@
+name: macOS Roles Verification
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  verify-macos-role:
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        role: [belle]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run mitamae for role ${{ matrix.role }}
+        env:
+          DOTFILES_ROLE: ${{ matrix.role }}
+        run: |
+          ./setup.sh

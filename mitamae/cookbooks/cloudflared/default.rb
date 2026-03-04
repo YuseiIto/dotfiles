@@ -1,10 +1,8 @@
 if %w[ubuntu debian].include?(node[:platform])
 
   arch = case node[:os_arch]
-         when 'x86_64'
-           'amd64'
-         when 'aarch64', 'arm64'
-           'arm64'
+         when 'x86_64' then 'amd64'
+         when 'arm64' then 'arm64'
          end
 
   archive_url = "https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-#{arch}.deb"

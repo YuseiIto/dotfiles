@@ -16,7 +16,6 @@ node.reverse_merge!(
 include_recipe '../plum'
 
 # Infrastructure
-include_recipe '../../cookbooks/git'
 include_recipe '../../cookbooks/rust'
 include_recipe '../../cookbooks/uv'
 include_recipe '../../cookbooks/nodenv'

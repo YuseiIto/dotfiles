@@ -30,7 +30,7 @@ jobs:
       - name: Install build dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y debootstrap squashfs-tools xz-utils
+          sudo apt-get install -y debootstrap squashfs-tools xz-utils systemd-container
           # Install oras
           ORAS_VERSION="1.2.0"
           curl -sLO "https://github.com/oras-project/oras/releases/download/v${ORAS_VERSION}/oras_${ORAS_VERSION}_linux_amd64.tar.gz"

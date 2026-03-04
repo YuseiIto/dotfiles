@@ -19,11 +19,6 @@ if %w[ubuntu debian].include?(node[:platform])
     not_if 'opam config env'
   end
 
-  execute 'Install ocaml-lsp-server via opam' do
-    command 'opam install -y ocaml-lsp-server'
-    not_if 'command -v ocamllsp'
-  end
-
 elsif node[:platform] == 'darwin'
   package 'ocaml'
   package 'opam'
@@ -33,5 +28,9 @@ elsif node[:platform] == 'darwin'
     not_if 'opam config env'
   end
 
-  package 'ocaml-lsp'
+end
+
+execute 'Install ocaml-lsp-server via opam' do
+  command 'opam install -y ocaml-lsp-server'
+  not_if 'command -v ocamllsp'
 end

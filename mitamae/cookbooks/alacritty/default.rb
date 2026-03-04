@@ -1,8 +1,5 @@
 if node[:platform] == 'darwin'
-  execute 'install alacritty via homebrew cask' do
-    command 'brew install --cask alacritty'
-    not_if 'brew list --cask alacritty'
-  end
+  brew_cask 'alacritty'
 elsif %w[ubuntu debian].include?(node[:platform])
   package 'snapd' do
     user 'root'

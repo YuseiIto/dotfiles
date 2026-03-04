@@ -1,8 +1,5 @@
 if node[:platform] == 'darwin'
-  execute 'install processing via homebrew cask' do
-    command 'brew install --cask processing'
-    not_if 'brew list --cask processing'
-  end
+  brew_cask 'processing'
 elsif %w[debian ubuntu].include?(node[:platform])
   package 'snapd' do
     user 'root'

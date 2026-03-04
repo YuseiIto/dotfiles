@@ -1,8 +1,5 @@
 if node[:platform] == 'darwin'
-  execute 'install firefox via homebrew cask' do
-    command 'brew install --cask firefox'
-    not_if 'brew list --cask firefox'
-  end
+  brew_cask 'firefox'
 elsif %w[ubuntu debian].include?(node[:platform])
   execute 'Add Mozilla APT repository' do
     command <<~EOC

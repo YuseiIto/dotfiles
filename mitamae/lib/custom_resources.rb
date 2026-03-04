@@ -51,6 +51,15 @@ define :cargo_package, bin_name: nil do
   end
 end
 
+# Install a macOS application via Homebrew Cask
+define :brew_cask do
+  cask_name = params[:name]
+  execute "install #{cask_name} via homebrew cask" do
+    command "brew install --cask #{cask_name}"
+    not_if "brew list --cask #{cask_name} >/dev/null 2>&1"
+  end
+end
+
 # Install a Node.js package globally via npm
 define :npm_global_package, version: nil, bin_name: nil do
   include_recipe File.expand_path('../cookbooks/nodenv', File.dirname(__FILE__))

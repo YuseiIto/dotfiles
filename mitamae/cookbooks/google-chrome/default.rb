@@ -1,8 +1,5 @@
 if node[:platform] == 'darwin'
-  execute 'install google-chrome via homebrew cask' do
-    command 'brew install --cask google-chrome'
-    not_if 'brew list --cask google-chrome'
-  end
+  brew_cask 'google-chrome'
 elsif %w[ubuntu debian].include?(node[:platform])
   execute 'Add Google Chrome APT repository' do
     command <<~EOC

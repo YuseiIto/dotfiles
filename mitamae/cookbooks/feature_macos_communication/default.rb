@@ -7,9 +7,6 @@ if node[:platform] == 'darwin'
   ]
 
   casks.each do |cask|
-    execute "install #{cask} via homebrew cask" do
-      command "brew install --cask #{cask}"
-      not_if "brew list --cask #{cask}"
-    end
+    brew_cask cask
   end
 end

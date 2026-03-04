@@ -27,10 +27,6 @@ COPY --chown=ubuntu:ubuntu ./ /home/ubuntu/dotfiles/
 WORKDIR /home/ubuntu/dotfiles/
 
 
-# Workaround for setup.sh to find the correct paths for uv and nodenv
-ARG PATH="/home/ubuntu/.local/bin:${PATH}"
-ARG PATH="/home/ubuntu/.nodenv/shims:/home/ubuntu/.nodenv/bin:${PATH}"
-
 ENV DOTFILES_ROLE=pine
 RUN bash setup.sh
 

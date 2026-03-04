@@ -6,6 +6,14 @@ elsif %w[ubuntu debian].include?(node[:platform])
   home = ENV['HOME']
   nodenv_root = "#{home}/.nodenv"
 
+  # Ensure nodenv shims are in PATH for subsequent recipes in this mitamae run
+  [
+    "#{nodenv_root}/shims",
+    "#{nodenv_root}/bin"
+  ].each do |dir|
+    ENV['PATH'] = "#{dir}:#{ENV['PATH']}" unless ENV['PATH'].include?(dir)
+  end
+
   execute 'Install nodenv via git' do
     command "git clone https://github.com/nodenv/nodenv.git #{nodenv_root}"
     not_if "test -d #{nodenv_root}"

@@ -1,5 +1,9 @@
 home = ENV['HOME']
 
+# Ensure ~/.cargo/bin is in PATH for subsequent recipes in this mitamae run
+cargo_bin = "#{home}/.cargo/bin"
+ENV['PATH'] = "#{cargo_bin}:#{ENV['PATH']}" unless ENV['PATH'].include?(cargo_bin)
+
 execute 'Install Rust via rustup' do
   command "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y"
   not_if "test -f #{home}/.cargo/bin/rustc"

@@ -14,12 +14,14 @@ case "${VARIANT}" in
     OS=debian
     RELEASE=bookworm
     TARGET_USER=debian
+    COMPONENTS=main
     ;;
   bamboo | pine)
     SUITE=noble
     OS=ubuntu
     RELEASE=24.04
     TARGET_USER=ubuntu
+    COMPONENTS=main,universe
     ;;
   *)
     echo "Unknown variant: ${VARIANT}" >&2
@@ -42,6 +44,7 @@ echo "==> Building LXC image for variant=${VARIANT} (${OS} ${RELEASE}, arch=${AR
 echo "--> Running debootstrap..."
 debootstrap \
   --include=systemd,systemd-sysv,dbus,sudo,curl,ca-certificates,tar,openssh-server \
+  --components="${COMPONENTS}" \
   "${SUITE}" \
   "${ROOTFS}"
 
@@ -54,6 +57,7 @@ fi
 echo "${TARGET_USER} ALL=(ALL) NOPASSWD:ALL" > "${ROOTFS}/etc/sudoers.d/${TARGET_USER}"
 chmod 0440 "${ROOTFS}/etc/sudoers.d/${TARGET_USER}"
 echo "${VARIANT}" > "${ROOTFS}/etc/hostname"
+echo "127.0.1.1 ${VARIANT}" >> "${ROOTFS}/etc/hosts"
 chroot "${ROOTFS}" systemctl enable ssh 2>/dev/null || true
 
 # Step 3: Copy dotfiles
@@ -67,6 +71,7 @@ chown -R 1000:1000 "${DEST}"
 echo "--> Running setup.sh inside rootfs..."
 systemd-nspawn \
   --directory="${ROOTFS}" \
+  --hostname="${VARIANT}" \
   --bind-ro=/etc/resolv.conf \
   --user="${TARGET_USER}" \
   --setenv=HOME="/home/${TARGET_USER}" \

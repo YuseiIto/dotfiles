@@ -62,11 +62,13 @@ jobs:
             echo "os=debian" >> $GITHUB_OUTPUT
             echo "release=bookworm" >> $GITHUB_OUTPUT
             echo "user=debian" >> $GITHUB_OUTPUT
+            echo "components=main" >> $GITHUB_OUTPUT
           else
             echo "suite=noble" >> $GITHUB_OUTPUT
             echo "os=ubuntu" >> $GITHUB_OUTPUT
             echo "release=24.04" >> $GITHUB_OUTPUT
             echo "user=ubuntu" >> $GITHUB_OUTPUT
+            echo "components=main,universe" >> $GITHUB_OUTPUT
           fi
 
       - name: Build rootfs with debootstrap
@@ -74,6 +76,7 @@ jobs:
           ROOTFS="/tmp/rootfs-${{ matrix.variant }}"
           sudo debootstrap \
             --include=systemd,systemd-sysv,dbus,sudo,curl,ca-certificates,tar,openssh-server \
+            --components=${{ steps.meta.outputs.components }} \
             ${{ steps.meta.outputs.suite }} \
             "${ROOTFS}"
 
@@ -92,8 +95,9 @@ jobs:
           echo "${USER} ALL=(ALL) NOPASSWD:ALL" | sudo tee "${ROOTFS}/etc/sudoers.d/${USER}"
           sudo chmod 0440 "${ROOTFS}/etc/sudoers.d/${USER}"
 
-          # Set hostname
+          # Set hostname and hosts entry (required for sudo to resolve hostname)
           echo "${{ matrix.variant }}" | sudo tee "${ROOTFS}/etc/hostname"
+          echo "127.0.1.1 ${{ matrix.variant }}" | sudo tee -a "${ROOTFS}/etc/hosts"
 
           # Enable systemd services
           sudo chroot "${ROOTFS}" systemctl enable ssh || true
@@ -115,6 +119,7 @@ jobs:
 
           sudo systemd-nspawn \
             --directory="${ROOTFS}" \
+            --hostname="${{ matrix.variant }}" \
             --bind-ro=/etc/resolv.conf \
             --user="${USER}" \
             --setenv=HOME="/home/${USER}" \

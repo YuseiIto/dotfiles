@@ -2,7 +2,7 @@
 # Build a local LXC image for the given variant.
 # Usage: sudo scripts/build-lxc.sh <variant>
 # Requires: debootstrap, squashfs-tools, xz-utils, oras, systemd-nspawn
-set -euCo pipefail
+set -euo pipefail
 
 VARIANT="${1:?Usage: $0 <variant>}"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

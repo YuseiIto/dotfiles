@@ -1,5 +1,5 @@
 #!/bin/bash
-set -euCo pipefail
+set -euo pipefail
 
 cd mitamae
 bin/setup

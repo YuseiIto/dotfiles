@@ -18,9 +18,9 @@ elsif %w[ubuntu debian].include?(node[:platform])
   execute 'Add HashiCorp repo' do
     key = '/usr/share/keyrings/hashicorp-archive-keyring.gpg'
     url = 'https://apt.releases.hashicorp.com'
-    codename = "$(grep -oP '(?<=UBUNTU_CODENAME=).*' /etc/os-release || lsb_release -cs)"
+    codename = "$(. /etc/os-release && echo \"${UBUNTU_CODENAME:-$VERSION_CODENAME}\")"
     sources_list = '/etc/apt/sources.list.d/hashicorp.list'
-    command "echo \"deb [arch=$(dpkg --print-architecture) signed-by=#{key}] #{url} #{codename} main\" >> #{sources_list}"
+    command "echo \"deb [arch=$(dpkg --print-architecture) signed-by=#{key}] #{url} #{codename} main\" > #{sources_list}"
     user 'root'
     not_if 'test -f /etc/apt/sources.list.d/hashicorp.list'
     notifies :run, 'execute[apt-get update for hashicorp]', :immediately

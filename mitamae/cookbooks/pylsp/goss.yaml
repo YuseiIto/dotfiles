@@ -1,4 +1,4 @@
 command:
-  pylsp ---version:
+  pylsp --version:
     exit-status: 0
     timeout: 5000

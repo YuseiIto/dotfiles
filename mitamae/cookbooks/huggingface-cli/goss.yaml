@@ -1,4 +1,4 @@
 command:
-  hf ---version:
+  hf --version:
     exit-status: 0
     timeout: 5000

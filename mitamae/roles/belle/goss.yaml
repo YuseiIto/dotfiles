@@ -7,6 +7,7 @@ gossfile:
   ../../cookbooks/zsh/goss.yaml: {}
   ../../cookbooks/neovim/goss.yaml: {}
   ../../cookbooks/base_tools/goss.yaml: {}
+  ../../cookbooks/tmux/goss.yaml: {}
   ../../cookbooks/binutils/goss.yaml: {}
   ../../cookbooks/starship/goss.yaml: {}
   ../../cookbooks/direnv/goss.yaml: {}

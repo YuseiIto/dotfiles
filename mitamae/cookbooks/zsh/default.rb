@@ -7,6 +7,10 @@ elsif %w[ubuntu debian].include?(node[:platform])
   end
 end
 
+dotfile '.zshenv' do
+  cookbook_dir File.dirname(__FILE__)
+end
+
 dotfile '.zshrc' do
   cookbook_dir File.dirname(__FILE__)
 end

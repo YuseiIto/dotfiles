@@ -97,13 +97,15 @@ systemd-nspawn \
 # Step 4.5: Validate with goss
 echo "--> Validating with goss..."
 GOSSFILE="/home/${TARGET_USER}/dotfiles/mitamae/roles/${VARIANT}/goss.yaml"
+# Run via zsh so ~/.zshenv is sourced, giving goss the same PATH as the user's shell
+# (includes ~/.local/bin, ~/.nodenv/bin, ~/.nodenv/shims, etc.)
 systemd-nspawn \
   --directory="${ROOTFS}" \
   --hostname="${VARIANT}" \
   --user="${TARGET_USER}" \
   --setenv=HOME="/home/${TARGET_USER}" \
   --setenv=USER="${TARGET_USER}" \
-  goss --gossfile "${GOSSFILE}" validate
+  zsh -c "goss --gossfile ${GOSSFILE} validate"
 
 # Step 5: Cleanup
 echo "--> Cleaning up..."

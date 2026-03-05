@@ -99,5 +99,7 @@ define :cross_platform_package, darwin_name: nil, debian_name: nil do
     package(params[:debian_name] || pkg) { user 'root' }
   elsif node[:platform] == 'darwin'
     package(params[:darwin_name] || pkg)
+  else
+    raise "cross_platform_package: unsupported platform '#{node[:platform]}' for package '#{pkg}'"
   end
 end

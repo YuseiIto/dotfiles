@@ -82,10 +82,10 @@ jobs:
           ROOTFS="/tmp/rootfs-${{ matrix.variant }}"
           USER="${{ steps.meta.outputs.user }}"
 
-          # Create user if not ubuntu (ubuntu user exists in ubuntu base)
-          if [[ "${USER}" == "debian" ]]; then
-            sudo chroot "${ROOTFS}" groupadd --gid 1000 debian 2>/dev/null || true
-            sudo chroot "${ROOTFS}" useradd --uid 1000 --gid 1000 -m -s /bin/bash debian
+          # Create user if not already present (debootstrap does not create default users)
+          if ! sudo chroot "${ROOTFS}" id "${USER}" &>/dev/null; then
+            sudo chroot "${ROOTFS}" groupadd --gid 1000 "${USER}" 2>/dev/null || true
+            sudo chroot "${ROOTFS}" useradd --uid 1000 --gid 1000 -m -s /bin/bash "${USER}"
           fi
 
           # Passwordless sudo

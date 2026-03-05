@@ -18,7 +18,7 @@ elsif %w[ubuntu debian].include?(node[:platform])
   execute 'Add HashiCorp repo' do
     key = '/usr/share/keyrings/hashicorp-archive-keyring.gpg'
     url = 'https://apt.releases.hashicorp.com'
-    codename = "$(. /etc/os-release && echo \"${UBUNTU_CODENAME:-$VERSION_CODENAME}\")"
+    codename = '$(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}")'
     sources_list = '/etc/apt/sources.list.d/hashicorp.list'
     command "echo \"deb [arch=$(dpkg --print-architecture) signed-by=#{key}] #{url} #{codename} main\" > #{sources_list}"
     user 'root'

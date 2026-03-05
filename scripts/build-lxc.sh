@@ -30,6 +30,12 @@ esac
 ROOTFS="/tmp/rootfs-${VARIANT}"
 ARCH="$(dpkg --print-architecture 2>/dev/null || uname -m | sed 's/x86_64/amd64/;s/aarch64/arm64/')"
 
+cleanup() {
+  echo "--> Removing rootfs at ${ROOTFS}..."
+  rm -rf "${ROOTFS}"
+}
+trap cleanup EXIT
+
 echo "==> Building LXC image for variant=${VARIANT} (${OS} ${RELEASE}, arch=${ARCH})"
 
 # Step 1: debootstrap

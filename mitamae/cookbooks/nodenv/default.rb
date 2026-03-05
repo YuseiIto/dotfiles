@@ -2,6 +2,16 @@ global_nodejs_version = '24.14.0'
 
 if node[:platform] == 'darwin'
   package 'nodenv'
+  package 'node-build'
+
+  execute 'Install and set global node version (macOS)' do
+    command <<-EOS
+      eval "$(nodenv init -)"
+      nodenv install #{global_nodejs_version} -s
+      nodenv global #{global_nodejs_version}
+    EOS
+    not_if "nodenv versions | grep -q '#{global_nodejs_version}'"
+  end
 elsif %w[ubuntu debian].include?(node[:platform])
   home = ENV['HOME']
   nodenv_root = "#{home}/.nodenv"

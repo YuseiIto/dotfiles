@@ -1,4 +1,4 @@
 command:
-  ld --version:
+  ld -v:
     exit-status: 0
     timeout: 5000

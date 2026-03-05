@@ -1,3 +1,4 @@
-file:
-  "{{.Env.HOME}}/.sdkman/candidates/kotlin/current/bin/kotlin":
-    exists: true
+command:
+  kotlin -version:
+    exit-status: 0
+    timeout: 5000

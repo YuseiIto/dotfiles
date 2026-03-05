@@ -1,3 +1,4 @@
-file:
-  "{{.Env.HOME}}/.local/bin/uv":
-    exists: true
+command:
+  uv ---version:
+    exit-status: 0
+    timeout: 5000

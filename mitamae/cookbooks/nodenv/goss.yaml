@@ -1,3 +1,4 @@
-file:
-  "{{.Env.HOME}}/.nodenv/bin/nodenv":
-    exists: true
+command:
+  nodenv ---version:
+    exit-status: 0
+    timeout: 5000

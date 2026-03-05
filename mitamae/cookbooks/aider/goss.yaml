@@ -1,3 +1,4 @@
-file:
-  "{{.Env.HOME}}/.local/bin/aider":
-    exists: true
+command:
+  aider ---version:
+    exit-status: 0
+    timeout: 5000

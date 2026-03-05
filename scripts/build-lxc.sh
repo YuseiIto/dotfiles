@@ -48,6 +48,18 @@ debootstrap \
   "${SUITE}" \
   "${ROOTFS}"
 
+# Step 1b: Append -updates and -security to sources.list
+# debootstrap only generates the base suite; add updates/security to match official images.
+echo "--> Configuring apt sources..."
+if [[ "${OS}" == "ubuntu" ]]; then
+  printf 'deb http://archive.ubuntu.com/ubuntu %s-updates %s\n' "${SUITE}" "${COMPONENTS}" >> "${ROOTFS}/etc/apt/sources.list"
+  printf 'deb http://security.ubuntu.com/ubuntu %s-security %s\n' "${SUITE}" "${COMPONENTS}" >> "${ROOTFS}/etc/apt/sources.list"
+else
+  printf 'deb http://deb.debian.org/debian %s-updates %s\n' "${SUITE}" "${COMPONENTS}" >> "${ROOTFS}/etc/apt/sources.list"
+  printf 'deb http://security.debian.org/debian-security %s-security %s\n' "${SUITE}" "${COMPONENTS}" >> "${ROOTFS}/etc/apt/sources.list"
+fi
+chroot "${ROOTFS}" apt-get update -qq
+
 # Step 2: Create user (debootstrap does not create default users for any variant)
 echo "--> Configuring user ${TARGET_USER}..."
 if ! chroot "${ROOTFS}" id "${TARGET_USER}" &>/dev/null; then
@@ -81,6 +93,17 @@ systemd-nspawn \
   --setenv=DEBIAN_FRONTEND=noninteractive \
   --chdir="/home/${TARGET_USER}/dotfiles" \
   bash setup.sh
+
+# Step 4.5: Validate with goss
+echo "--> Validating with goss..."
+GOSSFILE="/home/${TARGET_USER}/dotfiles/mitamae/roles/${VARIANT}/goss.yaml"
+systemd-nspawn \
+  --directory="${ROOTFS}" \
+  --hostname="${VARIANT}" \
+  --user="${TARGET_USER}" \
+  --setenv=HOME="/home/${TARGET_USER}" \
+  --setenv=USER="${TARGET_USER}" \
+  goss --gossfile "${GOSSFILE}" validate
 
 # Step 5: Cleanup
 echo "--> Cleaning up..."

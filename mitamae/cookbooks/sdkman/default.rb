@@ -17,7 +17,10 @@ if %w[ubuntu debian].include?(node[:platform])
     not_if "test -d #{sdkman_dir}"
   end
 
-  # NOTE: Shell initialization is handled via .zshrc updates or similar.
-  # For immediate use in subsequent commands within the same shell:
-  # . "$HOME/.sdkman/bin/sdkman-init.sh"
+  # Enable auto-answer so `sdk install` never blocks on prompts
+  execute 'Enable sdkman_auto_answer' do
+    command "sed -i 's/sdkman_auto_answer=false/sdkman_auto_answer=true/' #{sdkman_dir}/etc/config"
+    only_if "grep -q 'sdkman_auto_answer=false' #{sdkman_dir}/etc/config"
+  end
+
 end

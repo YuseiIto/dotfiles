@@ -7,6 +7,7 @@ gossfile:
   ../../cookbooks/nikto/goss.yaml: {}
   ../../cookbooks/cfn-lint/goss.yaml: {}
   ../../cookbooks/ollama/goss.yaml: {}
+  ../../cookbooks/sdkman/goss.yaml: {}
   ../../cookbooks/kotlin/goss.yaml: {}
   ../../cookbooks/cmake/goss.yaml: {}
   ../../cookbooks/ccls/goss.yaml: {}

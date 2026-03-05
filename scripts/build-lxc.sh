@@ -14,14 +14,14 @@ case "${VARIANT}" in
     OS=debian
     RELEASE=bookworm
     TARGET_USER=debian
-    COMPONENTS=main
+    COMPONENTS=main,non-free
     ;;
   bamboo | pine)
     SUITE=noble
     OS=ubuntu
     RELEASE=24.04
     TARGET_USER=ubuntu
-    COMPONENTS=main,universe
+    COMPONENTS=main,universe,multiverse
     ;;
   *)
     echo "Unknown variant: ${VARIANT}" >&2

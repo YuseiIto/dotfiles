@@ -45,11 +45,11 @@ debootstrap \
   "${SUITE}" \
   "${ROOTFS}"
 
-# Step 2: Create user (debian must be created; ubuntu exists in ubuntu base)
+# Step 2: Create user (debootstrap does not create default users for any variant)
 echo "--> Configuring user ${TARGET_USER}..."
-if [[ "${TARGET_USER}" == "debian" ]]; then
-  chroot "${ROOTFS}" groupadd --gid 1000 debian 2>/dev/null || true
-  chroot "${ROOTFS}" useradd --uid 1000 --gid 1000 -m -s /bin/bash debian
+if ! chroot "${ROOTFS}" id "${TARGET_USER}" &>/dev/null; then
+  chroot "${ROOTFS}" groupadd --gid 1000 "${TARGET_USER}" 2>/dev/null || true
+  chroot "${ROOTFS}" useradd --uid 1000 --gid 1000 -m -s /bin/bash "${TARGET_USER}"
 fi
 echo "${TARGET_USER} ALL=(ALL) NOPASSWD:ALL" > "${ROOTFS}/etc/sudoers.d/${TARGET_USER}"
 chmod 0440 "${ROOTFS}/etc/sudoers.d/${TARGET_USER}"

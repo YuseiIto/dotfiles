@@ -29,12 +29,14 @@ lint: mitamae/bin/rubocop
 format: mitamae/bin/rubocop
 	cd mitamae && $(BUNDLER) exec rubocop -a
 
-.PHONY: shellcheck dry-run
+.PHONY: shellcheck dry-run dry-run-linux dry-run-macos
 
 shellcheck:
 	shellcheck setup.sh mitamae/bin/setup
 
-dry-run: dry-run-plum dry-run-bamboo dry-run-pine dry-run-belle
+dry-run-linux: dry-run-plum dry-run-bamboo dry-run-pine
+
+dry-run-macos: dry-run-belle
 
 dry-run-%:
 	cd mitamae && DOTFILES_ROLE=$* bin/mitamae dry-run lib/custom_resources.rb roles/$*/default.rb

@@ -105,7 +105,7 @@ systemd-nspawn \
   --user="${TARGET_USER}" \
   --setenv=HOME="/home/${TARGET_USER}" \
   --setenv=USER="${TARGET_USER}" \
-  zsh -c "goss --gossfile ${GOSSFILE} validate"
+  zsh -c "goss --gossfile '${GOSSFILE}' validate"
 
 # Step 5: Cleanup
 echo "--> Cleaning up..."

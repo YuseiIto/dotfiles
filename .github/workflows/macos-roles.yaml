@@ -43,6 +43,7 @@ jobs:
           ./setup.sh
 
       - name: Validate role ${{ matrix.role }} with goss
+        env:
+          GOSS_USE_ALPHA: 1
         run: |
-          export PATH="$HOME/.local/bin:$HOME/.cargo/bin:$HOME/.nodenv/shims:$HOME/.nodenv/bin:$HOME/.sdkman/candidates/kotlin/current/bin:$HOME/.opam/default/bin:$PATH"
           goss --gossfile mitamae/roles/${{ matrix.role }}/goss.yaml validate

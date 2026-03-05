@@ -13,13 +13,13 @@ case "${VARIANT}" in
     SUITE=bookworm
     OS=debian
     RELEASE=bookworm
-    USER=debian
+    TARGET_USER=debian
     ;;
   bamboo | pine)
     SUITE=noble
     OS=ubuntu
     RELEASE=24.04
-    USER=ubuntu
+    TARGET_USER=ubuntu
     ;;
   *)
     echo "Unknown variant: ${VARIANT}" >&2
@@ -40,19 +40,19 @@ debootstrap \
   "${ROOTFS}"
 
 # Step 2: Create user (debian must be created; ubuntu exists in ubuntu base)
-echo "--> Configuring user ${USER}..."
-if [[ "${USER}" == "debian" ]]; then
+echo "--> Configuring user ${TARGET_USER}..."
+if [[ "${TARGET_USER}" == "debian" ]]; then
   chroot "${ROOTFS}" groupadd --gid 1000 debian 2>/dev/null || true
   chroot "${ROOTFS}" useradd --uid 1000 --gid 1000 -m -s /bin/bash debian
 fi
-echo "${USER} ALL=(ALL) NOPASSWD:ALL" > "${ROOTFS}/etc/sudoers.d/${USER}"
-chmod 0440 "${ROOTFS}/etc/sudoers.d/${USER}"
+echo "${TARGET_USER} ALL=(ALL) NOPASSWD:ALL" > "${ROOTFS}/etc/sudoers.d/${TARGET_USER}"
+chmod 0440 "${ROOTFS}/etc/sudoers.d/${TARGET_USER}"
 echo "${VARIANT}" > "${ROOTFS}/etc/hostname"
 chroot "${ROOTFS}" systemctl enable ssh 2>/dev/null || true
 
 # Step 3: Copy dotfiles
 echo "--> Copying dotfiles..."
-DEST="${ROOTFS}/home/${USER}/dotfiles"
+DEST="${ROOTFS}/home/${TARGET_USER}/dotfiles"
 mkdir -p "${DEST}"
 rsync -a --exclude='.git' "${REPO_ROOT}/" "${DEST}/"
 chown -R 1000:1000 "${DEST}"
@@ -62,13 +62,13 @@ echo "--> Running setup.sh inside rootfs..."
 systemd-nspawn \
   --directory="${ROOTFS}" \
   --bind-ro=/etc/resolv.conf \
-  --user="${USER}" \
-  --setenv=HOME="/home/${USER}" \
-  --setenv=USER="${USER}" \
+  --user="${TARGET_USER}" \
+  --setenv=HOME="/home/${TARGET_USER}" \
+  --setenv=USER="${TARGET_USER}" \
   --setenv=DOTFILES_ROLE="${VARIANT}" \
   --setenv=LANG=C.UTF-8 \
   --setenv=DEBIAN_FRONTEND=noninteractive \
-  --chdir="/home/${USER}/dotfiles" \
+  --chdir="/home/${TARGET_USER}/dotfiles" \
   bash setup.sh
 
 # Step 5: Cleanup

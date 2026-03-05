@@ -36,7 +36,7 @@ when 'arch'
     user 'root'
   end
 else
-  MItamae.logger.error "unsupported platform #{node[:platform]}: #{__FILE__}:#{__LINE__}"
+  Mitamae.logger.error "unsupported platform #{node[:platform]}: #{__FILE__}:#{__LINE__}"
   exit 1
 end
 

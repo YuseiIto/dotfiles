@@ -17,6 +17,14 @@ if [ -d "$HOME/.local/bin" ]; then
   export PATH="$HOME/.local/bin:${PATH}"
 fi
 
+# sdkman-managed tools (kotlin, java, etc.)
+if [ -d "$HOME/.sdkman/candidates" ]; then
+  for candidate_dir in "$HOME/.sdkman/candidates"/*/current/bin; do
+    [ -d "$candidate_dir" ] && PATH="${candidate_dir}:${PATH}"
+  done
+  export PATH
+fi
+
 # MySQL client (keg-only on Homebrew, not symlinked by default)
 if [ -d "/opt/homebrew/opt/mysql-client/bin" ]; then
   export PATH="/opt/homebrew/opt/mysql-client/bin:${PATH}"

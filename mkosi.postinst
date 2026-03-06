@@ -17,7 +17,7 @@ chmod 0440 /etc/sudoers.d/${TARGET_USER}
 # Hostname
 echo "${VARIANT}" > /etc/hostname
 
-# Copy dotfiles from $SRCDIR (mkosi's source directory environment variable)
+# Copy dotfiles from $SRCDIR (always set by mkosi to the source tree root, e.g. /work/src)
 DEST="/home/${TARGET_USER}/dotfiles"
 mkdir -p "${DEST}"
 cp -r "${SRCDIR}/." "${DEST}/"

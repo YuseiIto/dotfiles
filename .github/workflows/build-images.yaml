@@ -1,0 +1,47 @@
+name: Build OS Images
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'mkosi.**'
+      - 'mitamae/**'
+      - 'setup.sh'
+  workflow_dispatch:
+    inputs:
+      variant:
+        description: 'Variant to build (e.g. pine, bamboo)'
+        required: true
+        default: 'pine'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y mkosi systemd-container xz-utils
+
+      - name: Build OS Image with mkosi
+        env:
+          VARIANT: ${{ github.event.inputs.variant || 'pine' }}
+        run: |
+          sudo mkosi build --output=yuseiito-dev-live_${VARIANT}.raw
+
+      - name: Compress Image
+        env:
+          VARIANT: ${{ github.event.inputs.variant || 'pine' }}
+        run: |
+          sudo xz -T0 -9 yuseiito-dev-live_${VARIANT}.raw
+
+      - name: Upload Artifact
+        env:
+          VARIANT: ${{ github.event.inputs.variant || 'pine' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: yuseiito-dev-live_${{ github.event.inputs.variant || 'pine' }}-raw
+          path: yuseiito-dev-live_*.raw.xz
+          retention-days: 90

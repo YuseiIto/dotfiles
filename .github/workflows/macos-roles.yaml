@@ -46,4 +46,4 @@ jobs:
         env:
           GOSS_USE_ALPHA: 1
         run: |
-          goss --gossfile mitamae/roles/${{ matrix.role }}/goss.yaml validate
+          zsh -c "goss --gossfile mitamae/roles/${{ matrix.role }}/goss.yaml validate"

@@ -156,7 +156,7 @@ packer.startup(
 
       -- Display git status
       use 'airblade/vim-gitgutter'
-      -- Git commands from vim (add, commit, pluh, blame etc...)
+      -- Git commands from vim (add, commit, push, blame etc...)
       use 'tpope/vim-fugitive'
 
       -- Display terminal in easy manner

@@ -13,4 +13,4 @@ jobs:
         with:
           scandir: '.'
           additional_files: 'mitamae/bin/setup'
-          ignore_names: '.zshrc'
+          ignore_names: '.zshrc entrypoint.sh'

@@ -16,3 +16,8 @@ fi
 if [ -d "$HOME/.local/bin" ]; then
   export PATH="$HOME/.local/bin:${PATH}"
 fi
+
+# MySQL client (keg-only on Homebrew, not symlinked by default)
+if [ -d "/opt/homebrew/opt/mysql-client/bin" ]; then
+  export PATH="/opt/homebrew/opt/mysql-client/bin:${PATH}"
+fi

@@ -197,7 +197,7 @@ packer.startup(
     end
 
     if features.rich_presence then
-      -- Discord Rich presense
+      -- Discord Rich presence
       use { 'andweeb/presence.nvim',
         config = function()
           require("presence").setup({

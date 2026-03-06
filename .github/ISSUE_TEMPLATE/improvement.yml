@@ -1,0 +1,25 @@
+name: Improvement
+description: Suggest an improvement to an existing cookbook, config, or workflow
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: What would you like to improve?
+      description: Describe the improvement and why it matters.
+    validations:
+      required: true
+
+  - type: textarea
+    id: current_behavior
+    attributes:
+      label: Current behavior (if applicable)
+    validations:
+      required: false
+
+  - type: textarea
+    id: proposed_solution
+    attributes:
+      label: Proposed solution
+    validations:
+      required: false

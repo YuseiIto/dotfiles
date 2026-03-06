@@ -1,0 +1,4 @@
+command:
+  nikto -Version:
+    exit-status: 0
+    timeout: 5000

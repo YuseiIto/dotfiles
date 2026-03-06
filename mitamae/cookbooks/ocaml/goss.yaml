@@ -1,0 +1,7 @@
+command:
+  ocaml --version:
+    exit-status: 0
+    timeout: 5000
+file:
+  "{{.Env.HOME}}/.opam/default/bin/ocamllsp":
+    exists: true

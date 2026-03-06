@@ -1,0 +1,24 @@
+AllCops:
+  NewCops: enable # Enable new cops by default when RuboCop is updated.
+
+Lint/ShadowingOuterLocalVariable:
+  Enabled: false
+
+# Disable the EnvHome cop since it doesn't work with mruby.
+Style/EnvHome:
+  Enabled: false
+Style/FetchEnvVar:
+  Enabled: false
+
+# Disable since it's the transitional feature for ruby 3.0 and it doesn't matter for mruby.
+Style/FrozenStringLiteralComment:
+    Enabled: false
+
+# Configurations contain lots of heredocs for scripts.
+# EOC are EOCs, period. It doesn't have to be "meaningful".
+Naming/HeredocDelimiterNaming:
+  Enabled: false
+
+# Set max line length to 150
+Layout/LineLength:
+  Max: 150

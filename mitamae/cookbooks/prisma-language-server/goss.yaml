@@ -1,0 +1,4 @@
+command:
+  prisma-language-server --version:
+    exit-status: 0
+    timeout: 5000

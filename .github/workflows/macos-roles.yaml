@@ -1,0 +1,49 @@
+name: macOS Roles Verification
+
+on:
+  push:
+
+jobs:
+  verify-macos-role:
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        role: [belle]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Free disk space
+        run: |
+          df -h /
+          # Switch to CLI tools before removing Xcode apps
+          sudo xcode-select -s /Library/Developer/CommandLineTools
+          # Remove all Xcode app versions - ~38 GB
+          sudo rm -rf /Applications/Xcode*.app
+          # Remove Xcode simulator runtimes - ~51 GB
+          sudo rm -rf /Library/Developer/CoreSimulator
+          # Remove other Xcode developer files (keep CommandLineTools)
+          sudo rm -rf /Library/Developer/DeveloperDiskImages
+          sudo rm -rf /Library/Developer/CoreDevice
+          sudo rm -rf /Library/Developer/PrivateFrameworks
+          sudo rm -rf /Library/Developer/DeviceKit
+          df -h /
+
+      - name: Update Homebrew
+        # workaround: macOS runners ship with a stale Homebrew tap, causing
+        # 404 errors on casks whose upstream removed old versions (e.g. mactex).
+        run: brew update
+
+      - name: Run mitamae for role ${{ matrix.role }}
+        env:
+          DOTFILES_ROLE: ${{ matrix.role }}
+        run: |
+          ./setup.sh
+
+      - name: Validate role ${{ matrix.role }} with goss
+        env:
+          GOSS_USE_ALPHA: 1
+        run: |
+          zsh -c "goss --gossfile mitamae/roles/${{ matrix.role }}/goss.yaml validate"

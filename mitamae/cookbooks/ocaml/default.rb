@@ -1,0 +1,31 @@
+# Install OCaml compiler and package manager
+
+disable_sandboxing = if node[:is_container]
+                       '--disable-sandboxing'
+                     else
+                       ''
+                     end
+
+if %w[ubuntu debian].include?(node[:platform])
+  package 'ocaml' do
+    user 'root'
+  end
+  package 'opam' do
+    user 'root'
+  end
+
+elsif node[:platform] == 'darwin'
+  package 'ocaml'
+  package 'opam'
+
+end
+
+execute 'Init opam' do
+  command "opam init --auto-setup --quiet #{disable_sandboxing}"
+  not_if "test -d #{ENV['HOME']}/.opam"
+end
+
+execute 'Install ocaml-lsp-server via opam' do
+  command 'opam install -y ocaml-lsp-server'
+  not_if 'command -v ocamllsp'
+end

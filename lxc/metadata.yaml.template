@@ -1,0 +1,8 @@
+architecture: __ARCH__
+creation_date: __CREATION_DATE__
+properties:
+  description: "yuseiito-dev LXC container. Variant `__VARIANT__`"
+  os: __OS__
+  release: "__RELEASE__"
+  variant: __VARIANT__
+templates: {}

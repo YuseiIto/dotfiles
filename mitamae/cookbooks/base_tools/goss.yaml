@@ -1,0 +1,19 @@
+command:
+  curl --version:
+    exit-status: 0
+    timeout: 5000
+  wget --version:
+    exit-status: 0
+    timeout: 5000
+  rg --version:
+    exit-status: 0
+    timeout: 5000
+  fzy --version:
+    exit-status: 0
+    timeout: 5000
+  tree --version:
+    exit-status: 0
+    timeout: 5000
+  jq --version:
+    exit-status: 0
+    timeout: 5000

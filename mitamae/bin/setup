@@ -1,0 +1,43 @@
+#!/bin/bash
+set -eu
+
+mitamae_version="1.14.1"
+
+mitamae_bin="mitamae-${mitamae_version}"
+
+platform=$(uname | tr '[:upper:]' '[:lower:]')
+arch=$(uname -m)
+
+if [ "$arch" = "amd64" ] || [ "$arch" = "x86_64" ]; then
+	arch="x86_64"
+elif [ "$arch" = "arm64" ] || [ "$arch" = "aarch64" ]; then
+	arch="aarch64"
+else
+	echo "Unsupported architecture: $arch"
+	exit 1
+fi
+
+# Check if the mitamae binary is already present in the bin directory
+if ! [ -f "bin/${mitamae_bin}" ]; then
+	mitamae_download_name="mitamae-${arch}-${platform}"
+	mitamae_archive_name="${mitamae_download_name}.tar.gz"
+	mitamae_archive_url="https://github.com/itamae-kitchen/mitamae/releases/download/v${mitamae_version}/${mitamae_download_name}.tar.gz"
+	mitamae_archive_path="bin/${mitamae_archive_name}"
+
+	curl -o "$mitamae_archive_path" -fL "$mitamae_archive_url"
+
+	tar xvzf "$mitamae_archive_path" -C bin
+
+	# Rename the downloaded binary to version-named format
+	mv "bin/${mitamae_download_name}" "bin/${mitamae_bin}"
+
+	# Cleanup the downloaded archive
+	rm "$mitamae_archive_path"
+
+	# Make the mitamae binary executable
+	chmod +x "bin/${mitamae_bin}"
+fi
+
+# Create a symbolic link to the mitamae binary in the bin directory
+ln -sf "${mitamae_bin}" bin/mitamae
+

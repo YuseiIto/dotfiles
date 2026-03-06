@@ -1,0 +1,31 @@
+{
+  "name": "yuseiito-dev (Bamboo)",
+  "image": "ghcr.io/yuseiito/yuseiito-dev:bamboo-latest",
+  "remoteUser": "ubuntu",
+  "containerUser": "ubuntu",
+  "remoteEnv": {
+    "DOTFILES_ROLE": "bamboo"
+  },
+  "mounts": [
+    "source=dotfiles-zsh-history,target=/home/ubuntu/.zsh_history,type=volume",
+    "source=${localEnv:HOME}/.ssh,target=/home/ubuntu/.ssh,type=bind,consistency=cached,readonly=true"
+  ],
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {
+      "version": "latest",
+      "moby": true
+    },
+    "ghcr.io/devcontainers/features/github-cli:1": {
+      "version": "latest"
+    }
+  },
+  "hostRequirements": {
+    "gpu": "optional"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [],
+      "settings": {}
+    }
+  }
+}

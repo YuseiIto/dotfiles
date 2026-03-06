@@ -16,9 +16,9 @@ when 'ubuntu', 'debian'
 
   execute 'Install neovim binary' do
     command <<~EOC
-      curl -fsSLO #{url}
-      tar -C /opt -xzf #{nvim_archive}
-      rm #{nvim_archive}
+      curl -fsSL -o /tmp/#{nvim_archive} #{url}
+      tar -C /opt -xzf /tmp/#{nvim_archive}
+      rm /tmp/#{nvim_archive}
     EOC
     user 'root'
     not_if "/opt/#{nvim_release}/bin/nvim --version | grep -q 'NVIM v#{nvim_version}'" # Skip if the correct version is already installed

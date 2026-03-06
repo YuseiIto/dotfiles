@@ -17,9 +17,9 @@ elsif %w[ubuntu debian].include?(node[:platform])
 
   execute 'Install lua-language-server' do
     command <<~EOC
-      curl -fsSLO #{url}
-      tar xzf #{lls_archive} -C /opt/lua-language-server
-      rm -f #{lls_archive}
+      curl -fsSL -o /tmp/#{lls_archive} #{url}
+      tar xzf /tmp/#{lls_archive} -C /opt/lua-language-server
+      rm -f /tmp/#{lls_archive}
     EOC
     user 'root'
     not_if "/opt/lua-language-server/bin/lua-language-server --version 2>/dev/null | grep -q '#{lls_version}'"

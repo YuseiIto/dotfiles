@@ -1,3 +1,8 @@
+return unless %w[ubuntu debian].include?(node[:platform])
+
+# Requires gum for interactive disk selection
+include_recipe '../gum'
+
 # Required tools for the installer
 %w[parted dosfstools rsync fdisk].each do |pkg|
   package pkg

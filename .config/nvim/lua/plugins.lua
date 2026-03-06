@@ -119,7 +119,7 @@ packer.startup(
         end
       }
 
-      -- Display fit status on fern file tree
+      -- Display git status on fern file tree
       use 'lambdalisue/fern-git-status.vim'
       -- For richer icon at fern
       use { 'lambdalisue/fern-renderer-nerdfont.vim',

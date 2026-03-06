@@ -37,7 +37,7 @@ docker run --rm -it ghcr.io/yuseiito/yuseiito-dev:plum-latest   # Fast and light
 
 This repository is designed to be navigated and enhanced by **Coding Agents** (like Claude Code, Codex, Gemini CLI, or OpenCode).
 
-- **Agent Integration:** Predefined recipes and clear instructions ar prepared. It allows AI agents to act as first-class contributors.
+- **Agent Integration:** Predefined recipes and clear instructions are prepared. It allows AI agents to act as first-class contributors.
 - **Self-Documenting:** If you're exploring the repository, your AI agent can navigate the `mitamae` cookbooks to explain exactly what's being installed.
 
 ---

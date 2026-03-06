@@ -52,11 +52,11 @@ debootstrap \
 # debootstrap only generates the base suite; add updates/security to match official images.
 echo "--> Configuring apt sources..."
 if [[ "${OS}" == "ubuntu" ]]; then
-  printf 'deb http://archive.ubuntu.com/ubuntu %s-updates %s\n' "${SUITE}" "${COMPONENTS}" >> "${ROOTFS}/etc/apt/sources.list"
-  printf 'deb http://security.ubuntu.com/ubuntu %s-security %s\n' "${SUITE}" "${COMPONENTS}" >> "${ROOTFS}/etc/apt/sources.list"
+  printf 'deb http://archive.ubuntu.com/ubuntu %s-updates %s\n' "${SUITE}" "${COMPONENTS//,/ }" >> "${ROOTFS}/etc/apt/sources.list"
+  printf 'deb http://security.ubuntu.com/ubuntu %s-security %s\n' "${SUITE}" "${COMPONENTS//,/ }" >> "${ROOTFS}/etc/apt/sources.list"
 else
-  printf 'deb http://deb.debian.org/debian %s-updates %s\n' "${SUITE}" "${COMPONENTS}" >> "${ROOTFS}/etc/apt/sources.list"
-  printf 'deb http://security.debian.org/debian-security %s-security %s\n' "${SUITE}" "${COMPONENTS}" >> "${ROOTFS}/etc/apt/sources.list"
+  printf 'deb http://deb.debian.org/debian %s-updates %s\n' "${SUITE}" "${COMPONENTS//,/ }" >> "${ROOTFS}/etc/apt/sources.list"
+  printf 'deb http://security.debian.org/debian-security %s-security %s\n' "${SUITE}" "${COMPONENTS//,/ }" >> "${ROOTFS}/etc/apt/sources.list"
 fi
 chroot "${ROOTFS}" apt-get update -qq
 

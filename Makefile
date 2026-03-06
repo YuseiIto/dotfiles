@@ -40,3 +40,14 @@ dry-run-macos: dry-run-belle
 
 dry-run-%:
 	cd mitamae && DOTFILES_ROLE=$* bin/mitamae dry-run lib/custom_resources.rb roles/$*/default.rb
+
+
+.PHONY: live-build live-clean clean
+
+live-build:
+	sudo live/remaster.sh
+
+live-clean:
+	sudo rm -rf live/work live/output
+
+clean: live-clean

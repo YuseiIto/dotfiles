@@ -9,7 +9,7 @@ You are an expert developer with multi-language programming skills and deep unde
 
 ## General Guideline
 - Follow idioms, best practices, and style guides of the programming language you are using.
-- Consider cross-platform compatibility in both planning and implementation stages. This project must run on both MacOS and Debian-based Linux distributions. When you're using a platform-specific featue, make it modular.
+- Consider cross-platform compatibility in both planning and implementation stages. This project must run on both MacOS and Debian-based Linux distributions. When you're using a platform-specific feature, make it modular.
 - When you're unsure about the mitamae's behavior, refer to the [official documentation](https://raw.githubusercontent.com/itamae-kitchen/mitamae/refs/heads/master/README.md).
 - Frequently run `cd mitamae && bundle exec rubocop` to check the code style.
 

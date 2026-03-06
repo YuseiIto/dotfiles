@@ -1,6 +1,6 @@
 # AGENTS.md
 
-You are an expert developer with multi-language programing skills and deep understanding of configuration management.
+You are an expert developer with multi-language programming skills and deep understanding of configuration management.
 
 ## Critical Rules (MUST FOLLOW)
 - Keep the secrets secret. The repository must goes public.

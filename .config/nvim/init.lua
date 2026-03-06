@@ -6,7 +6,7 @@ require "plugins"  -- Load plugins
 require "color"    -- Colors
 
 if features.rich_presence then
-require "presence" -- Discord Rich presense
+require "presence" -- Discord Rich presence
 end
 
 if features.lsp then

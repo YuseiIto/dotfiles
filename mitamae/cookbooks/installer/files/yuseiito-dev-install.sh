@@ -19,6 +19,13 @@ gum style --border normal --margin "1 2" --padding "1 2" --border-foreground 212
 gum style --foreground 212 "Step 1: Select Installation Target Disk"
 DISKS=$(lsblk -dno NAME,SIZE,MODEL | grep -v "loop" | awk '{print "/dev/"$1" - "$2" "$3" "$4}')
 
+# Exclude the currently booted disk to prevent self-destruction
+ROOT_SOURCE=$(findmnt -n -o SOURCE /)
+BOOT_DISK=$(lsblk -no PKNAME "$ROOT_SOURCE" 2>/dev/null | head -1)
+if [[ -n "$BOOT_DISK" ]]; then
+    DISKS=$(echo "$DISKS" | grep -v "/dev/${BOOT_DISK}")
+fi
+
 if [[ -z "$DISKS" ]]; then
     gum style --foreground 196 "No suitable disks found!"
     exit 1
@@ -31,13 +38,14 @@ SELECTED_DISK=$(echo "$SELECTED_DISK_RAW" | awk '{print $1}')
 gum confirm "WARNING: This will ERASE ALL DATA on $SELECTED_DISK. Are you absolutely sure?" || exit 1
 
 # Step 3: Partitioning
-gum spin --spinner dot --title "Partitioning $SELECTED_DISK..." -- sleep 1
-cat <<EOF | sfdisk "$SELECTED_DISK"
+gum spin --spinner dot --title "Partitioning $SELECTED_DISK..." -- bash -c '
+sfdisk "$0" <<SFDISK_EOF
 label: gpt
 
 1 : size=512M, type=C12A7328-F81F-11D2-BA4B-00A0C93EC93B, name="EFI"
 2 : type=0FC63DAF-8483-4772-8E79-3D69D8477DE4, name="ROOT"
-EOF
+SFDISK_EOF
+' "$SELECTED_DISK"
 
 if [[ "$SELECTED_DISK" == *nvme* || "$SELECTED_DISK" == *mmcblk* ]]; then
     EFI_PART="${SELECTED_DISK}p1"

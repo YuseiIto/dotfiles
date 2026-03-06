@@ -6,6 +6,7 @@
   "remoteEnv": {
     "DOTFILES_ROLE": "bamboo"
   },
+  "initializeCommand": "mkdir -p ${localEnv:HOME}/.ssh",
   "mounts": [
     "source=dotfiles-zsh-history,target=/home/ubuntu/.zsh_history,type=volume",
     "source=${localEnv:HOME}/.ssh,target=/home/ubuntu/.ssh,type=bind,consistency=cached,readonly=true"

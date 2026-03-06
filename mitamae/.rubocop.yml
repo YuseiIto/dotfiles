@@ -10,7 +10,7 @@ Style/EnvHome:
 Style/FetchEnvVar:
   Enabled: false
 
-# Disable since it's the trsansitional feature for ruby 3.0 and it doesn't matter for mruby.
+# Disable since it's the transitional feature for ruby 3.0 and it doesn't matter for mruby.
 Style/FrozenStringLiteralComment:
     Enabled: false
 

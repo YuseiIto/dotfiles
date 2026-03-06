@@ -25,7 +25,6 @@ gossfile:
   ../../cookbooks/claude-code/goss.yaml: {}
   ../../cookbooks/gemini-cli/goss.yaml: {}
   ../../cookbooks/opencode/goss.yaml: {}
-  ../../cookbooks/sdkman/goss.yaml: {}
   ../../cookbooks/kotlin/goss.yaml: {}
   ../../cookbooks/ocaml/goss.yaml: {}
   ../../cookbooks/lua-language-server/goss.yaml: {}

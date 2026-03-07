@@ -96,7 +96,7 @@ end
 define :cross_platform_package, darwin_name: nil, debian_name: nil do
   pkg = params[:name]
   if %w[ubuntu debian].include?(node[:platform])
-    package(params[:debian_name] || pkg) { user 'root' }
+    package(params[:debian_name] || pkg)
   elsif node[:platform] == 'darwin'
     package(params[:darwin_name] || pkg)
   else

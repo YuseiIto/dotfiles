@@ -9,6 +9,12 @@
 .tmux/plugins
 .tmux/resurrect/
 
+# mkosi build artifacts
+mkosi.cache/
+*.raw
+*.raw.xz
+debian-tools
+
 # Automatically created by mitamae/bin/setup
 mitamae/bin/mitamae
 mitamae/bin/mitamae-*

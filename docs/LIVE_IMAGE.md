@@ -21,7 +21,7 @@ The image is built using [mkosi](https://github.com/systemd/mkosi).
 
 ### Method 2: Local Build
 
-Requires a Linux host with `mkosi` and `systemd-container` installed.
+Requires a Linux host with `mkosi` and `systemd-container`, `systemd-ukify`, `systemd-boot ` installed.
 
 ```bash
 # Build the .raw image

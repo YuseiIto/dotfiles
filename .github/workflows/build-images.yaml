@@ -25,7 +25,7 @@ jobs:
       - name: Install build dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y mkosi systemd-container xz-utils
+          sudo apt-get install -y mkosi systemd-container xz-utils systemd-ukify systemd-boot
 
       - name: Build OS Image with mkosi
         env:

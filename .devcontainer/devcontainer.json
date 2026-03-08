@@ -6,19 +6,12 @@
   "remoteEnv": {
     "DOTFILES_ROLE": "bamboo"
   },
+  "initializeCommand": "mkdir -p ${localEnv:HOME}/.ssh",
   "mounts": [
     "source=dotfiles-zsh-history,target=/home/ubuntu/.zsh_history,type=volume",
-    "source=${localEnv:HOME}/.ssh,target=/home/ubuntu/.ssh,type=bind,consistency=cached,readonly=true"
+    "source=${localEnv:HOME}/.ssh,target=/home/ubuntu/.ssh,type=bind,consistency=cached,readonly=true",
+    "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
   ],
-  "features": {
-    "ghcr.io/devcontainers/features/docker-in-docker:2": {
-      "version": "latest",
-      "moby": true
-    },
-    "ghcr.io/devcontainers/features/github-cli:1": {
-      "version": "latest"
-    }
-  },
   "hostRequirements": {
     "gpu": "optional"
   },

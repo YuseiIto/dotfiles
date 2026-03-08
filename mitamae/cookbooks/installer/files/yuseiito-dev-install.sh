@@ -38,14 +38,14 @@ SELECTED_DISK=$(echo "$SELECTED_DISK_RAW" | awk '{print $1}')
 gum confirm "WARNING: This will ERASE ALL DATA on $SELECTED_DISK. Are you absolutely sure?" || exit 1
 
 # Step 3: Partitioning
-gum spin --spinner dot --title "Partitioning $SELECTED_DISK..." -- bash -c '
-sfdisk "$0" <<SFDISK_EOF
+gum spin --spinner dot --title "Partitioning $SELECTED_DISK..." -- bash -c "
+sfdisk \"$0\" <<SFDISK_EOF
 label: gpt
 
-1 : size=512M, type=C12A7328-F81F-11D2-BA4B-00A0C93EC93B, name="EFI"
-2 : type=0FC63DAF-8483-4772-8E79-3D69D8477DE4, name="ROOT"
+1 : size=512M, type=C12A7328-F81F-11D2-BA4B-00A0C93EC93B, name=\"EFI\"
+2 : type=0FC63DAF-8483-4772-8E79-3D69D8477DE4, name=\"ROOT\"
 SFDISK_EOF
-' "$SELECTED_DISK"
+" "$SELECTED_DISK"
 
 if [[ "$SELECTED_DISK" == *nvme* || "$SELECTED_DISK" == *mmcblk* ]]; then
     EFI_PART="${SELECTED_DISK}p1"

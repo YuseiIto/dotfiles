@@ -14,6 +14,11 @@ mkosi.cache/
 *.raw
 *.raw.xz
 debian-tools
+yuseiito-dev-live_*.initrd
+yuseiito-dev-live_*.efi
+yuseiito-dev-live_*.vmlinuz
+initrd
+initrd.cpio.zst
 
 # Automatically created by mitamae/bin/setup
 mitamae/bin/mitamae

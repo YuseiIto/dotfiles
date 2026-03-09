@@ -1,4 +1,5 @@
 gossfile:
+  ../../cookbooks/agent-skills/agent-skills.yaml: {}
   ../../cookbooks/goss/goss.yaml: {}
   ../../cookbooks/git/goss.yaml: {}
   ../../cookbooks/rust/goss.yaml: {}

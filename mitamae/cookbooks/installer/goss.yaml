@@ -1,0 +1,9 @@
+file:
+  /usr/local/bin/yuseiito-dev-install:
+    exists: true
+    mode: "0755"
+    owner: root
+command:
+  # Check if it exists in PATH
+  which yuseiito-dev-install:
+    exit-status: 0

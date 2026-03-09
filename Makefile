@@ -40,3 +40,14 @@ dry-run-macos: dry-run-belle
 
 dry-run-%:
 	cd mitamae && DOTFILES_ROLE=$* bin/mitamae dry-run lib/custom_resources.rb roles/$*/default.rb
+
+
+.PHONY: clean
+clean:
+	@sudo rm  -f yuseiito-dev-live_*.raw\
+			 yuseiito-dev-live_*.vmlinuz\
+			 yuseiito-dev-live_*.efi\
+			 yuseiito-dev-live_*.initrd\
+			 initrd\
+			 initrd.cpio.zst
+	@sudo rm -rf debian-tools mkosi.cache

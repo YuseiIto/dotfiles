@@ -1,0 +1,59 @@
+#!/bin/bash
+set -euo pipefail
+
+TARGET_USER=ubuntu
+VARIANT=pine
+
+echo "==> Configuring user ${TARGET_USER}..."
+if ! id "${TARGET_USER}" > /dev/null 2>&1; then
+    useradd --uid 1000 -U -m -s /usr/bin/zsh "${TARGET_USER}"
+fi
+
+# Passwordless sudo
+mkdir -p /etc/sudoers.d
+echo "${TARGET_USER} ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/${TARGET_USER}
+chmod 0440 /etc/sudoers.d/${TARGET_USER}
+visudo -c -f /etc/sudoers.d/${TARGET_USER}
+
+# Copy dotfiles from $SRCDIR (always set by mkosi to the source tree root)
+DEST="/home/${TARGET_USER}/dotfiles"
+mkdir -p "${DEST}"
+cp -r "${SRCDIR}/." "${DEST}/"
+
+# Update package lists so mitamae can install packages from the chroot's apt sources.
+# Ensure universe, restricted, and multiverse repositories are enabled.
+if [ -f /etc/apt/sources.list.d/ubuntu.sources ]; then
+    sed -i 's/Components: main/Components: main universe restricted multiverse/g' /etc/apt/sources.list.d/ubuntu.sources
+elif [ -f /etc/apt/sources.list ]; then
+    # Add universe, restricted, multiverse if they're not there already
+    sed -i 's/main$/main universe restricted multiverse/g' /etc/apt/sources.list
+fi
+apt-get update
+
+# Run mitamae provisioning as root (sudo escalation is blocked in nspawn containers).
+# HOME must point to the target user's home so tools install to the right place.
+echo "==> Running mitamae provisioning for ${VARIANT}..."
+cd "${DEST}"
+HOME="/home/${TARGET_USER}" DOTFILES_ROLE="${VARIANT}" bash setup.sh
+
+# Fix ownership: mitamae runs as root but writes to the user's home directory.
+chown -R "${TARGET_USER}:${TARGET_USER}" "/home/${TARGET_USER}"
+
+# Fix permissions for security-sensitive directories if created during provisioning.
+for dir in .ssh .gnupg; do
+    if [ -d "/home/${TARGET_USER}/${dir}" ]; then
+        chmod 700 "/home/${TARGET_USER}/${dir}"
+        find "/home/${TARGET_USER}/${dir}" -type f -exec chmod 600 {} \;
+    fi
+done
+
+# Configure Cloud-init for first boot customization (e.g. Proxmox)
+mkdir -p /etc/cloud/cloud.cfg.d
+cat <<EOF > /etc/cloud/cloud.cfg.d/99_yuseiito.cfg
+# Custom cloud-init for yusei's dotfiles
+ssh_pwauth: true
+chpasswd:
+  list: |
+    ${TARGET_USER}:ubuntu
+  expire: False
+EOF

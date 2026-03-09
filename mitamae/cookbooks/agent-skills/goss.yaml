@@ -7,3 +7,19 @@ file:
   "{{.Env.HOME}}/.claude/skills/react-best-practices":
     exists: true
     filetype: directory
+  # Verify that squirrelscan/skills was installed
+  "{{.Env.HOME}}/.claude/skills/audit-website":
+    exists: true
+    filetype: directory
+  # Verify that ibelick/ui-skills was installed
+  "{{.Env.HOME}}/.claude/skills/baseline-ui":
+    exists: true
+    filetype: directory
+  # Verify that phuryn/pm-skills was installed
+  "{{.Env.HOME}}/.claude/skills/draft-nda":
+    exists: true
+    filetype: directory
+  # Verify that obra/superpowers was installed
+  "{{.Env.HOME}}/.claude/skills/brainstorming":
+    exists: true
+    filetype: directory

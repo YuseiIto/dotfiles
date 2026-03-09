@@ -5,7 +5,11 @@ npm_global_package 'skills'
 # Add new entries here to provision more skills at install time.
 # Actual SKILL.md files are NOT stored in this repo — they are fetched on demand.
 skill_sources = {
-  'vercel-labs/agent-skills' => 'react-best-practices'
+  'vercel-labs/agent-skills' => 'react-best-practices',
+  'squirrelscan/skills' => 'audit-website',
+  'ibelick/ui-skills' => 'baseline-ui',
+  'phuryn/pm-skills' => 'draft-nda',
+  'obra/superpowers' => 'brainstorming'
 }
 
 skill_sources.each do |source, marker|

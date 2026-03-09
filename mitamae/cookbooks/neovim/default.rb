@@ -52,6 +52,6 @@ template "#{home}/.config/nvim/lua/features.lua" do
 end
 
 execute 'Install neovim plugins via PackerSync' do
-  command 'nvim --headless +PackerSync +qa'
+  command 'PATH="/usr/local/bin:$PATH" nvim --headless +PackerSync +qa'
   not_if "test -d #{home}/.local/share/nvim/site/pack/packer/start/onedark.vim"
 end

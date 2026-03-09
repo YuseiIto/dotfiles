@@ -4,22 +4,22 @@ command:
     timeout: 5000
 file:
   # Verify that at least one skill from vercel-labs/agent-skills was installed
-  "{{.Env.HOME}}/.claude/skills/react-best-practices":
+  "{{.Env.HOME}}/.claude/skills/vercel-react-best-practices":
     exists: true
-    filetype: directory
+    filetype: symlink
   # Verify that squirrelscan/skills was installed
   "{{.Env.HOME}}/.claude/skills/audit-website":
     exists: true
-    filetype: directory
+    filetype: symlink
   # Verify that ibelick/ui-skills was installed
   "{{.Env.HOME}}/.claude/skills/baseline-ui":
     exists: true
-    filetype: directory
+    filetype: symlink
   # Verify that phuryn/pm-skills was installed
   "{{.Env.HOME}}/.claude/skills/draft-nda":
     exists: true
-    filetype: directory
+    filetype: symlink
   # Verify that obra/superpowers was installed
   "{{.Env.HOME}}/.claude/skills/brainstorming":
     exists: true
-    filetype: directory
+    filetype: symlink

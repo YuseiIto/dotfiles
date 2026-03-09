@@ -8,6 +8,7 @@ if node[:platform] == 'darwin'
         -o /usr/local/bin/goss
       chmod +x /usr/local/bin/goss
     EOC
+    user 'root'
     not_if 'command -v goss'
   end
 elsif %w[ubuntu debian].include?(node[:platform])

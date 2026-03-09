@@ -1,0 +1,9 @@
+command:
+  skills --version:
+    exit-status: 0
+    timeout: 5000
+file:
+  # Verify that at least one skill from vercel-labs/agent-skills was installed
+  "{{.Env.HOME}}/.claude/skills/react-best-practices":
+    exists: true
+    filetype: directory

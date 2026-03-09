@@ -33,10 +33,3 @@ format: mitamae/bin/rubocop
 
 shellcheck:
 	shellcheck setup.sh mitamae/bin/setup
-
-dry-run-linux: dry-run-plum dry-run-bamboo dry-run-pine
-
-dry-run-macos: dry-run-belle
-
-dry-run-%:
-	cd mitamae && DOTFILES_ROLE=$* bin/mitamae dry-run lib/custom_resources.rb roles/$*/default.rb

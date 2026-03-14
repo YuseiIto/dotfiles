@@ -12,5 +12,7 @@ elsif %w[ubuntu debian].include?(node[:platform])
     not_if 'test -f /etc/apt/sources.list.d/charm.list'
   end
 
-  package 'gum'
+  package 'gum' do
+    user 'root'
+  end
 end

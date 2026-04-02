@@ -49,6 +49,7 @@ include_recipe '../../cookbooks/gemini-cli'
 include_recipe '../../cookbooks/opencode'
 
 # Development Tools & LSPs
+include_recipe '../../cookbooks/corretto21'
 include_recipe '../../cookbooks/llvm'
 include_recipe '../../cookbooks/terraform-ls'
 include_recipe '../../cookbooks/pylsp'

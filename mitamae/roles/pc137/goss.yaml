@@ -22,6 +22,7 @@ gossfile:
   ../../cookbooks/claude-code/goss.yaml: {}
   ../../cookbooks/gemini-cli/goss.yaml: {}
   ../../cookbooks/opencode/goss.yaml: {}
+  ../../cookbooks/corretto21/goss.yaml: {}
   ../../cookbooks/llvm/goss.yaml: {}
   ../../cookbooks/terraform-ls/goss.yaml: {}
   ../../cookbooks/pylsp/goss.yaml: {}

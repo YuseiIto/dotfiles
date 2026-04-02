@@ -13,6 +13,7 @@ gossfile:
   ../../cookbooks/lazygit/goss.yaml: {}
   ../../cookbooks/cloudflared/goss.yaml: {}
   ../../cookbooks/awscli/goss.yaml: {}
+  ../../cookbooks/google-cloud-sdk/goss.yaml: {}
   ../../cookbooks/cfn-lint/goss.yaml: {}
   ../../cookbooks/gh/goss.yaml: {}
   ../../cookbooks/docker/goss.yaml: {}

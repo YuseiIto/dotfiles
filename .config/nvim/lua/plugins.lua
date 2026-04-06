@@ -84,7 +84,7 @@ packer.startup(
 
     if features.basic_amenities then
       -- Treesitter
-      use { "nvim-treesitter/nvim-treesitter", branch = 'master', lazy = false, build = ":TSUpdate" }
+      use { "nvim-treesitter/nvim-treesitter", branch = 'main', lazy = false, build = ":TSUpdate" }
       -- todo-comments
       use { 'folke/todo-comments.nvim',
         config = function()

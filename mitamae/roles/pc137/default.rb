@@ -63,6 +63,7 @@ include_recipe '../../cookbooks/goss'
 
 # macOS GUI
 include_recipe '../../cookbooks/feature_macos_fonts'
+include_recipe '../../cookbooks/feature_macos_media'
 include_recipe '../../cookbooks/slack'
 include_recipe '../../cookbooks/firefox'
 include_recipe '../../cookbooks/google-chrome'

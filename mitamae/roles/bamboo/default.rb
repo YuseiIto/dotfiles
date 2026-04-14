@@ -35,6 +35,7 @@ include_recipe '../../cookbooks/aider'
 include_recipe '../../cookbooks/claude-code'
 include_recipe '../../cookbooks/gemini-cli'
 include_recipe '../../cookbooks/opencode'
+include_recipe '../../cookbooks/agent-skills'
 
 # Data & Document Processing
 include_recipe '../../cookbooks/sqlite'

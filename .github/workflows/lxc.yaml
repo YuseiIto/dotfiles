@@ -38,7 +38,7 @@ jobs:
           rm "oras_${ORAS_VERSION}_linux_amd64.tar.gz"
 
       - name: Log in to the Container registry
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}

@@ -29,13 +29,13 @@ jobs:
         run: echo "name=${{ steps.owner.outputs.name }}/${{ steps.owner.outputs.name }}-dev" >> $GITHUB_OUTPUT
 
       - name: Set up QEMU for multi-arch build
-        uses: docker/setup-qemu-action@v3
+        uses: docker/setup-qemu-action@v4
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
 
       - name: Log in to the Container registry
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
@@ -53,7 +53,7 @@ jobs:
         run: echo "branch=${GITHUB_REF_NAME//\//-}" >> $GITHUB_OUTPUT
 
       - name: Build test image (amd64 only)
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v7
         with:
           context: .
           file: docker/Dockerfile.${{ matrix.variant }}
@@ -70,7 +70,7 @@ jobs:
 
       - name: Build and push (main)
         if: github.ref == 'refs/heads/main'
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v7
         with:
           context: .
           file: docker/Dockerfile.${{ matrix.variant }}
@@ -82,7 +82,7 @@ jobs:
 
       - name: Build and push (branch)
         if: github.ref != 'refs/heads/main'
-        uses: docker/build-push-action@v5
+        uses: docker/build-push-action@v7
         with:
           context: .
           file: docker/Dockerfile.${{ matrix.variant }}

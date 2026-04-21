@@ -1,0 +1,4 @@
+command:
+  kotlin-lsp --version:
+    exit-status: 0
+    timeout: 10000

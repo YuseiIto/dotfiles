@@ -31,4 +31,5 @@ gossfile:
   ../../cookbooks/biome/goss.yaml: {}
   ../../cookbooks/prisma-language-server/goss.yaml: {}
   ../../cookbooks/lua-language-server/goss.yaml: {}
+  ../../cookbooks/kotlin-lsp/goss.yaml: {}
   ../../cookbooks/cloc/goss.yaml: {}

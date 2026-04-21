@@ -58,6 +58,7 @@ include_recipe '../../cookbooks/typescript-language-server'
 include_recipe '../../cookbooks/biome'
 include_recipe '../../cookbooks/prisma-language-server'
 include_recipe '../../cookbooks/lua-language-server'
+include_recipe '../../cookbooks/kotlin-lsp'
 include_recipe '../../cookbooks/cloc'
 include_recipe '../../cookbooks/goss'
 

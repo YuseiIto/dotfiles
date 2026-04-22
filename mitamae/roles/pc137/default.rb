@@ -28,6 +28,7 @@ include_recipe '../../cookbooks/base_tools'
 include_recipe '../../cookbooks/binutils'
 include_recipe '../../cookbooks/starship'
 include_recipe '../../cookbooks/direnv'
+include_recipe '../../cookbooks/zoxide'
 include_recipe '../../cookbooks/lazygit'
 include_recipe '../../cookbooks/alacritty'
 

@@ -40,5 +40,9 @@ vim.lsp.enable('biome')
 -- https://github.com/prisma/language-tools
 vim.lsp.enable('prismals')
 
+-- Kotlin LSP
+-- https://github.com/Kotlin/kotlin-lsp
+vim.lsp.enable('kotlin_lsp')
+
 -- Rust
 vim.lsp.enable('rust_analyzer')

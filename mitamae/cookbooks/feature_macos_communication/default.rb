@@ -1,7 +1,8 @@
 # Chat and communication
+include_recipe '../slack'
+
 if node[:platform] == 'darwin'
   casks = %w[
-    slack
     discord
     keybase
   ]

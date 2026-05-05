@@ -3,6 +3,7 @@ goss_arch = node[:os_arch] == 'arm64' ? 'arm64' : 'amd64'
 
 if node[:platform] == 'darwin'
   execute 'install goss' do
+    user 'root'
     command <<~EOC
       curl -fsSL "https://github.com/goss-org/goss/releases/download/v#{goss_version}/goss-darwin-#{goss_arch}" \
         -o /usr/local/bin/goss

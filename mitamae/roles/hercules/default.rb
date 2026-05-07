@@ -30,6 +30,7 @@ include_recipe '../../cookbooks/starship'
 include_recipe '../../cookbooks/direnv'
 include_recipe '../../cookbooks/lazygit'
 include_recipe '../../cookbooks/alacritty'
+include_recipe '../../cookbooks/zoxide'
 
 # Networking & Security
 include_recipe '../../cookbooks/cloudflared'

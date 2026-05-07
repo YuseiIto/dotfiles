@@ -12,6 +12,7 @@ gossfile:
   ../../cookbooks/binutils/goss.yaml: {}
   ../../cookbooks/starship/goss.yaml: {}
   ../../cookbooks/direnv/goss.yaml: {}
+  ../../cookbooks/zoxide/goss.yaml: {}
   ../../cookbooks/lazygit/goss.yaml: {}
   ../../cookbooks/cloudflared/goss.yaml: {}
   ../../cookbooks/aria2/goss.yaml: {}

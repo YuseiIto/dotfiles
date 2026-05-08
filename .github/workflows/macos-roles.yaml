@@ -9,7 +9,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        role: [belle]
+        role: [belle, pc137, hercules]
 
     steps:
       - name: Checkout code

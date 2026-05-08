@@ -10,7 +10,7 @@ when 'ubuntu', 'debian'
 
   arch = node[:os_arch] == 'arm64' ? 'arm64' : 'x64'
   archive = "tree-sitter-linux-#{arch}.gz"
-  binary = "/usr/local/bin/tree-sitter"
+  binary = '/usr/local/bin/tree-sitter'
 
   execute "Install tree-sitter CLI #{tree_sitter_version}" do
     command <<~EOC

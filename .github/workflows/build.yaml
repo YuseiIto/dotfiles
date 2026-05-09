@@ -95,6 +95,7 @@ jobs:
 
 
   lxc:
+    name: LXC 🐧 [${{ matrix.variant }}]
     runs-on: ubuntu-latest
     strategy:
       matrix:

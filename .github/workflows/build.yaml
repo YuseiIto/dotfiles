@@ -8,7 +8,8 @@ env:
   IMAGE_NAME: ${{ github.repository_owner }}/yuseiito-dev
 
 jobs:
-  build-and-push:
+  docker:
+    name: Docker 🐳 [${{ matrix.variant }}]
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -45,6 +46,7 @@ jobs:
         id: vars
         if: github.ref == 'refs/heads/main'
         run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
 
       # Replace slashes in branch name to hyphens to ensure valid Docker tag
       - name: Sanitize branch name

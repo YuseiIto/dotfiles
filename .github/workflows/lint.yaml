@@ -1,10 +1,14 @@
-name: Check RuboCop
+name: Lint
 on:
   push:
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   rubocop:
+    name: RuboCop
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -17,3 +21,14 @@ jobs:
       - name: Run RuboCop
         run: bundle exec rubocop
         working-directory: mitamae
+
+  shellcheck:
+    name: ShellCheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ludeeus/action-shellcheck@2.0.0
+        with:
+          scandir: '.'
+          additional_files: 'mitamae/bin/setup'
+          ignore_names: '.zshrc entrypoint.sh'

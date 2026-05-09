@@ -1,0 +1,72 @@
+name: Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  devcontainer:
+      name: DevContainer
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout repository
+          uses: actions/checkout@v6
+
+        - name: Build and start Dev Container
+          uses: devcontainers/ci@v0.3
+          with:
+            runCmd: zsh -c "echo 'Dev container built and started successfully!'"
+
+  macos-smoke:
+      name: macOS [${{ matrix.role }}]
+      runs-on: macos-latest
+      strategy:
+        fail-fast: false
+        matrix:
+          role: [belle, pc137, hercules]
+
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v6
+
+        - name: Free disk space
+          run: |
+            df -h /
+            # Switch to CLI tools before removing Xcode apps
+            sudo xcode-select -s /Library/Developer/CommandLineTools
+            # Remove all Xcode app versions - ~38 GB
+            sudo rm -rf /Applications/Xcode*.app
+            # Remove Xcode simulator runtimes - ~51 GB
+            sudo rm -rf /Library/Developer/CoreSimulator
+            # Remove other Xcode developer files (keep CommandLineTools)
+            sudo rm -rf /Library/Developer/DeveloperDiskImages
+            sudo rm -rf /Library/Developer/CoreDevice
+            sudo rm -rf /Library/Developer/PrivateFrameworks
+            sudo rm -rf /Library/Developer/DeviceKit
+            df -h /
+
+        - name: Update Homebrew
+          # workaround: macOS runners ship with a stale Homebrew tap, causing
+          # 404 errors on casks whose upstream removed old versions (e.g. mactex).
+          run: brew update
+
+        - name: Run mitamae for role ${{ matrix.role }}
+          env:
+            DOTFILES_ROLE: ${{ matrix.role }}
+          run: |
+            ./setup.sh
+
+        - name: Validate role ${{ matrix.role }} with goss
+          env:
+            GOSS_USE_ALPHA: 1
+          run: |
+            zsh -c "goss --gossfile mitamae/roles/${{ matrix.role }}/goss.yaml validate"

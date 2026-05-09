@@ -1,11 +1,11 @@
-name: devcontainer (Branch)
+name: Test
 
 on:
   push:
 
 jobs:
-  test-devcontainer:
-      name: Test Dev Container
+   devcontainer:
+      name: DevContainer
       runs-on: ubuntu-latest
       steps:
         - name: Checkout repository

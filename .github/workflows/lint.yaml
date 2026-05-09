@@ -1,10 +1,11 @@
-name: Check RuboCop
+name: Lint
 on:
   push:
   pull_request:
 
 jobs:
   rubocop:
+    name: RuboCop
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code

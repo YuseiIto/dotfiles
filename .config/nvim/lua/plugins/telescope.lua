@@ -9,6 +9,7 @@ return {
     { "<leader>fg", function() require("telescope.builtin").live_grep() end },
     { "<leader>fb", function() require("telescope.builtin").buffers() end },
     { "<leader>fh", function() require("telescope.builtin").help_tags() end },
+    { "<leader>fr", "<cmd>Telescope resume<CR>", desc = "Resume the last finder." },
   },
   dependencies = { "nvim-lua/plenary.nvim" },
 }

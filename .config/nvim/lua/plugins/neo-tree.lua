@@ -4,7 +4,7 @@ return {
   "nvim-neo-tree/neo-tree.nvim",
   enabled = features.basic_amenities,
   branch = "v3.x",
-  cmd = "Neotree",
+  lazy = false,
   keys = {
     { "<C-n>", "<cmd>Neotree toggle reveal<CR>", desc = "Toggle file tree" },
   },
@@ -13,11 +13,6 @@ return {
     "nvim-tree/nvim-web-devicons",
     "MunifTanjim/nui.nvim",
   },
-  init = function()
-    -- Hijack netrw so opening a directory shows neo-tree
-    vim.g.loaded_netrw = 1
-    vim.g.loaded_netrwPlugin = 1
-  end,
   config = function()
     require("neo-tree").setup({
       filesystem = {

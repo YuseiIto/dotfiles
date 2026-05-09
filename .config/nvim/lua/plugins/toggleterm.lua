@@ -6,5 +6,20 @@ return {
   version = "*",
   cmd = { "ToggleTerm", "ToggleTermToggleAll" },
   keys = { "<leader>g" },
-  config = function() require("toggleterm").setup() end,
+  config = function()
+    require("toggleterm").setup()
+
+    local Terminal = require('toggleterm.terminal').Terminal
+    local lazygit  = Terminal:new({
+      cmd = "lazygit",
+      hidden = true,
+      direction = "float",
+    })
+
+    function _lazygit_toggle()
+      lazygit:toggle()
+    end
+
+    vim.keymap.set("n", "<leader>g", "<cmd>lua _lazygit_toggle()<CR>", { silent = true, desc= "Open lazygit on floating window."})
+  end,
 }

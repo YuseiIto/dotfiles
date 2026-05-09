@@ -23,7 +23,3 @@ require "color"    -- Colors
 if features.lsp then
 require "lsp/lsp"  -- LSP Configurations
 end
-
-if features.lazygit then
-require "lazygit"  -- Open lazygit
-end

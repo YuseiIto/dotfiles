@@ -18,6 +18,10 @@ return {
       -- Quit neovim when neo-tree window is the last one remaining.
       close_if_last_window = true,
       filesystem = {
+        -- Let the tree focus on the file opened in the current buffer.
+        follow_current_file = {
+          enabled = true,
+        },
         filtered_items = {
           -- Hide gitignored files to reduce libuv watchers and avoid EMFILE errors.
           -- Press 'H' to toggle visibility when needed.

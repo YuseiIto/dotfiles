@@ -6,6 +6,10 @@ on:
 env:
   REGISTRY: ghcr.io
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
   docker:
     name: Docker 🐳 [${{ matrix.variant }}]

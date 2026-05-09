@@ -14,9 +14,6 @@ jobs:
   docker:
     name: Docker 🐳 [${{ matrix.variant }}]
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
     strategy:
       matrix:
         variant: [pine, bamboo, plum]
@@ -99,9 +96,6 @@ jobs:
 
   lxc:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
     strategy:
       matrix:
         variant: [plum, bamboo, pine]

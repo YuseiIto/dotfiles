@@ -34,6 +34,22 @@ vim.lsp.config('ts_ls', {
 vim.lsp.enable('ts_ls')
 
 -- biome
+-- Fall back to the current file's directory so biome LSP attaches even in
+-- projects without biome.json (e.g. ad-hoc JSON editing).
+vim.lsp.config('biome', {
+  root_dir = function(bufnr, cb)
+    local fname = vim.api.nvim_buf_get_name(bufnr)
+    local markers = vim.fs.find(
+      { 'biome.json', 'biome.jsonc', 'package.json', '.git' },
+      { upward = true, path = vim.fs.dirname(fname) }
+    )
+    if #markers > 0 then
+      cb(vim.fs.dirname(markers[1]))
+    else
+      cb(vim.fs.dirname(fname))
+    end
+  end,
+})
 vim.lsp.enable('biome')
 
 -- prismals

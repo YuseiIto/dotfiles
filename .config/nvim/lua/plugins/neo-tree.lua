@@ -22,9 +22,13 @@ return {
     require("neo-tree").setup({
       filesystem = {
         filtered_items = {
-          visible = true,
+          -- Hide gitignored files to reduce libuv watchers and avoid EMFILE errors.
+          -- Press 'H' to toggle visibility when needed.
           hide_dotfiles = false,
-          hide_gitignored = false,
+          hide_gitignored = true,
+          hide_by_name = {
+            ".git",
+          },
         },
       }
     })

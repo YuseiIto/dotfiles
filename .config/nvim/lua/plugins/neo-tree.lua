@@ -21,14 +21,12 @@ return {
   config = function()
     require("neo-tree").setup({
       filesystem = {
-        hijack_netrw_behavior = "open_default",
         filtered_items = {
           visible = true,
           hide_dotfiles = false,
           hide_gitignored = false,
         },
-      },
-      window = { width = 40 },
+      }
     })
   end,
 }

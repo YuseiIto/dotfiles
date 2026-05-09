@@ -15,6 +15,8 @@ return {
   },
   config = function()
     require("neo-tree").setup({
+      -- Quit neovim when neo-tree window is the last one remaining.
+      close_if_last_window = true,
       filesystem = {
         filtered_items = {
           -- Hide gitignored files to reduce libuv watchers and avoid EMFILE errors.

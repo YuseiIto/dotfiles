@@ -1,5 +1,5 @@
 vim.g.mapleader = " "  -- Remap Leader to <Space>
-vim.opt.clipboard = "unnamed"  -- Share clipboard with system
+vim.opt.clipboard = "unnamedplus"  -- Share clipboard with system
 vim.opt.number = true      -- Display line number
 vim.opt.autoindent = true  -- Indent automatically
 vim.opt.hls = true         -- Highlight search

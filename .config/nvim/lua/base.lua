@@ -11,7 +11,18 @@ vim.opt.showmatch = true   -- Show matching parentheses
 vim.opt.history = 10000    -- Set the number of lines to be stored in the history
 vim.opt.smartindent = true -- Increase/decrease indent depending on the context
 vim.opt.signcolumn = "yes" -- Always show the sign column to avoid flickering
-vim.opt.listchars = "tab:>.,trail:_" -- Set control characters visible
+vim.opt.listchars = {
+  tab = '│ ',      -- Vertical bar for tabs (useful for indent guides)
+  multispace = '·', -- Subtle dots for multiple spaces
+  lead = ' ',       -- Keep leading spaces clean
+  trail = '·',      -- Show trailing whitespace clearly
+  nbsp = '␣',       -- Distinct character for non-breaking spaces
+  extends = '→',    -- Indicator for lines extending off-screen
+  precedes = '←',
+}
+vim.opt.tabstop = 4
+vim.opt.shiftwidth = 4
+vim.opt.expandtab = true
 vim.opt.list = true
 
 -- Remember the place of cursor

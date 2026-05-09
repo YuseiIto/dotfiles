@@ -6,12 +6,7 @@ require "lsp/languages"
 local function fn_format()
   vim.lsp.buf.format({ async = false })
 end
-
-vim.api.nvim_create_autocmd('LspAttach', {
-  callback = function()
-    vim.api.nvim_create_user_command("Format", fn_format, { nargs = 0 })
-  end
-})
+vim.api.nvim_create_user_command("Format", fn_format, { nargs = 0 })
 
 vim.keymap.set('n', 'K',  '<cmd>lua vim.lsp.buf.hover()<CR>')
 vim.keymap.set('n', 'gf', '<cmd>lua vim.lsp.buf.formatting()<CR>')

@@ -3,7 +3,7 @@ local features = require("features")
 return {
   "andweeb/presence.nvim",
   enabled = features.rich_presence,
-  event = "VeryLazy",
+  lazy = false,
   config = function()
     require("presence").setup({
       blacklist           = {},

@@ -3,13 +3,12 @@ goss_arch = node[:os_arch] == 'arm64' ? 'arm64' : 'amd64'
 
 if node[:platform] == 'darwin'
   execute 'install goss' do
-    user 'root'
     command <<~EOC
-      curl -fsSL "https://github.com/goss-org/goss/releases/download/v#{goss_version}/goss-darwin-#{goss_arch}" \
+      set -e
+      sudo curl -fsSL --create-dirs "https://github.com/goss-org/goss/releases/download/v#{goss_version}/goss-darwin-#{goss_arch}" \
         -o /usr/local/bin/goss
-      chmod +x /usr/local/bin/goss
+      sudo chmod +x /usr/local/bin/goss
     EOC
-    user 'root'
     not_if 'command -v goss'
   end
 elsif %w[ubuntu debian].include?(node[:platform])

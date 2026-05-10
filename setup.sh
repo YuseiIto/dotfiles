@@ -5,7 +5,7 @@ cd mitamae
 bin/setup
 
 # Determine the target role based on the DOTFILES_ROLE environment variable or the hostname
-LOWERCASE_HOSTNAME=$(hostname | tr '[:upper:]' '[:lower:]')
+LOWERCASE_HOSTNAME=$(hostname -s | tr '[:upper:]' '[:lower:]')
 
 # If DOTFILES_ROLE is set, use it; otherwise, use the lowercase hostname
 ROLE="${DOTFILES_ROLE:-$LOWERCASE_HOSTNAME}"

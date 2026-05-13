@@ -17,6 +17,13 @@ return {
     require("neo-tree").setup({
       -- Quit neovim when neo-tree window is the last one remaining.
       close_if_last_window = true,
+      window = {
+        mappings = {
+          ["v"] = "open_vsplit",
+          ["l"] = "open",
+          ["h"] = "close_node"
+        }
+      },
       filesystem = {
         -- Let the tree focus on the file opened in the current buffer.
         follow_current_file = {

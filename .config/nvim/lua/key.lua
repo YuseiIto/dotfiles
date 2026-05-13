@@ -20,3 +20,5 @@ vim.keymap.set('n', '<Tab><Tab>', 'gT')
 for i = 1, 9, 1 do
   vim.keymap.set('n', '<Tab>' .. i, i .. 'gt', { desc = string.format("Jump to %d-th tab.", i) })
 end
+
+vim.keymap.set('t', '<C-q>', '<C-\\><C-n>', { desc = 'Exit terminal mode' })

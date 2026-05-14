@@ -30,6 +30,7 @@ include_recipe '../../cookbooks/cfn-lint'
 
 # AI & Coding Assistants
 include_recipe '../../cookbooks/ollama'
+include_recipe '../../cookbooks/git-commit-claude'
 
 # Languages & Runtimes
 include_recipe '../../cookbooks/kotlin'

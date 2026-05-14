@@ -2,7 +2,13 @@
 # Generate a Git commit message draft with Claude, then open $EDITOR for review.
 # Usage: git commit-claude [extra hint...]
 #        git ccc [extra hint...]
+# Env vars:
+#   GIT_CCC_MODEL  (default: sonnet)  — claude --model alias or full name
+#   GIT_CCC_EFFORT (default: low)     — low|medium|high|xhigh|max
 set -euo pipefail
+
+: "${GIT_CCC_MODEL:=sonnet}"
+: "${GIT_CCC_EFFORT:=low}"
 
 if ! command -v claude >/dev/null 2>&1; then
   echo "git-commit-claude: 'claude' CLI not found in PATH" >&2
@@ -43,8 +49,12 @@ ${diff_content}"
 draft_file="$(git rev-parse --git-dir)/COMMIT_EDITMSG_CLAUDE"
 trap 'rm -f "$draft_file"' EXIT
 
-echo "git-commit-claude: generating draft with Claude..." >&2
-if ! claude -p "$prompt" >"$draft_file"; then
+echo "git-commit-claude: generating draft (model=$GIT_CCC_MODEL effort=$GIT_CCC_EFFORT)..." >&2
+if ! claude -p \
+    --model "$GIT_CCC_MODEL" \
+    --effort "$GIT_CCC_EFFORT" \
+    --no-session-persistence \
+    "$prompt" >"$draft_file"; then
   echo "git-commit-claude: claude CLI failed" >&2
   exit 1
 fi

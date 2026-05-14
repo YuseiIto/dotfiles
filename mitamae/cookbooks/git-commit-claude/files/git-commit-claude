@@ -1,0 +1,52 @@
+#!/bin/bash
+# Generate a Git commit message draft with Claude, then open $EDITOR for review.
+# Usage: git commit-claude [extra hint...]
+#        git ccc [extra hint...]
+set -euo pipefail
+
+if ! command -v claude >/dev/null 2>&1; then
+  echo "git-commit-claude: 'claude' CLI not found in PATH" >&2
+  exit 127
+fi
+
+if ! git rev-parse --git-dir >/dev/null 2>&1; then
+  echo "git-commit-claude: not inside a git repository" >&2
+  exit 1
+fi
+
+if git diff --cached --quiet; then
+  echo "git-commit-claude: no staged changes (use 'git add' first)" >&2
+  exit 1
+fi
+
+user_hint="${*:-}"
+diff_content="$(git diff --cached)"
+recent_log="$(git log -n 20 --pretty=format:'%s%n%n%b%n---' 2>/dev/null || true)"
+
+prompt="You are generating a Git commit message.
+
+Rules:
+- Match the LANGUAGE of the recent commits below (English/Japanese/etc). Do not switch languages.
+- Match the tone, prefix style (e.g. 'feat:', 'fix:'), and length conventions visible in those commits.
+- First line: <= 72 chars, imperative mood, no trailing period.
+- If the change is non-trivial, add a blank line and a short body explaining *why*.
+- Output ONLY the commit message — no code fences, no preamble, no quotes.
+
+Recent commits (style + language reference):
+${recent_log}
+
+${user_hint:+Additional user hint (incorporate if relevant): ${user_hint}}
+
+Staged diff:
+${diff_content}"
+
+draft_file="$(git rev-parse --git-dir)/COMMIT_EDITMSG_CLAUDE"
+trap 'rm -f "$draft_file"' EXIT
+
+echo "git-commit-claude: generating draft with Claude..." >&2
+if ! claude -p "$prompt" >"$draft_file"; then
+  echo "git-commit-claude: claude CLI failed" >&2
+  exit 1
+fi
+
+exec git commit -e -F "$draft_file"

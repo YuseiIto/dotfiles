@@ -12,6 +12,11 @@ if [ -d "$HOME/.nodenv" ]; then
   export PATH="$HOME/.nodenv/shims:$HOME/.nodenv/bin:${PATH}"
 fi
 
+# rbenv (Ruby version manager — shims expose ruby, gem, bundle, rubocop)
+if [ -d "$HOME/.rbenv" ]; then
+  export PATH="$HOME/.rbenv/shims:$HOME/.rbenv/bin:${PATH}"
+fi
+
 # Rust (cargo-installed binaries, rustc, cargo, etc.)
 if [ -d "$HOME/.cargo/bin" ]; then
   export PATH="$HOME/.cargo/bin:${PATH}"

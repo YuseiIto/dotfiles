@@ -36,6 +36,11 @@ if command -v nodenv > /dev/null 2>&1; then
   eval "$(nodenv init -)"
 fi
 
+# Initialize rbenv if it's installed
+if command -v rbenv > /dev/null 2>&1; then
+  eval "$(rbenv init - zsh)"
+fi
+
 # THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 if [ -d "$HOME/.sdkman" ]; then
   export SDKMAN_DIR="$HOME/.sdkman"

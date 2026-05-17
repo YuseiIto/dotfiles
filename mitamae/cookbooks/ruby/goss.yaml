@@ -1,0 +1,7 @@
+command:
+  rbenv --version:
+    exit-status: 0
+    timeout: 5000
+  ruby --version:
+    exit-status: 0
+    timeout: 5000

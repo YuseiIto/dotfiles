@@ -4,6 +4,8 @@ gossfile:
   ../../cookbooks/rust/goss.yaml: {}
   ../../cookbooks/uv/goss.yaml: {}
   ../../cookbooks/nodenv/goss.yaml: {}
+  ../../cookbooks/ruby/goss.yaml: {}
+  ../../cookbooks/dotfiles-utils/goss.yaml: {}
   ../../cookbooks/zsh/goss.yaml: {}
   ../../cookbooks/neovim/goss.yaml: {}
   ../../cookbooks/base_tools/goss.yaml: {}

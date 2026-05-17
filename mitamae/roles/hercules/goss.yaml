@@ -12,6 +12,7 @@ gossfile:
   ../../cookbooks/direnv/goss.yaml: {}
   ../../cookbooks/lazygit/goss.yaml: {}
   ../../cookbooks/zoxide/goss.yaml: {}
+  ../../cookbooks/fastfetch/goss.yaml: {}
   ../../cookbooks/cloudflared/goss.yaml: {}
   ../../cookbooks/nmap/goss.yaml: {}
   ../../cookbooks/awscli/goss.yaml: {}

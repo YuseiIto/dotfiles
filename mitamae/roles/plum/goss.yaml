@@ -6,3 +6,4 @@ gossfile:
   ../../cookbooks/git/goss.yaml: {}
   ../../cookbooks/tmux/goss.yaml: {}
   ../../cookbooks/direnv/goss.yaml: {}
+  ../../cookbooks/fastfetch/goss.yaml: {}

@@ -19,6 +19,8 @@ include_recipe '../plum'
 include_recipe '../../cookbooks/rust'
 include_recipe '../../cookbooks/uv'
 include_recipe '../../cookbooks/nodenv'
+include_recipe '../../cookbooks/ruby'
+include_recipe '../../cookbooks/dotfiles-utils'
 
 # Shell & Terminal
 include_recipe '../../cookbooks/starship'

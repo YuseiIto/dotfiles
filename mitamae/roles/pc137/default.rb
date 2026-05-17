@@ -31,6 +31,7 @@ include_recipe '../../cookbooks/direnv'
 include_recipe '../../cookbooks/zoxide'
 include_recipe '../../cookbooks/lazygit'
 include_recipe '../../cookbooks/alacritty'
+include_recipe '../../cookbooks/fastfetch'
 
 # Networking
 include_recipe '../../cookbooks/cloudflared'

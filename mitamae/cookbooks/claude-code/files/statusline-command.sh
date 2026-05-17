@@ -48,7 +48,7 @@ fmt_reset() {
 # Shorten $HOME to ~. usage: short_path <abs_path>
 short_path() {
   case "$1" in
-    "$HOME"*) printf '~%s' "${1#$HOME}" ;;
+    "$HOME"*) printf '~%s' "${1#"$HOME"}" ;;
     *)        printf '%s' "$1" ;;
   esac
 }

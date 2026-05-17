@@ -1,0 +1,10 @@
+command:
+  test -L "$HOME/.local/bin/git-commit-claude":
+    exit-status: 0
+    timeout: 5000
+  test -L "$HOME/.local/bin/git-ccc":
+    exit-status: 0
+    timeout: 5000
+  test -x "$HOME/.local/bin/git-commit-claude":
+    exit-status: 0
+    timeout: 5000

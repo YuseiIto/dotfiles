@@ -2,6 +2,11 @@
 # ~/.zshenv is sourced by zsh for ALL invocations: login, non-login, interactive, non-interactive.
 # Keep only PATH and environment variable exports here.
 
+# Force XDG default so macOS-aware tools (e.g. lazygit) use ~/.config instead of
+# ~/Library/Application Support. XDG_CONFIG_HOME defaults to ~/.config when unset,
+# so this is a no-op for tools that already check XDG.
+export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
+
 # nodenv
 if [ -d "$HOME/.nodenv" ]; then
   export PATH="$HOME/.nodenv/shims:$HOME/.nodenv/bin:${PATH}"

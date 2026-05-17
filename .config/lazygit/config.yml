@@ -1,0 +1,6 @@
+customCommands:
+  - key: '<c-a>'
+    context: 'files'
+    command: 'git ccc'
+    description: 'Generate commit message with Claude'
+    output: terminal

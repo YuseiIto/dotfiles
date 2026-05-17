@@ -2,3 +2,13 @@ command:
   claude --version:
     exit-status: 0
     timeout: 30000
+file:
+  "{{.Env.HOME}}/.claude/settings.json":
+    exists: true
+    filetype: symlink
+  "{{.Env.HOME}}/.claude/statusline-command.sh":
+    exists: true
+    filetype: symlink
+  "{{.Env.HOME}}/.claude/skills":
+    exists: true
+    filetype: symlink

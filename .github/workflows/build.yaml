@@ -18,12 +18,21 @@ permissions:
   packages: write
 
 jobs:
-  docker:
-    name: Docker 🐳 [${{ matrix.variant }}]
-    runs-on: ubuntu-latest
+  docker-build:
+    name: Docker 🐳 [${{ matrix.variant }}/${{ matrix.arch }}]
+    runs-on: ${{ matrix.runner }}
     strategy:
+      fail-fast: false
       matrix:
         variant: [pine, bamboo, plum]
+        arch: [amd64, arm64]
+        include:
+          - arch: amd64
+            platform: linux/amd64
+            runner: ubuntu-24.04
+          - arch: arm64
+            platform: linux/arm64
+            runner: ubuntu-24.04-arm
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
@@ -36,8 +45,78 @@ jobs:
         id: image_name
         run: echo "name=${{ steps.owner.outputs.name }}/${{ steps.owner.outputs.name }}-dev" >> $GITHUB_OUTPUT
 
-      - name: Set up QEMU for multi-arch build
-        uses: docker/setup-qemu-action@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v4
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build test image
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: docker/Dockerfile.${{ matrix.variant }}
+          platforms: ${{ matrix.platform }}
+          load: true
+          push: false
+          tags: test-${{ matrix.variant }}-${{ matrix.arch }}:local
+
+      - name: Run goss validation
+        run: |
+          home=$([[ "${{ matrix.variant }}" == "plum" ]] && echo "/home/debian" || echo "/home/ubuntu")
+          docker run --rm test-${{ matrix.variant }}-${{ matrix.arch }}:local \
+            goss --gossfile "${home}/dotfiles/mitamae/roles/${{ matrix.variant }}/goss.yaml" validate
+
+      - name: Build and push by digest
+        id: build
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: docker/Dockerfile.${{ matrix.variant }}
+          platforms: ${{ matrix.platform }}
+          outputs: type=image,name=${{ env.REGISTRY }}/${{ steps.image_name.outputs.name }},push-by-digest=true,name-canonical=true,push=true
+
+      - name: Export digest
+        run: |
+          mkdir -p "${RUNNER_TEMP}/digests"
+          digest="${{ steps.build.outputs.digest }}"
+          touch "${RUNNER_TEMP}/digests/${digest#sha256:}"
+
+      - name: Upload digest
+        uses: actions/upload-artifact@v4
+        with:
+          name: digests-${{ matrix.variant }}-${{ matrix.arch }}
+          path: ${{ runner.temp }}/digests/*
+          if-no-files-found: error
+          retention-days: 1
+
+  docker-merge:
+    name: Docker manifest 📦 [${{ matrix.variant }}]
+    needs: docker-build
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        variant: [pine, bamboo, plum]
+    steps:
+      - name: Set lower username
+        id: owner
+        run: echo "name=$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
+
+      - name: Set Image name
+        id: image_name
+        run: echo "name=${{ steps.owner.outputs.name }}/${{ steps.owner.outputs.name }}-dev" >> $GITHUB_OUTPUT
+
+      - name: Download digests
+        uses: actions/download-artifact@v4
+        with:
+          path: ${{ runner.temp }}/digests
+          pattern: digests-${{ matrix.variant }}-*
+          merge-multiple: true
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
@@ -54,51 +133,38 @@ jobs:
         if: github.ref == 'refs/heads/main'
         run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
 
-
       # Replace slashes in branch name to hyphens to ensure valid Docker tag
       - name: Sanitize branch name
         id: branch_name
         if: github.ref != 'refs/heads/main'
         run: echo "branch=${GITHUB_REF_NAME//\//-}" >> $GITHUB_OUTPUT
 
-      - name: Build test image (amd64 only)
-        uses: docker/build-push-action@v7
-        with:
-          context: .
-          file: docker/Dockerfile.${{ matrix.variant }}
-          platforms: linux/amd64
-          load: true
-          push: false
-          tags: test-${{ matrix.variant }}:local
-
-      - name: Run goss validation
-        run: |
-          home=$([[ "${{ matrix.variant }}" == "plum" ]] && echo "/home/debian" || echo "/home/ubuntu")
-          docker run --rm test-${{ matrix.variant }}:local \
-            goss --gossfile "${home}/dotfiles/mitamae/roles/${{ matrix.variant }}/goss.yaml" validate
-
-      - name: Build and push (main)
+      - name: Create manifest list and push (main)
         if: github.ref == 'refs/heads/main'
-        uses: docker/build-push-action@v7
-        with:
-          context: .
-          file: docker/Dockerfile.${{ matrix.variant }}
-          platforms: linux/amd64,linux/arm64
-          push: true
-          tags: |
-            ${{ env.REGISTRY }}/${{ steps.image_name.outputs.name }}:${{ matrix.variant }}-latest
-            ${{ env.REGISTRY }}/${{ steps.image_name.outputs.name }}:${{ matrix.variant }}-${{ steps.vars.outputs.sha_short }}
+        working-directory: ${{ runner.temp }}/digests
+        env:
+          IMAGE_REF: ${{ env.REGISTRY }}/${{ steps.image_name.outputs.name }}
+          VARIANT: ${{ matrix.variant }}
+          SHA: ${{ steps.vars.outputs.sha_short }}
+        run: |
+          # shellcheck disable=SC2046
+          docker buildx imagetools create \
+            -t "${IMAGE_REF}:${VARIANT}-latest" \
+            -t "${IMAGE_REF}:${VARIANT}-${SHA}" \
+            $(printf "${IMAGE_REF}@sha256:%s " *)
 
-      - name: Build and push (branch)
+      - name: Create manifest list and push (branch)
         if: github.ref != 'refs/heads/main'
-        uses: docker/build-push-action@v7
-        with:
-          context: .
-          file: docker/Dockerfile.${{ matrix.variant }}
-          platforms: linux/amd64,linux/arm64
-          push: true
-          tags: |
-            ${{ env.REGISTRY }}/${{ steps.image_name.outputs.name }}:${{ matrix.variant }}-${{ steps.branch_name.outputs.branch }}
+        working-directory: ${{ runner.temp }}/digests
+        env:
+          IMAGE_REF: ${{ env.REGISTRY }}/${{ steps.image_name.outputs.name }}
+          VARIANT: ${{ matrix.variant }}
+          BRANCH: ${{ steps.branch_name.outputs.branch }}
+        run: |
+          # shellcheck disable=SC2046
+          docker buildx imagetools create \
+            -t "${IMAGE_REF}:${VARIANT}-${BRANCH}" \
+            $(printf "${IMAGE_REF}@sha256:%s " *)
 
 
   lxc:

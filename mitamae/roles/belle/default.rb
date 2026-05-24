@@ -96,6 +96,7 @@ include_recipe '../../cookbooks/processing'
 include_recipe '../../cookbooks/postico'
 include_recipe '../../cookbooks/stoplight-studio'
 include_recipe '../../cookbooks/flatcam'
+include_recipe '../../cookbooks/affinity'
 
 # Development Tools & LSPs
 include_recipe '../../cookbooks/llvm'

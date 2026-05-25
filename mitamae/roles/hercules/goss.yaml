@@ -17,6 +17,8 @@ gossfile:
   ../../cookbooks/nmap/goss.yaml: {}
   ../../cookbooks/awscli/goss.yaml: {}
   ../../cookbooks/cfn-lint/goss.yaml: {}
+  ../../cookbooks/yamllint/goss.yaml: {}
+  ../../cookbooks/ansible-lint/goss.yaml: {}
   ../../cookbooks/gh/goss.yaml: {}
   ../../cookbooks/ollama/goss.yaml: {}
   ../../cookbooks/huggingface-cli/goss.yaml: {}

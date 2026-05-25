@@ -42,6 +42,8 @@ include_recipe '../../cookbooks/nikto'
 # Cloud & DevOps
 include_recipe '../../cookbooks/awscli'
 include_recipe '../../cookbooks/cfn-lint'
+include_recipe '../../cookbooks/yamllint'
+include_recipe '../../cookbooks/ansible-lint'
 include_recipe '../../cookbooks/gh'
 
 # AI & Coding Assistants

@@ -298,5 +298,6 @@
   },
   "effortLevel": "xhigh",
   "theme": "dark",
-  "agentPushNotifEnabled": true
+  "agentPushNotifEnabled": true,
+  "skipAutoPermissionPrompt": true
 }

@@ -296,7 +296,7 @@
       }
     }
   },
-  "effortLevel": "high",
+  "effortLevel": "xhigh",
   "theme": "dark",
   "agentPushNotifEnabled": true
 }

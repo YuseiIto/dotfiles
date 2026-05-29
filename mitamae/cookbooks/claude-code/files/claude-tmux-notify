@@ -1,0 +1,48 @@
+#!/bin/sh
+# Manage @claude_notif tmux window option from Claude Code hook events.
+# State lives entirely in tmux user options on the pane/window:
+#   @claude_main_sid (pane option)  : main CC session id captured at SessionStart
+#   @claude_notif    (window option): boolean flag read by tmux window-status-format
+#
+# Subcommands (invoked from settings.json hooks):
+#   capture-main    — SessionStart                       : record main, clear stale flag
+#   notify-if-main  — Notification                       : raise [!] for any CC session in this pane
+#   clear           — UserPromptSubmit                   : lower [!]
+#   clear-if-main   — PreToolUse / PermissionDenied      : lower [!] when main resolves a pending notification
+#   session-end     — SessionEnd                         : drop both flags when main exits
+#
+# Bias: prefer false-positive over false-negative. Subagent activity is NOT gated
+# out — missing a real user-input prompt is worse than an occasional spurious [!].
+
+[ -n "$TMUX_PANE" ] || exit 0
+PANE="$TMUX_PANE"
+
+case "${1:?usage: capture-main|notify-if-main|clear|clear-if-main|session-end}" in
+  capture-main)
+    sid=$(jq -r '.session_id') || exit 0
+    [ -n "$sid" ] && [ "$sid" != "null" ] || exit 0
+    tmux set-option -t "$PANE" -p @claude_main_sid "$sid" >/dev/null
+    tmux set-option -uw -t "$PANE" @claude_notif 2>/dev/null || true
+    ;;
+  notify-if-main)
+    tmux set-option -t "$PANE" -w @claude_notif 1 >/dev/null
+    ;;
+  clear)
+    tmux set-option -uw -t "$PANE" @claude_notif 2>/dev/null || true
+    ;;
+  clear-if-main)
+    # Fast path: no flag set → no jq spawn (this hook fires on every PreToolUse)
+    [ -n "$(tmux show-options -wqv -t "$PANE" @claude_notif)" ] || exit 0
+    main=$(tmux show-options -pqv -t "$PANE" @claude_main_sid)
+    [ -n "$main" ] || exit 0
+    [ "$(jq -r '.session_id')" = "$main" ] || exit 0
+    tmux set-option -uw -t "$PANE" @claude_notif 2>/dev/null || true
+    ;;
+  session-end)
+    main=$(tmux show-options -pqv -t "$PANE" @claude_main_sid)
+    [ -n "$main" ] || exit 0
+    [ "$(jq -r '.session_id')" = "$main" ] || exit 0
+    tmux set-option -uw -t "$PANE" @claude_notif 2>/dev/null || true
+    tmux set-option -up -t "$PANE" @claude_main_sid 2>/dev/null || true
+    ;;
+esac

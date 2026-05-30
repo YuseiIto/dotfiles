@@ -1,0 +1,13 @@
+#!/bin/sh
+# Raise @claude_notif tmux window option when Claude Code needs user input.
+# Cleared by tmux pane-focus-in / after-select-window hooks (see tmux.conf).
+# Skipped when this pane is already active in tmux — the user is looking,
+# so raising would be moot, and pane-focus-in wouldn't fire to clear it
+# until focus actually moves.
+
+[ -n "$TMUX_PANE" ] || exit 0
+
+active=$(tmux display-message -p -t "$TMUX_PANE" '#{pane_active}' 2>/dev/null)
+[ "$active" = "1" ] && exit 0
+
+tmux set-option -t "$TMUX_PANE" -w @claude_notif 1 >/dev/null

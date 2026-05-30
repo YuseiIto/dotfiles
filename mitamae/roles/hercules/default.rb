@@ -79,6 +79,7 @@ include_recipe '../../cookbooks/freecad'
 include_recipe '../../cookbooks/openscad'
 include_recipe '../../cookbooks/processing'
 include_recipe '../../cookbooks/postico'
+include_recipe '../../cookbooks/affinity'
 
 # Development Tools & LSPs
 include_recipe '../../cookbooks/llvm'

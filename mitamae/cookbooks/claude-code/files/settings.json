@@ -206,6 +206,7 @@
       "Bash(cargo install *)"
     ]
   },
+  "model": "opus",
   "hooks": {
     "Notification": [
       {
@@ -218,7 +219,6 @@
       }
     ]
   },
-  "model": "opus",
   "statusLine": {
     "type": "command",
     "command": "sh ~/.claude/statusline-command.sh"
@@ -236,7 +236,11 @@
     "rust-analyzer-lsp@claude-plugins-official": true,
     "context7@claude-plugins-official": true,
     "typescript-lsp@claude-plugins-official": true,
-    "kotlin-lsp@claude-plugins-official": true
+    "kotlin-lsp@claude-plugins-official": true,
+    "frontend-design@claude-plugins-official": true,
+    "playground@claude-plugins-official": true,
+    "playwright@claude-plugins-official": true,
+    "pyright-lsp@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "pm-skills": {

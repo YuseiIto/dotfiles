@@ -12,3 +12,9 @@ file:
   "{{.Env.HOME}}/.claude/skills":
     exists: true
     filetype: symlink
+  "{{.Env.HOME}}/.claude/CLAUDE.md":
+    exists: true
+    filetype: symlink
+  "{{.Env.HOME}}/.claude/rules":
+    exists: true
+    filetype: symlink

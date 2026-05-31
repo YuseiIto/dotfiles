@@ -21,7 +21,7 @@ elsif %w[ubuntu debian].include?(node[:platform])
   end
 end
 
-%w[settings.json statusline-command.sh skills claude-tmux-notify].each do |entry|
+%w[settings.json statusline-command.sh skills claude-tmux-notify CLAUDE.md rules].each do |entry|
   claude_dotfile entry do
     cookbook_dir File.dirname(__FILE__)
   end

@@ -1,4 +1,4 @@
-global_ruby_version = '4.0.4'
+global_ruby_version = '4.0.5'
 
 home = ENV['HOME']
 rbenv_root = "#{home}/.rbenv"

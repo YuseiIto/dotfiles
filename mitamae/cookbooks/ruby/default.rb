@@ -18,12 +18,14 @@ cross_platform_package 'ruby-build'
 # from source, so the Debian/Ubuntu containers need a C toolchain plus the
 # usual development headers. The minimal CI images only ship curl/tar, so
 # without these `rbenv install` fails. List mirrors ruby-build's documented
-# "Suggested build environment" for Ubuntu/Debian.
+# "Suggested build environment" for Ubuntu/Debian (rustc is for YJIT).
+# ref: https://github.com/rbenv/ruby-build/wiki#suggested-build-environment
 if %w[ubuntu debian].include?(node[:platform])
   %w[
+    build-essential
     autoconf
     patch
-    build-essential
+    rustc
     libssl-dev
     libyaml-dev
     libreadline-dev
@@ -33,7 +35,6 @@ if %w[ubuntu debian].include?(node[:platform])
     libffi-dev
     libgdbm-dev
     libdb-dev
-    uuid-dev
   ].each do |dep|
     package dep do
       user 'root'

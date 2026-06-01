@@ -206,7 +206,6 @@
       "Bash(cargo install *)"
     ]
   },
-  "model": "opus",
   "hooks": {
     "Notification": [
       {

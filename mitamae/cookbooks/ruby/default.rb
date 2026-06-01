@@ -1,4 +1,4 @@
-global_ruby_version = '4.0.4'
+global_ruby_version = '4.0.5'
 
 home = ENV['HOME']
 rbenv_root = "#{home}/.rbenv"
@@ -14,10 +14,36 @@ end
 cross_platform_package 'rbenv'
 cross_platform_package 'ruby-build'
 
-# Overlay ruby-build as an rbenv plugin so we get upstream-fresh Ruby definitions.
-# rbenv prefers the plugin over the system-installed ruby-build, so the latest
-# Ruby releases are available even when the distro package lags.
+# ruby-build compiles Ruby (and, when the system OpenSSL is too old, OpenSSL)
+# from source, so the Debian/Ubuntu containers need a C toolchain plus the
+# usual development headers. The minimal CI images only ship curl/tar, so
+# without these `rbenv install` fails. List mirrors ruby-build's documented
+# "Suggested build environment" for Ubuntu/Debian (rustc is for YJIT).
+# ref: https://github.com/rbenv/ruby-build/wiki#suggested-build-environment
 if %w[ubuntu debian].include?(node[:platform])
+  %w[
+    build-essential
+    autoconf
+    patch
+    rustc
+    libssl-dev
+    libyaml-dev
+    libreadline-dev
+    zlib1g-dev
+    libgmp-dev
+    libncurses-dev
+    libffi-dev
+    libgdbm-dev
+    libdb-dev
+  ].each do |dep|
+    package dep do
+      user 'root'
+    end
+  end
+
+  # Overlay ruby-build as an rbenv plugin so we get upstream-fresh Ruby
+  # definitions. rbenv prefers the plugin over the system-installed ruby-build,
+  # so the latest Ruby releases are available even when the distro package lags.
   directory "#{rbenv_root}/plugins" do
     action :create
   end

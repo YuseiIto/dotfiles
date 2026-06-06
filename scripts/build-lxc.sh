@@ -17,9 +17,9 @@ case "${VARIANT}" in
     COMPONENTS=main,non-free
     ;;
   bamboo | pine)
-    SUITE=noble
+    SUITE=resolute
     OS=ubuntu
-    RELEASE=24.04
+    RELEASE=26.04
     TARGET_USER=ubuntu
     COMPONENTS=main,universe,multiverse
     ;;

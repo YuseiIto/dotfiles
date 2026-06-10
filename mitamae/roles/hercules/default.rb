@@ -43,6 +43,7 @@ include_recipe '../../cookbooks/nmap'
 include_recipe '../../cookbooks/awscli'
 include_recipe '../../cookbooks/cfn-lint'
 include_recipe '../../cookbooks/gh'
+include_recipe '../../cookbooks/docker'
 
 # AI & Coding Assistants
 include_recipe '../../cookbooks/ollama'

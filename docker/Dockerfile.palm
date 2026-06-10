@@ -1,4 +1,4 @@
-FROM debian:bookworm-slim@sha256:0104b334637a5f19aa9c983a91b54c89887c0984081f2068983107a6f6c21eeb
+FROM ubuntu:24.04@sha256:786a8b558f7be160c6c8c4a54f9a57274f3b4fb1491cf65146521ae77ff1dc54
 
 LABEL org.opencontainers.image.source=https://github.com/yuseiito/dotfiles
 LABEL org.opencontainers.image.description="Yusei's dotfiles Container. Variant `palm`"
@@ -11,36 +11,31 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && \
     apt-get install -y sudo curl ca-certificates tar
 
-# Allow passwordless sudo for the debian user
-ARG USER_UID=1000
-ARG USER_GID=$USER_UID
-RUN groupadd --gid $USER_GID debian && \
-    useradd --uid $USER_UID --gid $USER_GID -m -s /bin/bash debian && \
-    echo "debian ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/debian && \
-    chmod 0440 /etc/sudoers.d/debian
+# Allow passwordless sudo for the ubuntu user
+RUN echo "ubuntu ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/ubuntu && \
+    chmod 0440 /etc/sudoers.d/ubuntu
 
-
-USER debian
-ENV HOME=/home/debian
-ENV USER=debian
-ENV LOGNAME=debian
+USER ubuntu
+ENV HOME=/home/ubuntu
+ENV USER=ubuntu
+ENV LOGNAME=ubuntu
 ENV LANG=C.UTF-8
 ENV TZ=Asia/Tokyo
+# palm omits zsh; the runtime PATH is exposed shell-agnostically via ~/.shell-env.sh and bash.
 ENV SHELL=/usr/bin/bash
 
-COPY --chown=debian:debian ./ /home/debian/dotfiles/
-WORKDIR /home/debian/dotfiles/
+COPY --chown=ubuntu:ubuntu ./ /home/ubuntu/dotfiles/
+WORKDIR /home/ubuntu/dotfiles/
 
-RUN sudo apt-get update
 
 ENV DOTFILES_ROLE=palm
-RUN bash ./setup.sh && \
+RUN bash setup.sh && \
     sudo install -m 755 docker/entrypoint.palm.sh /usr/local/bin/entrypoint.sh
 
-WORKDIR /home/debian
+WORKDIR /home/ubuntu
 
 HEALTHCHECK --interval=60s --timeout=30s --start-period=5s --retries=3 \
-    CMD ["/usr/local/bin/entrypoint.sh", "goss", "--gossfile", "/home/debian/dotfiles/mitamae/roles/palm/goss.yaml", "validate"]
+    CMD ["/usr/local/bin/entrypoint.sh", "goss", "--gossfile", "/home/ubuntu/dotfiles/mitamae/roles/palm/goss.yaml", "validate"]
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 CMD ["/usr/bin/bash"]

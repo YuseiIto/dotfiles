@@ -74,7 +74,7 @@ jobs:
       - name: Run goss validation
         run: |
           case "${{ matrix.variant }}" in
-            plum|palm) home="/home/debian" ;;
+            plum) home="/home/debian" ;;
             *) home="/home/ubuntu" ;;
           esac
           docker run --rm test-${{ matrix.variant }}:local \

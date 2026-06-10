@@ -12,6 +12,7 @@ gossfile:
   ../../cookbooks/rust/goss.yaml: {}
   ../../cookbooks/ocaml/goss.yaml: {}
   ../../cookbooks/sdkman/goss.yaml: {}
+  ../../cookbooks/corretto21/goss.yaml: {}
   ../../cookbooks/kotlin/goss.yaml: {}
   ../../cookbooks/cmake/goss.yaml: {}
   ../../cookbooks/llvm/goss.yaml: {}

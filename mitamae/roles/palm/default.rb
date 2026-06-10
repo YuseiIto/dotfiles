@@ -30,7 +30,7 @@ include_recipe '../../cookbooks/uv'
 include_recipe '../../cookbooks/rust'
 include_recipe '../../cookbooks/ocaml'
 include_recipe '../../cookbooks/sdkman'
-include_recipe '../../cookbooks/java'
+include_recipe '../../cookbooks/corretto21'
 include_recipe '../../cookbooks/kotlin'
 include_recipe '../../cookbooks/tree-sitter'
 

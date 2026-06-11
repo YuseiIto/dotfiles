@@ -45,6 +45,20 @@ jobs:
         id: image_name
         run: echo "name=${{ steps.owner.outputs.name }}/${{ steps.owner.outputs.name }}-dev" >> $GITHUB_OUTPUT
 
+      - name: Docker metadata
+        id: meta
+        uses: docker/metadata-action@v6
+        with:
+          images: ${{ env.REGISTRY }}/${{ steps.image_name.outputs.name }}
+          flavor: |
+            latest=false
+            prefix=${{ matrix.variant }}-,onlatest=true
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=sha,enable={{is_default_branch}}
+            type=raw,value=latest,enable={{is_default_branch}}
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
 
@@ -64,10 +78,14 @@ jobs:
           load: true
           push: false
           tags: test-${{ matrix.variant }}-${{ matrix.arch }}:local
+          cache-from: type=gha,scope=${{ matrix.variant }}-${{ matrix.arch }}
 
       - name: Run goss validation
         run: |
-          home=$([[ "${{ matrix.variant }}" == "plum" ]] && echo "/home/debian" || echo "/home/ubuntu")
+          case "${{ matrix.variant }}" in
+            plum) home="/home/debian" ;;
+            *) home="/home/ubuntu" ;;
+          esac
           docker run --rm test-${{ matrix.variant }}-${{ matrix.arch }}:local \
             goss --gossfile "${home}/dotfiles/mitamae/roles/${{ matrix.variant }}/goss.yaml" validate
 
@@ -78,7 +96,10 @@ jobs:
           context: .
           file: docker/Dockerfile.${{ matrix.variant }}
           platforms: ${{ matrix.platform }}
+          labels: ${{ steps.meta.outputs.labels }}
           outputs: type=image,name=${{ env.REGISTRY }}/${{ steps.image_name.outputs.name }},push-by-digest=true,name-canonical=true,push=true
+          cache-from: type=gha,scope=${{ matrix.variant }}-${{ matrix.arch }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.variant }}-${{ matrix.arch }}
 
       - name: Export digest
         run: |
@@ -87,7 +108,7 @@ jobs:
           touch "${RUNNER_TEMP}/digests/${digest#sha256:}"
 
       - name: Upload digest
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: digests-${{ matrix.variant }}-${{ matrix.arch }}
           path: ${{ runner.temp }}/digests/*
@@ -112,11 +133,29 @@ jobs:
         run: echo "name=${{ steps.owner.outputs.name }}/${{ steps.owner.outputs.name }}-dev" >> $GITHUB_OUTPUT
 
       - name: Download digests
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           path: ${{ runner.temp }}/digests
           pattern: digests-${{ matrix.variant }}-*
           merge-multiple: true
+
+      - name: Docker metadata
+        id: meta
+        uses: docker/metadata-action@v6
+        with:
+          images: ${{ env.REGISTRY }}/${{ steps.image_name.outputs.name }}
+          flavor: |
+            latest=false
+            prefix=${{ matrix.variant }}-,onlatest=true
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=sha,enable={{is_default_branch}}
+            type=raw,value=latest,enable={{is_default_branch}}
+        env:
+          # Annotations attach to the manifest list assembled in this job; the
+          # per-arch digest images carry OCI labels from the build job instead.
+          DOCKER_METADATA_ANNOTATIONS_LEVELS: index
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
@@ -128,43 +167,21 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract short commit SHA
-        id: vars
-        if: github.ref == 'refs/heads/main'
-        run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
-
-      # Replace slashes in branch name to hyphens to ensure valid Docker tag
-      - name: Sanitize branch name
-        id: branch_name
-        if: github.ref != 'refs/heads/main'
-        run: echo "branch=${GITHUB_REF_NAME//\//-}" >> $GITHUB_OUTPUT
-
-      - name: Create manifest list and push (main)
-        if: github.ref == 'refs/heads/main'
+      - name: Create manifest list and push
         working-directory: ${{ runner.temp }}/digests
         env:
           IMAGE_REF: ${{ env.REGISTRY }}/${{ steps.image_name.outputs.name }}
-          VARIANT: ${{ matrix.variant }}
-          SHA: ${{ steps.vars.outputs.sha_short }}
+          METADATA_JSON: ${{ steps.meta.outputs.json }}
         run: |
-          # shellcheck disable=SC2046
-          docker buildx imagetools create \
-            -t "${IMAGE_REF}:${VARIANT}-latest" \
-            -t "${IMAGE_REF}:${VARIANT}-${SHA}" \
-            $(printf "${IMAGE_REF}@sha256:%s " *)
+          mapfile -t tags < <(jq -r '.tags[]' <<< "$METADATA_JSON")
+          mapfile -t annotations < <(jq -r '.annotations[]' <<< "$METADATA_JSON")
 
-      - name: Create manifest list and push (branch)
-        if: github.ref != 'refs/heads/main'
-        working-directory: ${{ runner.temp }}/digests
-        env:
-          IMAGE_REF: ${{ env.REGISTRY }}/${{ steps.image_name.outputs.name }}
-          VARIANT: ${{ matrix.variant }}
-          BRANCH: ${{ steps.branch_name.outputs.branch }}
-        run: |
-          # shellcheck disable=SC2046
-          docker buildx imagetools create \
-            -t "${IMAGE_REF}:${VARIANT}-${BRANCH}" \
-            $(printf "${IMAGE_REF}@sha256:%s " *)
+          create_args=()
+          for tag in "${tags[@]}"; do create_args+=(--tag "$tag"); done
+          for annotation in "${annotations[@]}"; do create_args+=(--annotation "$annotation"); done
+          for digest in *; do create_args+=("${IMAGE_REF}@sha256:${digest}"); done
+
+          docker buildx imagetools create "${create_args[@]}"
 
 
   lxc:

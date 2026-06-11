@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        variant: [pine, bamboo, plum]
+        variant: [pine, bamboo, plum, palm]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
@@ -73,7 +73,10 @@ jobs:
 
       - name: Run goss validation
         run: |
-          home=$([[ "${{ matrix.variant }}" == "plum" ]] && echo "/home/debian" || echo "/home/ubuntu")
+          case "${{ matrix.variant }}" in
+            plum) home="/home/debian" ;;
+            *) home="/home/ubuntu" ;;
+          esac
           docker run --rm test-${{ matrix.variant }}:local \
             goss --gossfile "${home}/dotfiles/mitamae/roles/${{ matrix.variant }}/goss.yaml" validate
 

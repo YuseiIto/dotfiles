@@ -1,3 +1,5 @@
+include_recipe '../shell-env'
+
 # Install zsh
 if node[:platform] == 'darwin'
   package 'zsh'

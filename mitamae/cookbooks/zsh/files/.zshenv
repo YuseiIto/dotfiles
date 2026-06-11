@@ -1,41 +1,5 @@
 #!/bin/zsh
 # ~/.zshenv is sourced by zsh for ALL invocations: login, non-login, interactive, non-interactive.
-# Keep only PATH and environment variable exports here.
-
-# Force XDG default so macOS-aware tools (e.g. lazygit) use ~/.config instead of
-# ~/Library/Application Support. XDG_CONFIG_HOME defaults to ~/.config when unset,
-# so this is a no-op for tools that already check XDG.
-export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
-
-# nodenv
-if [ -d "$HOME/.nodenv" ]; then
-  export PATH="$HOME/.nodenv/shims:$HOME/.nodenv/bin:${PATH}"
-fi
-
-# rbenv (Ruby version manager — shims expose ruby, gem, bundle, rubocop)
-if [ -d "$HOME/.rbenv" ]; then
-  export PATH="$HOME/.rbenv/shims:$HOME/.rbenv/bin:${PATH}"
-fi
-
-# Rust (cargo-installed binaries, rustc, cargo, etc.)
-if [ -d "$HOME/.cargo/bin" ]; then
-  export PATH="$HOME/.cargo/bin:${PATH}"
-fi
-
-# uv-based tools and other user-local binaries (uv, aider, hf, pylsp, etc.)
-if [ -d "$HOME/.local/bin" ]; then
-  export PATH="$HOME/.local/bin:${PATH}"
-fi
-
-# sdkman-managed tools (kotlin, java, etc.)
-if [ -d "$HOME/.sdkman/candidates" ]; then
-  for candidate_dir in "$HOME/.sdkman/candidates"/*/current/bin; do
-    [ -d "$candidate_dir" ] && PATH="${candidate_dir}:${PATH}"
-  done
-  export PATH
-fi
-
-# MySQL client (keg-only on Homebrew, not symlinked by default)
-if [ -d "/opt/homebrew/opt/mysql-client/bin" ]; then
-  export PATH="/opt/homebrew/opt/mysql-client/bin:${PATH}"
-fi
+# PATH and environment exports live in the shell-agnostic ~/.shell-env.sh (shared with bash),
+# symlinked by the shell-env cookbook.
+[ -f "$HOME/.shell-env.sh" ] && . "$HOME/.shell-env.sh"

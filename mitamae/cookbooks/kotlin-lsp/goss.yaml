@@ -1,3 +1,4 @@
 command:
+  kotlin-lsp --help:
     exit-status: 0
     timeout: 60000

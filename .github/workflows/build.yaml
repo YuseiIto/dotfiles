@@ -97,7 +97,10 @@ jobs:
           file: docker/Dockerfile.${{ matrix.variant }}
           platforms: ${{ matrix.platform }}
           labels: ${{ steps.meta.outputs.labels }}
-          outputs: type=image,name=${{ env.REGISTRY }}/${{ steps.image_name.outputs.name }},push-by-digest=true,name-canonical=true,push=true
+          # oci-mediatypes=true ensures the per-arch images (and the index merged
+          # from them) are OCI, so GHCR honors the index-level description
+          # annotation set in docker-merge. Ref: docker/build-push-action#1022
+          outputs: type=image,name=${{ env.REGISTRY }}/${{ steps.image_name.outputs.name }},oci-mediatypes=true,push-by-digest=true,name-canonical=true,push=true
           cache-from: type=gha,scope=${{ matrix.variant }}-${{ matrix.arch }}
           cache-to: type=gha,mode=max,scope=${{ matrix.variant }}-${{ matrix.arch }}
 

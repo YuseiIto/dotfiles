@@ -1,3 +1,4 @@
+# shellcheck shell=sh
 # Shared shell environment: PATH and exported variables, sourced by both zsh
 # (~/.zshenv) and bash (~/.bashrc). Pure POSIX sh — this file is sourced, no shebang.
 

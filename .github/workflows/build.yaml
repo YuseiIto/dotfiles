@@ -147,14 +147,16 @@ jobs:
         uses: docker/metadata-action@v6
         with:
           images: ${{ env.REGISTRY }}/${{ steps.image_name.outputs.name }}
-          flavor: |
-            latest=false
-            prefix=${{ matrix.variant }}-,onlatest=true
+          # Per-tag prefix keeps each variant on its own tag. A flavor-level
+          # prefix with onlatest=true applies only to the latest tag, so with
+          # latest=false it would vanish and every variant would collide on the
+          # same unprefixed tag (e.g. pr-42).
+          flavor: latest=false
           tags: |
-            type=ref,event=branch
-            type=ref,event=pr
-            type=sha,enable={{is_default_branch}}
-            type=raw,value=latest,enable={{is_default_branch}}
+            type=ref,event=branch,prefix=${{ matrix.variant }}-
+            type=ref,event=pr,prefix=${{ matrix.variant }}-pr-
+            type=sha,prefix=${{ matrix.variant }}-,enable={{is_default_branch}}
+            type=raw,value=${{ matrix.variant }}-latest,enable={{is_default_branch}}
         env:
           # Annotations attach to the manifest list assembled in this job; the
           # per-arch digest images carry OCI labels from the build job instead.

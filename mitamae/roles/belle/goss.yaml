@@ -23,6 +23,8 @@ gossfile:
   ../../cookbooks/awscli/goss.yaml: {}
   ../../cookbooks/cfn-lint/goss.yaml: {}
   ../../cookbooks/gh/goss.yaml: {}
+  ../../cookbooks/docker/goss.yaml: {}
+  ../../cookbooks/devcontainer-cli/goss.yaml: {}
   ../../cookbooks/ollama/goss.yaml: {}
   ../../cookbooks/huggingface-cli/goss.yaml: {}
   ../../cookbooks/aider/goss.yaml: {}

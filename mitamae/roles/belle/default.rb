@@ -45,6 +45,7 @@ include_recipe '../../cookbooks/nikto'
 include_recipe '../../cookbooks/awscli'
 include_recipe '../../cookbooks/cfn-lint'
 include_recipe '../../cookbooks/gh'
+include_recipe '../../cookbooks/docker'
 include_recipe '../../cookbooks/devcontainer-cli'
 
 # AI & Coding Assistants

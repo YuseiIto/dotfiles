@@ -1,33 +1,43 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:recommended",
-    "docker:pinDigests",
-    ":gitSignOff"
-  ],
+  "extends": ["config:best-practices", ":gitSignOff", ":semanticCommits", "schedule:weekly"],
   "labels": ["dependencies"],
+  "dependencyDashboard": true,
+  "prHourlyLimit": 0,
+  "lockFileMaintenance": {
+    "enabled": true,
+    "automerge": true
+  },
   "packageRules": [
     {
-      "description": "Group GitHub Actions updates",
+      "description": "Group and automerge GitHub Actions updates",
       "matchManagers": ["github-actions"],
       "groupName": "github-actions",
       "automerge": true
     },
     {
-      "description": "Group devcontainer feature updates",
+      "description": "Group and automerge devcontainer feature updates",
       "matchManagers": ["devcontainer"],
       "groupName": "devcontainer-features",
       "automerge": true
     },
     {
-      "description": "Group Docker base image updates",
+      "description": "Group Docker base image updates (reviewed, not automerged)",
       "matchManagers": ["dockerfile"],
       "groupName": "docker-base-images"
     },
     {
-      "description": "Group bundler (Gemfile) updates",
+      "description": "Group bundler (Gemfile) updates and automerge non-major ones",
       "matchManagers": ["bundler"],
-      "groupName": "bundler"
+      "groupName": "bundler",
+      "matchUpdateTypes": ["minor", "patch", "digest"],
+      "automerge": true
+    },
+    {
+      "description": "Keep major bundler updates as a separate reviewed PR",
+      "matchManagers": ["bundler"],
+      "matchUpdateTypes": ["major"],
+      "groupName": "bundler (major)"
     }
   ]
 }

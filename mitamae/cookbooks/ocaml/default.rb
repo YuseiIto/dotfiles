@@ -27,5 +27,9 @@ end
 
 execute 'Install ocaml-lsp-server via opam' do
   command 'opam install -y ocaml-lsp-server'
-  not_if 'command -v ocamllsp'
+  # opam installs into the switch's bin (~/.opam/default/bin) which is not on
+  # PATH during the mitamae run, so `command -v ocamllsp` would never
+  # short-circuit. Test the installed binary directly so the install only
+  # runs once.
+  not_if "test -x #{ENV['HOME']}/.opam/default/bin/ocamllsp"
 end

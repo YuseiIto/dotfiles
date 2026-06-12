@@ -40,7 +40,6 @@ include_recipe '../../cookbooks/cloc'
 
 # Data & Document Processing
 include_recipe '../../cookbooks/ffmpeg'
-include_recipe '../../cookbooks/imagemagick'
 include_recipe '../../cookbooks/pandoc'
 
 # System Utilities

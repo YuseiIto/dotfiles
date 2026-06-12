@@ -1,5 +1,5 @@
 node.reverse_merge!(
-  variant: 'belle',
+  variant: 'hercules',
   is_container: false,
 
   editor_features: {

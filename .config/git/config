@@ -1,5 +1,30 @@
 [user]
 	name = Yusei Ito
 	email = me@yuseiito.com
-	
-	
+
+[init]
+	defaultBranch = main
+
+[push]
+	autoSetupRemote = true
+
+[pull]
+	rebase = true
+
+[fetch]
+	prune = true
+
+[merge]
+	conflictstyle = zdiff3
+
+[diff]
+	algorithm = histogram
+
+[commit]
+	verbose = true
+
+[rerere]
+	enabled = true
+
+[branch]
+	sort = -committerdate

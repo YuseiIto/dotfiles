@@ -1,3 +1,19 @@
+---
+name: git-commits
+description: >-
+  Conventions for git commits: Conventional Commits types, one-logical-change
+  granularity, pre-commit verification (lint / format / test), and explicit
+  staging (never blind `git add .`). Use when committing, writing commit
+  messages, splitting changes, or staging files.
+triggers:
+  - commit
+  - commits
+  - git commit
+  - conventional commits
+  - staging
+  - コミット
+---
+
 # git の扱い
 
 ## コミットメッセージ

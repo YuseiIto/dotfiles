@@ -15,6 +15,3 @@ file:
   "{{.Env.HOME}}/.claude/CLAUDE.md":
     exists: true
     filetype: symlink
-  "{{.Env.HOME}}/.claude/rules":
-    exists: true
-    filetype: symlink

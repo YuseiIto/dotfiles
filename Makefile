@@ -31,19 +31,14 @@ format: mitamae/bin/rubocop
 
 .PHONY: shellcheck dry-run dry-run-linux dry-run-macos
 
-# Lint every tracked shell script: all *.sh files plus shebang scripts, while
-# skipping zsh files (shellcheck cannot parse zsh). This is the single source of
-# truth for shell linting, shared by the CI ShellCheck job, so the two never
-# drift apart.
+# Lint shell scripts. *.sh files are discovered with git; the few extensionless
+# shell commands are listed explicitly. zsh scripts carry an inline
+# `# shellcheck disable=SC1071` directive so shellcheck skips them — no file
+# filtering is needed here. CI runs this same target.
+SHELLCHECK_EXTRA_FILES = \
+	mitamae/bin/setup \
+	mitamae/cookbooks/claude-code/files/claude-tmux-notify \
+	mitamae/cookbooks/git-commit-claude/files/git-commit-claude
+
 shellcheck:
-	@files="$$(git ls-files | while IFS= read -r f; do \
-		[ -f "$$f" ] || continue; \
-		first="$$(head -n1 "$$f")"; \
-		case "$$first" in *zsh*) continue ;; esac; \
-		case "$$f" in \
-			*.sh) printf '%s\n' "$$f" ;; \
-			*) printf '%s\n' "$$first" | grep -Eq '^#!.*(/| )(bash|sh|dash|ksh)([[:space:]]|$$)' && printf '%s\n' "$$f" ;; \
-		esac; \
-	done)"; \
-	echo "Linting shell scripts:"; printf '%s\n' "$$files" | sed 's/^/  /'; \
-	printf '%s\n' "$$files" | xargs shellcheck
+	shellcheck $$(git ls-files '*.sh') $(SHELLCHECK_EXTRA_FILES)

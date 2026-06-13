@@ -1,1 +1,5 @@
-brew_cask 'ovice' if node[:platform] == 'darwin'
+if node[:platform] == 'darwin'
+  brew_cask 'ovice'
+else
+  unsupported_platform! node[:platform]
+end

@@ -10,6 +10,8 @@ elsif %w[ubuntu debian].include?(node[:platform])
     user 'root'
     not_if 'snap list | grep -q alacritty'
   end
+else
+  unsupported_platform! node[:platform]
 end
 
 dotconfig 'alacritty'

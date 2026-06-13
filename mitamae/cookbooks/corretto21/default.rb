@@ -14,4 +14,6 @@ elsif %w[ubuntu debian].include?(node[:platform])
   package 'java-21-amazon-corretto-jdk' do
     user 'root'
   end
+else
+  unsupported_platform! node[:platform]
 end

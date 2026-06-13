@@ -5,4 +5,6 @@ elsif %w[ubuntu debian].include?(node[:platform])
     command 'uv tool install platformio'
     not_if 'command -v pio || test -f ~/.platformio/penv/bin/pio'
   end
+else
+  unsupported_platform! node[:platform]
 end

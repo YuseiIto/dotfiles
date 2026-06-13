@@ -77,12 +77,25 @@ Debian installs run as root automatically. Darwin uses brew.
 
 ### `brew_cask` — macOS GUI applications
 
-Only available on macOS. Use for `.app` bundles (not CLI tools).
+Only available on macOS. Use for `.app` bundles (not CLI tools). Pair it with
+an explicit `unsupported_platform!` fallback so the cookbook fails loudly if it
+is ever reached on a non-macOS host (see "Unsupported platforms" below).
 
 ```ruby
 if node[:platform] == 'darwin'
   brew_cask 'wezterm'
+else
+  unsupported_platform! node[:platform]
 end
+```
+
+### `unsupported_platform!` — fail loudly on platforms you don't support
+
+Always terminate platform branches with this helper instead of silently
+skipping. See "Unsupported platforms" below for the full policy.
+
+```ruby
+unsupported_platform! node[:platform]
 ```
 
 ### `cargo_package` — Rust binaries
@@ -156,6 +169,8 @@ elsif %w[ubuntu debian].include?(node[:platform])
     user 'root'
     not_if 'snap list | grep -q mytool'
   end
+else
+  unsupported_platform! node[:platform]
 end
 ```
 
@@ -181,6 +196,28 @@ end
 node[:platform] == 'darwin'                        # macOS
 %w[ubuntu debian].include?(node[:platform])        # Debian/Ubuntu Linux
 ```
+
+### Unsupported platforms (required)
+
+Every cookbook must handle each platform it supports explicitly and **fail
+loudly on the rest** by calling `unsupported_platform! node[:platform]`. Never
+leave a bare `if`/`elsif` without an `else`, and never write
+`... if node[:platform] == 'darwin'` as a silent guard — both hide
+role/platform misconfigurations behind a no-op.
+
+```ruby
+if node[:platform] == 'darwin'
+  package 'mytool'
+elsif %w[ubuntu debian].include?(node[:platform])
+  # ... Linux install ...
+else
+  unsupported_platform! node[:platform]
+end
+```
+
+Cookbooks built solely on `cross_platform_package`, `cargo_package`,
+`uv_tool_package`, or `npm_global_package` already embed this policy and need no
+extra branch.
 
 ### Architecture
 
@@ -212,6 +249,8 @@ elsif %w[ubuntu debian].include?(node[:platform])
     user 'root'
     not_if "mytool --version 2>/dev/null | grep -q '#{mytool_version}'"
   end
+else
+  unsupported_platform! node[:platform]
 end
 ```
 

@@ -2,9 +2,10 @@ if %w[ubuntu debian].include?(node[:platform])
   package 'tmux' do
     user 'root'
   end
-else
-  # macOS, Arch Linux
+elsif %w[darwin arch].include?(node[:platform])
   package 'tmux'
+else
+  unsupported_platform! node[:platform]
 end
 
 home = ENV['HOME']

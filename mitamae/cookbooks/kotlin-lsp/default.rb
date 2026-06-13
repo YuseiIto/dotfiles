@@ -47,4 +47,6 @@ elsif %w[ubuntu debian].include?(node[:platform])
     user 'root'
     force true
   end
+else
+  unsupported_platform! node[:platform]
 end

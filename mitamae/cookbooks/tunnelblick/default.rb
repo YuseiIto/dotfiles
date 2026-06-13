@@ -1,1 +1,5 @@
-brew_cask 'tunnelblick' if node[:platform] == 'darwin'
+if node[:platform] == 'darwin'
+  brew_cask 'tunnelblick'
+else
+  unsupported_platform! node[:platform]
+end

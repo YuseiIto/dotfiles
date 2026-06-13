@@ -21,4 +21,6 @@ elsif %w[ubuntu debian].include?(node[:platform])
   package 'google-cloud-cli' do
     user 'root'
   end
+else
+  unsupported_platform! node[:platform]
 end

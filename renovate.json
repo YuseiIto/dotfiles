@@ -3,6 +3,7 @@
   "extends": [
     "config:recommended",
     "docker:pinDigests",
+    "helpers:pinGitHubActionDigests",
     ":gitSignOff"
   ],
   "labels": ["dependencies"],

@@ -6,7 +6,6 @@ node.reverse_merge!(
     lsp: false,
     basic_amenities: false,
     lazygit: false,
-    rust_dev: false,
     prisma_dev: false,
     render_md: false,
     ai: false,

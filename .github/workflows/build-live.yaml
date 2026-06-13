@@ -1,0 +1,53 @@
+name: Build Live ISO
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'live/**'
+      - 'mitamae/**'
+      - 'setup.sh'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Free up disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc || true
+          sudo docker system prune -af || true
+          df -h
+
+      - name: Restore ISO cache
+        uses: actions/cache@v4
+        with:
+          path: live/cache/
+          key: ubuntu-iso-24.04.4-desktop-amd64
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y squashfs-tools xorriso systemd-container wget rsync
+
+      - name: Build Live ISO
+        run: sudo live/remaster.sh 2>&1 | tee /tmp/build.log
+
+      - name: Upload ISO artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: pine-live-iso
+          path: live/output/pine-live.iso
+          retention-days: 90
+
+      - name: Upload build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log
+          path: /tmp/build.log
+          retention-days: 14

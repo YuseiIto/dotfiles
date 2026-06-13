@@ -33,3 +33,21 @@ format: mitamae/bin/rubocop
 
 shellcheck:
 	shellcheck setup.sh mitamae/bin/setup
+
+dry-run-linux: dry-run-plum dry-run-bamboo dry-run-pine
+
+dry-run-macos: dry-run-belle
+
+dry-run-%:
+	cd mitamae && DOTFILES_ROLE=$* bin/mitamae local --dry-run lib/custom_resources.rb roles/$*/default.rb
+
+
+.PHONY: live-build live-clean clean
+
+live-build:
+	sudo live/remaster.sh
+
+live-clean:
+	sudo rm -rf live/work live/output
+
+clean: live-clean

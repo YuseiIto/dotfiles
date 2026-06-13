@@ -1,0 +1,4 @@
+curl
+ca-certificates
+openssh-server
+linux-firmware

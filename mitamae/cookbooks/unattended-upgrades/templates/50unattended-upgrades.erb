@@ -1,0 +1,14 @@
+// Managed by mitamae (cookbooks/unattended-upgrades). Do not edit by hand.
+// Only security-origin updates are applied automatically.
+Unattended-Upgrade::Allowed-Origins {
+    "${distro_id}:${distro_codename}-security";
+    "${distro_id}ESMApps:${distro_codename}-apps-security";
+    "${distro_id}ESM:${distro_codename}-infra-security";
+};
+
+// Keep services running: never reboot automatically.
+Unattended-Upgrade::Automatic-Reboot "false";
+
+// Housekeeping to bound disk usage from kept packages.
+Unattended-Upgrade::Remove-Unused-Kernel-Packages "true";
+Unattended-Upgrade::Remove-Unused-Dependencies "true";

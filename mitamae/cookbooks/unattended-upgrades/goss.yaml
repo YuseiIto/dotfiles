@@ -1,0 +1,9 @@
+command:
+  dpkg -s unattended-upgrades:
+    exit-status: 0
+    timeout: 5000
+file:
+  /etc/apt/apt.conf.d/20auto-upgrades:
+    exists: true
+  /etc/apt/apt.conf.d/50unattended-upgrades:
+    exists: true

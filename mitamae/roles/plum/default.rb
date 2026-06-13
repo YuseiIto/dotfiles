@@ -21,3 +21,6 @@ include_recipe '../../cookbooks/base_tools'
 include_recipe '../../cookbooks/direnv'
 include_recipe '../../cookbooks/fastfetch'
 include_recipe '../../cookbooks/goss'
+
+# Security
+include_recipe '../../cookbooks/unattended-upgrades'

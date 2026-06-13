@@ -7,3 +7,4 @@ gossfile:
   ../../cookbooks/tmux/goss.yaml: {}
   ../../cookbooks/direnv/goss.yaml: {}
   ../../cookbooks/fastfetch/goss.yaml: {}
+  ../../cookbooks/unattended-upgrades/goss.yaml: {}

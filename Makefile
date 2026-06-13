@@ -31,5 +31,14 @@ format: mitamae/bin/rubocop
 
 .PHONY: shellcheck dry-run dry-run-linux dry-run-macos
 
+# Lint shell scripts. *.sh files are discovered with git; the few extensionless
+# shell commands are listed explicitly. zsh scripts carry an inline
+# `# shellcheck disable=SC1071` directive so shellcheck skips them — no file
+# filtering is needed here. CI runs this same target.
+SHELLCHECK_EXTRA_FILES = \
+	mitamae/bin/setup \
+	mitamae/cookbooks/claude-code/files/claude-tmux-notify \
+	mitamae/cookbooks/git-commit-claude/files/git-commit-claude
+
 shellcheck:
-	shellcheck setup.sh mitamae/bin/setup
+	shellcheck $$(git ls-files '*.sh') $(SHELLCHECK_EXTRA_FILES)

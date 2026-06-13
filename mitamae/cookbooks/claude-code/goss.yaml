@@ -9,6 +9,9 @@ file:
   "{{.Env.HOME}}/.claude/statusline-command.sh":
     exists: true
     filetype: symlink
+  "{{.Env.HOME}}/.claude/claude-tmux-notify":
+    exists: true
+    filetype: symlink
   "{{.Env.HOME}}/.claude/skills":
     exists: true
     filetype: symlink

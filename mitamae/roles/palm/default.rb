@@ -23,6 +23,11 @@ include_recipe '../../cookbooks/direnv'
 include_recipe '../../cookbooks/goss'
 include_recipe '../../cookbooks/dotfiles-utils'
 
+# AI agents
+# palm runs OpenHands rather than Claude Code; provision the shared, tool-agnostic
+# agent guidance (skills + user preferences) into OpenHands' user-scope config.
+include_recipe '../../cookbooks/openhands'
+
 # Languages & Runtimes
 include_recipe '../../cookbooks/nodenv'
 include_recipe '../../cookbooks/ruby'

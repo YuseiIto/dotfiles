@@ -1,0 +1,7 @@
+file:
+  "{{.Env.HOME}}/.openhands/skills":
+    exists: true
+    filetype: symlink
+  "{{.Env.HOME}}/.openhands/microagents/user-preferences.md":
+    exists: true
+    filetype: symlink

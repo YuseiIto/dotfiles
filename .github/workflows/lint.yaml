@@ -32,3 +32,26 @@ jobs:
           scandir: '.'
           additional_files: 'mitamae/bin/setup'
           ignore_names: '.zshrc entrypoint.sh'
+
+  role-variant:
+    name: Role variant matches role name
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Check that each role's variant equals its directory name
+        run: |
+          status=0
+          for dir in mitamae/roles/*/; do
+            role="$(basename "$dir")"
+            file="${dir}default.rb"
+            [ -f "$file" ] || continue
+            variant="$(sed -nE "s/^[[:space:]]*variant:[[:space:]]*'([^']*)'.*/\1/p" "$file")"
+            if [ -z "$variant" ]; then
+              echo "::error file=$file::no 'variant:' found"
+              status=1
+            elif [ "$variant" != "$role" ]; then
+              echo "::error file=$file::variant '$variant' does not match role name '$role'"
+              status=1
+            fi
+          done
+          exit $status

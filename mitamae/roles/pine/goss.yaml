@@ -13,7 +13,6 @@ gossfile:
   ../../cookbooks/ccls/goss.yaml: {}
   ../../cookbooks/cloc/goss.yaml: {}
   ../../cookbooks/ffmpeg/goss.yaml: {}
-  ../../cookbooks/imagemagick/goss.yaml: {}
   ../../cookbooks/pandoc/goss.yaml: {}
   ../../cookbooks/asciinema/goss.yaml: {}
   ../../cookbooks/arduino-cli/goss.yaml: {}

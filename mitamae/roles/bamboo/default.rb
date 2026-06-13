@@ -40,6 +40,7 @@ include_recipe '../../cookbooks/gemini-cli'
 include_recipe '../../cookbooks/opencode'
 
 # Data & Document Processing
+include_recipe '../../cookbooks/imagemagick'
 include_recipe '../../cookbooks/sqlite'
 include_recipe '../../cookbooks/mysql-client'
 

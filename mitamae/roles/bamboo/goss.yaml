@@ -16,6 +16,7 @@ gossfile:
   ../../cookbooks/claude-code/goss.yaml: {}
   ../../cookbooks/gemini-cli/goss.yaml: {}
   ../../cookbooks/opencode/goss.yaml: {}
+  ../../cookbooks/imagemagick/goss.yaml: {}
   ../../cookbooks/sqlite/goss.yaml: {}
   ../../cookbooks/mysql-client/goss.yaml: {}
   ../../cookbooks/llvm/goss.yaml: {}

@@ -68,6 +68,9 @@ include_recipe '../../cookbooks/kotlin-lsp'
 include_recipe '../../cookbooks/cloc'
 include_recipe '../../cookbooks/goss'
 
+# Data & Document Processing
+include_recipe '../../cookbooks/imagemagick'
+
 # macOS GUI
 include_recipe '../../cookbooks/feature_macos_fonts'
 include_recipe '../../cookbooks/feature_macos_media'

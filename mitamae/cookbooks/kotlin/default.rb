@@ -13,4 +13,6 @@ elsif %w[ubuntu debian].include?(node[:platform])
     # installed binary directly so the install only runs once.
     not_if "test -x #{home}/.sdkman/candidates/kotlin/current/bin/kotlin"
   end
+else
+  unsupported_platform! node[:platform]
 end

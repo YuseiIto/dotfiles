@@ -20,4 +20,6 @@ elsif %w[ubuntu debian].include?(node[:platform])
     user 'root'
     not_if 'command -v aws'
   end
+else
+  unsupported_platform! node[:platform]
 end

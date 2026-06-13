@@ -23,6 +23,5 @@ when 'ubuntu', 'debian'
     not_if "test -x #{binary} && #{binary} --version | grep -q '#{tree_sitter_version}'"
   end
 else
-  Mitamae.logger.error "unsupported platform #{node[:platform]}: #{__FILE__}:#{__LINE__}"
-  exit 1
+  unsupported_platform! node[:platform]
 end

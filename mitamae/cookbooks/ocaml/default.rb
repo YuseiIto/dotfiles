@@ -17,7 +17,8 @@ if %w[ubuntu debian].include?(node[:platform])
 elsif node[:platform] == 'darwin'
   package 'ocaml'
   package 'opam'
-
+else
+  unsupported_platform! node[:platform]
 end
 
 execute 'Init opam' do

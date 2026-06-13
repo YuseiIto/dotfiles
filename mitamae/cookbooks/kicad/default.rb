@@ -4,4 +4,6 @@ elsif %w[ubuntu debian].include?(node[:platform])
   package 'kicad' do
     user 'root'
   end
+else
+  unsupported_platform! node[:platform]
 end

@@ -5,6 +5,17 @@ node[:os_arch] = case node[:kernel][:machine]
                  else raise "Unsupported architecture: #{node[:kernel][:machine]}"
                  end
 
+# Abort the run when a cookbook is executed on a platform it does not support.
+#
+# Cookbooks are only ever included in roles whose platform they target, so
+# reaching this means the role/platform combination is misconfigured. Failing
+# loudly surfaces the mistake immediately instead of silently skipping the
+# installation and leaving a half-provisioned host. Pass `node[:platform]` so
+# the message names the offending platform.
+define :unsupported_platform! do
+  raise "Unsupported platform: #{params[:name]}"
+end
+
 # Symlink dotfiles to the user's home directory
 # Pass `cookbook_dir: __dir__` from the calling cookbook so the files/ path resolves correctly.
 define :dotfile, source: nil, cookbook_dir: nil do
@@ -100,6 +111,6 @@ define :cross_platform_package, darwin_name: nil, debian_name: nil do
   elsif node[:platform] == 'darwin'
     package(params[:darwin_name] || pkg)
   else
-    raise "cross_platform_package: unsupported platform '#{node[:platform]}' for package '#{pkg}'"
+    unsupported_platform! node[:platform]
   end
 end

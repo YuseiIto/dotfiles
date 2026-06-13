@@ -4,4 +4,6 @@ elsif %w[ubuntu debian].include?(node[:platform])
   npm_global_package '@biomejs/biome' do
     bin_name 'biome'
   end
+else
+  unsupported_platform! node[:platform]
 end

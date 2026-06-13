@@ -3,4 +3,6 @@ if node[:platform] == 'darwin'
     command 'NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'
     not_if 'command -v brew'
   end
+else
+  unsupported_platform! node[:platform]
 end

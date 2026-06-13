@@ -12,6 +12,5 @@ if node[:platform] == 'darwin'
     not_if 'brew list --formula tomoyanonymous/homebrew-flatcam/flatcam-evo >/dev/null 2>&1'
   end
 else
-  Mitamae.logger.error "unsupported platform #{node[:platform]}: #{__FILE__}:#{__LINE__}"
-  exit 1
+  unsupported_platform! node[:platform]
 end

@@ -14,4 +14,6 @@ elsif %w[ubuntu debian].include?(node[:platform])
   package 'firefox' do
     user 'root'
   end
+else
+  unsupported_platform! node[:platform]
 end

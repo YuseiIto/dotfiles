@@ -5,6 +5,8 @@ elsif %w[ubuntu debian].include?(node[:platform])
     command 'curl -LsSf https://astral.sh/uv/install.sh | sh'
     not_if 'command -v uv'
   end
+else
+  unsupported_platform! node[:platform]
 end
 
 # Ensure ~/.local/bin is in PATH for subsequent recipes in this mitamae run

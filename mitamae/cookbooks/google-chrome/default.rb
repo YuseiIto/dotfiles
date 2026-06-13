@@ -13,4 +13,6 @@ elsif %w[ubuntu debian].include?(node[:platform])
   package 'google-chrome-stable' do
     user 'root'
   end
+else
+  unsupported_platform! node[:platform]
 end

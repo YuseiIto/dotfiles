@@ -1,1 +1,5 @@
-brew_cask 'stoplight-studio' if node[:platform] == 'darwin'
+if node[:platform] == 'darwin'
+  brew_cask 'stoplight-studio'
+else
+  unsupported_platform! node[:platform]
+end

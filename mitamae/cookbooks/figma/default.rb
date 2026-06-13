@@ -1,1 +1,5 @@
-brew_cask 'figma' if node[:platform] == 'darwin'
+if node[:platform] == 'darwin'
+  brew_cask 'figma'
+else
+  unsupported_platform! node[:platform]
+end

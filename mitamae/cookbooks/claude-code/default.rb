@@ -21,6 +21,8 @@ elsif %w[ubuntu debian].include?(node[:platform])
     command 'curl -fsSL https://claude.ai/install.sh | bash -s latest'
     not_if 'command -v claude'
   end
+else
+  unsupported_platform! node[:platform]
 end
 
 %w[settings.json statusline-command.sh skills claude-tmux-notify CLAUDE.md rules].each do |entry|

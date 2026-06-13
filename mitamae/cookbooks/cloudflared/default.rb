@@ -16,7 +16,8 @@ if %w[ubuntu debian].include?(node[:platform])
     EOC
     not_if 'command -v cloudflared'
   end
-else
-  # macOS, Arch Linux
+elsif %w[darwin arch].include?(node[:platform])
   package 'cloudflared'
+else
+  unsupported_platform! node[:platform]
 end

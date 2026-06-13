@@ -1,3 +1,20 @@
+---
+name: coding-comments
+description: >-
+  Guidelines for writing code comments. Comments capture Why / Why-not (not
+  What or How), use annotation markers (TODO / NOTE / FIXME / HACK), and follow
+  a review checklist. Use when writing, reviewing, or revising code comments and
+  annotations.
+triggers:
+  - comment
+  - comments
+  - docstring
+  - annotation
+  - TODO
+  - FIXME
+  - コメント
+---
+
 # コメントについて
 
 ## 原則

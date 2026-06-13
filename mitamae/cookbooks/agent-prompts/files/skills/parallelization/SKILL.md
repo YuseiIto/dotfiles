@@ -1,3 +1,21 @@
+---
+name: parallelization
+description: >-
+  How to parallelize work and delegate to subagents. At the start of a task,
+  identify independent subtasks to dispatch in parallel and offload large
+  searches / evaluations to subagents to keep the main context clean. Use when
+  planning a task or deciding whether to fan out work.
+triggers:
+  - subagent
+  - subagents
+  - parallel
+  - parallelize
+  - delegate
+  - background task
+  - 並列
+  - サブエージェント
+---
+
 # 並列化と subagent
 
 タスクを受けたら最初に「**並列化できる subtask は何か**」「**subagent に投げて main context を空けられるか**」を洗い出してから動く。default は subagent 優先 / 並列優先。

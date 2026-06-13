@@ -6,6 +6,7 @@ gossfile:
   ../../cookbooks/direnv/goss.yaml: {}
   ../../cookbooks/goss/goss.yaml: {}
   ../../cookbooks/dotfiles-utils/goss.yaml: {}
+  ../../cookbooks/openhands/goss.yaml: {}
   ../../cookbooks/nodenv/goss.yaml: {}
   ../../cookbooks/ruby/goss.yaml: {}
   ../../cookbooks/uv/goss.yaml: {}

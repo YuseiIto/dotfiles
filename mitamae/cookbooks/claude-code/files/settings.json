@@ -137,6 +137,7 @@
       "Bash(uv audit *)",
       "Bash(uv run pytest *)",
       "Bash(uv run python -m pytest *)",
+      "Bash(uv run ruff *)",
       "Bash(uv sync *)",
       "Bash(uv lock *)",
       "Bash(uv add *)",

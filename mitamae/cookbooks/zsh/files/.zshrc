@@ -5,6 +5,20 @@
 autoload -U compinit
 compinit
 
+# Command history persistence.
+# zsh does NOT save history to a file unless both HISTFILE and SAVEHIST are set.
+# Use an XDG-style data location so it can be mounted as a directory in containers
+# (a single dotfile target turns into a directory under volume/bind mounts).
+HISTFILE="$HOME/.local/share/zsh/history"
+HISTSIZE=100000
+SAVEHIST=100000
+mkdir -p "${HISTFILE:h}"      # zsh won't create the parent dir on its own
+setopt SHARE_HISTORY          # read/write history across concurrent sessions
+setopt EXTENDED_HISTORY       # record command start time and duration
+setopt HIST_IGNORE_ALL_DUPS   # drop older duplicates of a command
+setopt HIST_IGNORE_SPACE      # skip commands that start with a space
+setopt HIST_REDUCE_BLANKS     # collapse superfluous whitespace before saving
+
 # If you have device-specific settings, create ~/.zshrc_specific and write them there
 if  [ -f ~/.zshrc_specific ]; then
   source ~/.zshrc_specific

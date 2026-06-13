@@ -8,7 +8,7 @@
   },
   "initializeCommand": "mkdir -p ${localEnv:HOME}/.ssh",
   "mounts": [
-    "source=dotfiles-zsh-history,target=/home/ubuntu/.zsh_history,type=volume",
+    "source=dotfiles-zsh-history,target=/home/ubuntu/.local/share/zsh,type=volume",
     "source=${localEnv:HOME}/.ssh,target=/home/ubuntu/.ssh,type=bind,consistency=cached,readonly=true",
     "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
   ],

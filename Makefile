@@ -31,5 +31,19 @@ format: mitamae/bin/rubocop
 
 .PHONY: shellcheck dry-run dry-run-linux dry-run-macos
 
+# Lint every tracked shell script: all *.sh files plus shebang scripts, while
+# skipping zsh files (shellcheck cannot parse zsh). This is the single source of
+# truth for shell linting, shared by the CI ShellCheck job, so the two never
+# drift apart.
 shellcheck:
-	shellcheck setup.sh mitamae/bin/setup
+	@files="$$(git ls-files | while IFS= read -r f; do \
+		[ -f "$$f" ] || continue; \
+		first="$$(head -n1 "$$f")"; \
+		case "$$first" in *zsh*) continue ;; esac; \
+		case "$$f" in \
+			*.sh) printf '%s\n' "$$f" ;; \
+			*) printf '%s\n' "$$first" | grep -Eq '^#!.*(/| )(bash|sh|dash|ksh)([[:space:]]|$$)' && printf '%s\n' "$$f" ;; \
+		esac; \
+	done)"; \
+	echo "Linting shell scripts:"; printf '%s\n' "$$files" | sed 's/^/  /'; \
+	printf '%s\n' "$$files" | xargs shellcheck

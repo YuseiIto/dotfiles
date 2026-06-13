@@ -3,15 +3,27 @@
   "image": "ghcr.io/yuseiito/yuseiito-dev:bamboo-latest",
   "remoteUser": "ubuntu",
   "containerUser": "ubuntu",
+  // Keep the container user's UID stable so the rootless Docker socket path
+  // (/run/user/1000/docker.sock) referenced below stays correct.
+  "updateRemoteUserUID": false,
   "remoteEnv": {
     "DOTFILES_ROLE": "bamboo"
+  },
+  // Talk to the in-container rootless Docker daemon instead of the host
+  // daemon. See start-rootless-docker.sh for why the host socket bind mount
+  // was removed.
+  "containerEnv": {
+    "XDG_RUNTIME_DIR": "/run/user/1000",
+    "DOCKER_HOST": "unix:///run/user/1000/docker.sock"
   },
   "initializeCommand": "mkdir -p ${localEnv:HOME}/.ssh",
   "mounts": [
     "source=dotfiles-zsh-history,target=/home/ubuntu/.local/share/zsh,type=volume",
-    "source=${localEnv:HOME}/.ssh,target=/home/ubuntu/.ssh,type=bind,consistency=cached,readonly=true",
-    "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
+    "source=${localEnv:HOME}/.ssh,target=/home/ubuntu/.ssh,type=bind,consistency=cached,readonly=true"
   ],
+  // Start the rootless daemon after the container is up. The script no-ops if
+  // the rootless tooling is unavailable, so it never blocks startup.
+  "postStartCommand": "bash .devcontainer/start-rootless-docker.sh",
   "hostRequirements": {
     "gpu": "optional"
   },

@@ -1,0 +1,16 @@
+file:
+  "{{.Env.HOME}}/.claude/settings.json":
+    exists: true
+    filetype: symlink
+  "{{.Env.HOME}}/.claude/statusline-command.sh":
+    exists: true
+    filetype: symlink
+  "{{.Env.HOME}}/.claude/skills":
+    exists: true
+    filetype: symlink
+  "{{.Env.HOME}}/.claude/CLAUDE.md":
+    exists: true
+    filetype: symlink
+  "{{.Env.HOME}}/.claude/rules":
+    exists: true
+    filetype: symlink

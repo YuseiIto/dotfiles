@@ -12,14 +12,21 @@ define :claude_dotfile, source: nil, cookbook_dir: nil do
   end
 end
 
+# Roles can set node[:claude_code][:install_cli] = false to skip installing the CLI itself
+# (e.g. hosted environments where `claude` is already present) and only symlink ~/.claude config.
+claude_code_opts = node[:claude_code] || {}
+install_cli = claude_code_opts[:install_cli] != false
+
 # Use "latest" to always install the latest version of claude-code to get the latest models and features.
 # This may degrade stability, but it's the nature of the rapidly evolving AI ecosystem.
-if node[:platform] == 'darwin'
-  brew_cask 'claude-code@latest'
-elsif %w[ubuntu debian].include?(node[:platform])
-  execute 'install claude-code via official installer' do
-    command 'curl -fsSL https://claude.ai/install.sh | bash -s latest'
-    not_if 'command -v claude'
+if install_cli
+  if node[:platform] == 'darwin'
+    brew_cask 'claude-code@latest'
+  elsif %w[ubuntu debian].include?(node[:platform])
+    execute 'install claude-code via official installer' do
+      command 'curl -fsSL https://claude.ai/install.sh | bash -s latest'
+      not_if 'command -v claude'
+    end
   end
 end
 

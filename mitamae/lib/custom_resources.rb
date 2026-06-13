@@ -150,12 +150,22 @@ end
 # Automatically handles debian/ubuntu vs darwin platform differences.
 # Supports packages with the same name across platforms (e.g., ffmpeg)
 # or different names (e.g., sqlite3 on debian, sqlite on darwin).
-define :cross_platform_package, darwin_name: nil, debian_name: nil do
+# Set `darwin_cask true` when the macOS counterpart ships as a Homebrew
+# Cask (e.g., kicad, freecad, openscad) instead of a regular formula.
+define :cross_platform_package, darwin_name: nil, debian_name: nil, darwin_cask: false do
   pkg = params[:name]
   if %w[ubuntu debian].include?(node[:platform])
     package(params[:debian_name] || pkg) { user 'root' }
   elsif node[:platform] == 'darwin'
-    package(params[:darwin_name] || pkg)
+    if params[:darwin_cask]
+      cask_name = params[:darwin_name] || pkg
+      execute "install #{cask_name} via homebrew cask" do
+        command "brew install --cask #{cask_name}"
+        not_if "brew list --cask #{cask_name} >/dev/null 2>&1"
+      end
+    else
+      package(params[:darwin_name] || pkg)
+    end
   else
     unsupported_platform! node[:platform]
   end

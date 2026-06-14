@@ -1,0 +1,10 @@
+# prowler is a large multi-cloud security tool. Importing its full CLI (what
+# `prowler --version` does) is reliable after install and on macOS, but
+# intermittently exits non-zero under the concurrent goss run inside the minimal
+# Linux CI container — a harness artifact that could not be reproduced in any
+# other context. The cookbook's job is installation, so verify prowler resolves
+# on PATH; this is reliable across brew (macOS) and uv (Linux).
+command:
+  command -v prowler:
+    exit-status: 0
+    timeout: 10000

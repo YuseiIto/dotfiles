@@ -67,6 +67,7 @@ include_recipe '../../cookbooks/cloc'
 # Data & Document Processing
 include_recipe '../../cookbooks/ffmpeg'
 include_recipe '../../cookbooks/imagemagick'
+include_recipe '../../cookbooks/graphviz'
 include_recipe '../../cookbooks/pandoc'
 include_recipe '../../cookbooks/sqlite'
 include_recipe '../../cookbooks/mysql-client'

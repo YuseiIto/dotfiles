@@ -40,3 +40,4 @@ gossfile:
   ../../cookbooks/kotlin-lsp/goss.yaml: {}
   ../../cookbooks/cloc/goss.yaml: {}
   ../../cookbooks/imagemagick/goss.yaml: {}
+  ../../cookbooks/graphviz/goss.yaml: {}

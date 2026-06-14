@@ -18,6 +18,7 @@ gossfile:
   ../../cookbooks/cloudflared/goss.yaml: {}
   ../../cookbooks/nmap/goss.yaml: {}
   ../../cookbooks/awscli/goss.yaml: {}
+  ../../cookbooks/prowler/goss.yaml: {}
   ../../cookbooks/cfn-lint/goss.yaml: {}
   ../../cookbooks/gh/goss.yaml: {}
   ../../cookbooks/docker/goss.yaml: {}

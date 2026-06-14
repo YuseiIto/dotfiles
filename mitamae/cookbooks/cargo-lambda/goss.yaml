@@ -1,0 +1,4 @@
+command:
+  cargo lambda --version:
+    exit-status: 0
+    timeout: 10000

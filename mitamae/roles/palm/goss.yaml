@@ -27,6 +27,7 @@ gossfile:
   ../../cookbooks/kotlin-lsp/goss.yaml: {}
   ../../cookbooks/docker/goss.yaml: {}
   ../../cookbooks/awscli/goss.yaml: {}
+  ../../cookbooks/cargo-lambda/goss.yaml: {}
   ../../cookbooks/gh/goss.yaml: {}
   ../../cookbooks/google-cloud-sdk/goss.yaml: {}
   ../../cookbooks/cfn-lint/goss.yaml: {}

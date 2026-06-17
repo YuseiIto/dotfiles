@@ -83,6 +83,7 @@ include_recipe '../../cookbooks/kicad'
 include_recipe '../../cookbooks/freecad'
 include_recipe '../../cookbooks/openscad'
 include_recipe '../../cookbooks/processing'
+include_recipe '../../cookbooks/raspberry-pi-imager'
 include_recipe '../../cookbooks/postico'
 include_recipe '../../cookbooks/affinity'
 

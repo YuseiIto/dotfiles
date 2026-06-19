@@ -44,3 +44,15 @@ SHELLCHECK_EXTRA_FILES = \
 
 shellcheck:
 	shellcheck $$(git ls-files '*.sh') $(SHELLCHECK_EXTRA_FILES)
+
+.PHONY: audit audit-baseline
+
+# Report packages installed on this host that mitamae does not declare.
+# Set DOTFILES_ROLE to audit a role other than the current hostname.
+audit:
+	scripts/audit-packages.sh
+
+# Accept the host's current package state as the baseline for its role.
+# Run once on a known-good host, then commit mitamae/audit/baseline.<role>.txt.
+audit-baseline:
+	scripts/audit-packages.sh --update-baseline

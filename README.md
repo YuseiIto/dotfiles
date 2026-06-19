@@ -48,7 +48,13 @@ This repository is designed to be navigated and enhanced by **Coding Agents** (l
 - `mitamae/`: Idempotent provisioning via [mItamae](https://github.com/itamae-kitchen/mitamae).
   - `cookbooks/`: Individual tool recipes.
   - `roles/`: Collections of cookbooks (Pine, Bamboo, Plum, Belle).
+  - `audit/`: Detecting packages installed outside mitamae — see [audit/README.md](./mitamae/audit/README.md).
 - `docker/`: Dockerfiles for the containerized environments.
+
+> [!TIP]
+> mitamae guarantees declared packages are installed, but not that *undeclared*
+> ones are absent. Run `make audit` to detect drift — see
+> [mitamae/audit/README.md](./mitamae/audit/README.md).
 
 ---
 

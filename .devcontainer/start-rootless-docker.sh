@@ -6,27 +6,40 @@
 # effectively host root (a container could start a privileged container or
 # mount the host filesystem), so a container compromise escalated straight to
 # the host. A rootless daemon runs entirely inside the container's user
-# namespace, removing that escalation path.
+# namespace, removing that escalation path. It requires the relaxed
+# seccomp/AppArmor profile and /dev/fuse configured via runArgs in
+# devcontainer.json.
 #
 # This script always exits 0: Docker availability must never block container
-# startup. When the rootless tooling is absent (e.g. an older base image that
-# predates docker-ce-rootless-extras), it simply no-ops.
+# startup. Failures are still reported loudly on stderr so they show up in
+# the container creation log instead of being buried in dockerd.log.
 set -u
 
 uid="$(id -u)"
 user="$(id -un)"
 runtime_dir="/run/user/${uid}"
 sock="${runtime_dir}/docker.sock"
+log_file="${runtime_dir}/dockerd.log"
+export XDG_RUNTIME_DIR="${runtime_dir}"
+export DOCKER_HOST="unix://${sock}"
 
-# Already running? Nothing to do.
-if [ -S "${sock}" ]; then
+warn() {
+  echo "rootless docker: WARNING: $*" >&2
+}
+
+# A responsive daemon means a previous start already succeeded. Checking with
+# `docker info` instead of testing for the socket file also catches a stale
+# socket left behind by a dead daemon (e.g. after a container restart).
+if docker info >/dev/null 2>&1; then
+  echo "rootless docker: daemon already running (${DOCKER_HOST})"
   exit 0
 fi
 
-# The rootless launcher is provided by docker-ce-rootless-extras. If it is not
-# installed, leave Docker unconfigured rather than failing startup.
+# The rootless launcher is provided by docker-ce-rootless-extras. If it is
+# not installed (a base image that predates it), leave Docker unconfigured
+# rather than failing startup.
 if ! command -v dockerd-rootless.sh >/dev/null 2>&1; then
-  echo "rootless docker: dockerd-rootless.sh not found, skipping startup" >&2
+  warn "dockerd-rootless.sh not found, skipping startup"
   exit 0
 fi
 
@@ -43,10 +56,28 @@ fi
 if [ ! -d "${runtime_dir}" ]; then
   sudo install -d -m 0700 -o "${uid}" -g "${uid}" "${runtime_dir}"
 fi
-export XDG_RUNTIME_DIR="${runtime_dir}"
 
-# Launch the daemon in the background. It listens on
-# unix://${XDG_RUNTIME_DIR}/docker.sock, which DOCKER_HOST points to.
-nohup dockerd-rootless.sh >"${runtime_dir}/dockerd.log" 2>&1 &
+# Remove a stale socket so the new daemon can bind it.
+rm -f "${sock}"
 
+nohup dockerd-rootless.sh >"${log_file}" 2>&1 &
+
+# Wait for the daemon to come up and verify it actually answers, so a broken
+# setup is visible in the creation log instead of failing silently.
+for _ in $(seq 1 30); do
+  if docker info >/dev/null 2>&1; then
+    # Keep the conventional socket path working for tools that do not read
+    # DOCKER_HOST (and for shells started before the daemon came up). The
+    # symlink target is the user-owned rootless socket, so this grants no
+    # extra privileges.
+    sudo ln -sf "${sock}" /var/run/docker.sock
+    echo "rootless docker: daemon is up (${DOCKER_HOST})"
+    exit 0
+  fi
+  sleep 1
+done
+
+warn "daemon did not become ready within 30s; docker will be unavailable"
+warn "last lines of ${log_file}:"
+tail -n 20 "${log_file}" >&2 || true
 exit 0

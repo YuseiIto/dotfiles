@@ -24,7 +24,18 @@ jobs:
         - name: Build and start Dev Container
           uses: devcontainers/ci@513af61f4de4f75d37e4438f184ba4358f0fc1ca # v0.3
           with:
-            runCmd: zsh -c "echo 'Dev container built and started successfully!'"
+            # Beyond starting the container, verify the in-container rootless
+            # Docker daemon (started by postStartCommand) actually works. The
+            # check is skipped with a visible warning if the prebuilt image
+            # does not ship the rootless tooling yet, so an image lagging one
+            # rebuild behind does not fail the job.
+            runCmd: |
+              zsh -c "echo 'Dev container built and started successfully!'"
+              if command -v dockerd-rootless.sh >/dev/null 2>&1; then
+                docker run --rm hello-world
+              else
+                echo "::warning::rootless docker tooling not in the prebuilt image yet; smoke test skipped"
+              fi
 
   macos-smoke:
       name: macOS [${{ matrix.role }}]

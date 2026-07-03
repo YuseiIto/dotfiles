@@ -16,7 +16,6 @@ return {
     "Saghen/blink.cmp",
     enabled = features.lsp,
     version = "1.*",
-    event = "InsertEnter",
     opts = {
       keymap = {
         preset = "default",

@@ -244,7 +244,9 @@
       "Read(**/secrets*)"
     ],
     "ask": [
-      "Bash(git reset --hard *)",
+      "Bash(git rebase *)",
+      "Bash(git reset *)",
+      "Bash(git restore *)",
       "Bash(git push *)",
       "Bash(git push --force-with-lease *)",
       "Bash(chmod *)",

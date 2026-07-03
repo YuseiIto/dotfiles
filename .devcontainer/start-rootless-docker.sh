@@ -94,4 +94,21 @@ if [ -r "${restrict}" ] && [ "$(cat "${restrict}")" = "1" ]; then
   warn "the HOST kernel restricts unprivileged user namespaces (AppArmor)."
   warn "fix on the host: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0"
 fi
+
+# Namespace failures depend on host state the error message does not show
+# (setuid bits survive image builds?, seccomp/NoNewPrivs on this process,
+# whether the container itself sits in a user namespace, ...), so dump the
+# relevant facts to make the next failure diagnosable from the log alone.
+warn "diagnostics:"
+{
+  ls -l "$(command -v newuidmap)" "$(command -v newgidmap)" 2>/dev/null
+  grep -E 'NoNewPrivs|CapBnd|CapEff|Seccomp:' /proc/self/status
+  echo "container uid_map: $(tr -s ' \n' ' ' </proc/self/uid_map)"
+  echo "subuid: $(tr '\n' ' ' </etc/subuid 2>/dev/null)"
+  if unshare -U -r true 2>/dev/null; then
+    echo "unshare -U -r (self-map): OK"
+  else
+    echo "unshare -U -r (self-map): FAILED"
+  fi
+} >&2
 exit 0

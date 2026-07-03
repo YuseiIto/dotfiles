@@ -29,9 +29,13 @@ jobs:
             # check is skipped with a visible warning if the prebuilt image
             # does not ship the rootless tooling yet, so an image lagging one
             # rebuild behind does not fail the job.
+            # The gate must match start-rootless-docker.sh: dockerd-rootless.sh
+            # alone also exists on older images (docker-ce recommends the
+            # rootless extras), so check the prerequisites the daemon dies
+            # without.
             runCmd: |
               zsh -c "echo 'Dev container built and started successfully!'"
-              if command -v dockerd-rootless.sh >/dev/null 2>&1; then
+              if command -v dockerd-rootless.sh >/dev/null 2>&1 && command -v newuidmap >/dev/null 2>&1 && command -v slirp4netns >/dev/null 2>&1; then
                 docker run --rm hello-world
               else
                 echo "::warning::rootless docker tooling not in the prebuilt image yet; smoke test skipped"

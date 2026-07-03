@@ -35,13 +35,17 @@ if docker info >/dev/null 2>&1; then
   exit 0
 fi
 
-# The rootless launcher is provided by docker-ce-rootless-extras. If it is
-# not installed (a base image that predates it), leave Docker unconfigured
-# rather than failing startup.
-if ! command -v dockerd-rootless.sh >/dev/null 2>&1; then
-  warn "dockerd-rootless.sh not found, skipping startup"
-  exit 0
-fi
+# The launcher comes from docker-ce-rootless-extras, but its presence alone
+# does not mean the image is ready: docker-ce pulls the extras in via
+# Recommends, so older images ship dockerd-rootless.sh without the uidmap/
+# networking/storage prerequisites and the daemon dies at startup. Require
+# the full toolset and skip (loudly) if any piece is missing.
+for cmd in dockerd-rootless.sh newuidmap newgidmap slirp4netns fuse-overlayfs; do
+  if ! command -v "${cmd}" >/dev/null 2>&1; then
+    warn "${cmd} not found (image predates the rootless tooling), skipping startup"
+    exit 0
+  fi
+done
 
 # Ensure subordinate UID/GID ranges exist for the current user; rootless mode
 # needs them to map container UIDs into the user namespace.

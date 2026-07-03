@@ -24,8 +24,5 @@ vim.keymap.set('n', 'gt', '<cmd>lua vim.lsp.buf.type_definition()<CR>')
 vim.keymap.set('n', 'gn', '<cmd>lua vim.lsp.buf.rename()<CR>')
 vim.keymap.set('n', 'ga', '<cmd>lua vim.lsp.buf.code_action()<CR>')
 vim.keymap.set('n', 'ge', '<cmd>lua vim.diagnostic.open_float()<CR>')
--- `vim.diagnostic.goto_next/goto_prev` are deprecated since Neovim 0.11.
--- Use `vim.diagnostic.jump({ count = ... })`; `float = true` keeps the
--- previous behaviour of showing the diagnostic in a floating window.
 vim.keymap.set('n', 'g]', function() vim.diagnostic.jump({ count = 1, float = true }) end)
 vim.keymap.set('n', 'g[', function() vim.diagnostic.jump({ count = -1, float = true }) end)

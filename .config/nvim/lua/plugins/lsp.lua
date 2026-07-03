@@ -16,9 +16,6 @@ return {
     "Saghen/blink.cmp",
     enabled = features.lsp,
     version = "1.*",
-    -- No lazy-load event: blink.cmp is a dependency of nvim-lspconfig (which is
-    -- `lazy = false`) and its capabilities are required in that plugin's
-    -- config, so it always loads at startup. An `event` here would be a no-op.
     opts = {
       keymap = {
         preset = "default",

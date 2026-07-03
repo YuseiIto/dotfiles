@@ -18,15 +18,34 @@ permissions:
   packages: write
 
 jobs:
-  docker:
-    name: Docker 🐳 [${{ matrix.variant }}]
-    runs-on: ubuntu-latest
+  docker-build:
+    name: Docker 🐳 [${{ matrix.variant }}/${{ matrix.arch }}]
+    runs-on: ${{ matrix.runner }}
     strategy:
+      fail-fast: false
       matrix:
         variant: [pine, bamboo, plum, palm]
+        arch: [amd64, arm64]
+        include:
+          - arch: amd64
+            platform: linux/amd64
+            runner: ubuntu-24.04
+          - arch: arm64
+            platform: linux/arm64
+            runner: ubuntu-24.04-arm
     steps:
       - name: Checkout repository
         uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+
+      # Free up runner disk before building. The images carry full toolchains
+      # (and now prowler's large dependency tree), so exporting/loading them can
+      # exhaust the default runner disk. The arm64 runner image ships far fewer
+      # preinstalled toolchains, so only amd64 needs this.
+      - name: Free disk space
+        if: matrix.arch == 'amd64'
+        uses: jlumbroso/free-disk-space@54081f138730dfa15788a46383842cd2f914a1be # v1.3.1
+        with:
+          large-packages: false
 
       - name: Set lower username
         id: owner
@@ -36,8 +55,13 @@ jobs:
         id: image_name
         run: echo "name=${{ steps.owner.outputs.name }}/${{ steps.owner.outputs.name }}-dev" >> $GITHUB_OUTPUT
 
-      - name: Set up QEMU for multi-arch build
-        uses: docker/setup-qemu-action@06116385d9baf250c9f4dcb4858b16962ea869c3 # v4
+      - name: Docker metadata
+        id: meta
+        # Only the labels output is consumed here: the digest build applies no
+        # tags (tagging happens on the manifest list in docker-merge).
+        uses: docker/metadata-action@80c7e94dd9b9319bd5eb7a0e0fe9291e23a2a2e9 # v6
+        with:
+          images: ${{ env.REGISTRY }}/${{ steps.image_name.outputs.name }}
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@d7f5e7f509e45cec5c76c4d5afdd7de93d0b3df5 # v4
@@ -49,27 +73,16 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract short commit SHA
-        id: vars
-        if: github.ref == 'refs/heads/main'
-        run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
-
-
-      # Replace slashes in branch name to hyphens to ensure valid Docker tag
-      - name: Sanitize branch name
-        id: branch_name
-        if: github.ref != 'refs/heads/main'
-        run: echo "branch=${GITHUB_REF_NAME//\//-}" >> $GITHUB_OUTPUT
-
-      - name: Build test image (amd64 only)
+      - name: Build test image
         uses: docker/build-push-action@f9f3042f7e2789586610d6e8b85c8f03e5195baf # v7
         with:
           context: .
           file: docker/Dockerfile.${{ matrix.variant }}
-          platforms: linux/amd64
+          platforms: ${{ matrix.platform }}
           load: true
           push: false
-          tags: test-${{ matrix.variant }}:local
+          tags: test-${{ matrix.variant }}-${{ matrix.arch }}:local
+          cache-from: type=gha,scope=${{ matrix.variant }}-${{ matrix.arch }}
 
       - name: Run goss validation
         run: |
@@ -77,31 +90,107 @@ jobs:
             plum) home="/home/debian" ;;
             *) home="/home/ubuntu" ;;
           esac
-          docker run --rm test-${{ matrix.variant }}:local \
+          docker run --rm test-${{ matrix.variant }}-${{ matrix.arch }}:local \
             goss --gossfile "${home}/dotfiles/mitamae/roles/${{ matrix.variant }}/goss.yaml" validate
 
-      - name: Build and push (main)
-        if: github.ref == 'refs/heads/main'
+      - name: Build and push by digest
+        id: build
         uses: docker/build-push-action@f9f3042f7e2789586610d6e8b85c8f03e5195baf # v7
         with:
           context: .
           file: docker/Dockerfile.${{ matrix.variant }}
-          platforms: linux/amd64,linux/arm64
-          push: true
-          tags: |
-            ${{ env.REGISTRY }}/${{ steps.image_name.outputs.name }}:${{ matrix.variant }}-latest
-            ${{ env.REGISTRY }}/${{ steps.image_name.outputs.name }}:${{ matrix.variant }}-${{ steps.vars.outputs.sha_short }}
+          platforms: ${{ matrix.platform }}
+          labels: ${{ steps.meta.outputs.labels }}
+          # oci-mediatypes=true ensures the per-arch images (and the index merged
+          # from them) are OCI, so GHCR honors the index-level description
+          # annotation set in docker-merge. Ref: docker/build-push-action#1022
+          outputs: type=image,name=${{ env.REGISTRY }}/${{ steps.image_name.outputs.name }},oci-mediatypes=true,push-by-digest=true,name-canonical=true,push=true
+          cache-from: type=gha,scope=${{ matrix.variant }}-${{ matrix.arch }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.variant }}-${{ matrix.arch }}
 
-      - name: Build and push (branch)
-        if: github.ref != 'refs/heads/main'
-        uses: docker/build-push-action@f9f3042f7e2789586610d6e8b85c8f03e5195baf # v7
+      - name: Export digest
+        run: |
+          mkdir -p "${RUNNER_TEMP}/digests"
+          digest="${{ steps.build.outputs.digest }}"
+          touch "${RUNNER_TEMP}/digests/${digest#sha256:}"
+
+      - name: Upload digest
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
-          context: .
-          file: docker/Dockerfile.${{ matrix.variant }}
-          platforms: linux/amd64,linux/arm64
-          push: true
+          name: digests-${{ matrix.variant }}-${{ matrix.arch }}
+          path: ${{ runner.temp }}/digests/*
+          if-no-files-found: error
+          retention-days: 1
+
+  docker-merge:
+    name: Docker manifest 📦 [${{ matrix.variant }}]
+    needs: docker-build
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        variant: [pine, bamboo, plum, palm]
+    steps:
+      - name: Set lower username
+        id: owner
+        run: echo "name=$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
+
+      - name: Set Image name
+        id: image_name
+        run: echo "name=${{ steps.owner.outputs.name }}/${{ steps.owner.outputs.name }}-dev" >> $GITHUB_OUTPUT
+
+      - name: Download digests
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
+        with:
+          path: ${{ runner.temp }}/digests
+          pattern: digests-${{ matrix.variant }}-*
+          merge-multiple: true
+
+      - name: Docker metadata
+        id: meta
+        uses: docker/metadata-action@80c7e94dd9b9319bd5eb7a0e0fe9291e23a2a2e9 # v6
+        with:
+          images: ${{ env.REGISTRY }}/${{ steps.image_name.outputs.name }}
+          # Per-tag prefix keeps each variant on its own tag. A flavor-level
+          # prefix with onlatest=true applies only to the latest tag, so with
+          # latest=false it would vanish and every variant would collide on the
+          # same unprefixed tag (e.g. pr-42).
+          flavor: latest=false
           tags: |
-            ${{ env.REGISTRY }}/${{ steps.image_name.outputs.name }}:${{ matrix.variant }}-${{ steps.branch_name.outputs.branch }}
+            type=ref,event=branch,prefix=${{ matrix.variant }}-
+            type=ref,event=pr,prefix=${{ matrix.variant }}-pr-
+            type=sha,prefix=${{ matrix.variant }}-,enable={{is_default_branch}}
+            type=raw,value=${{ matrix.variant }}-latest,enable={{is_default_branch}}
+        env:
+          # Annotations attach to the manifest list assembled in this job; the
+          # per-arch digest images carry OCI labels from the build job instead.
+          DOCKER_METADATA_ANNOTATIONS_LEVELS: index
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@d7f5e7f509e45cec5c76c4d5afdd7de93d0b3df5 # v4
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@650006c6eb7dba73a995cc03b0b2d7f5ca915bee # v4
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create manifest list and push
+        working-directory: ${{ runner.temp }}/digests
+        env:
+          IMAGE_REF: ${{ env.REGISTRY }}/${{ steps.image_name.outputs.name }}
+          METADATA_JSON: ${{ steps.meta.outputs.json }}
+        run: |
+          mapfile -t tags < <(jq -r '.tags[]' <<< "$METADATA_JSON")
+          mapfile -t annotations < <(jq -r '.annotations[]' <<< "$METADATA_JSON")
+
+          create_args=()
+          for tag in "${tags[@]}"; do create_args+=(--tag "$tag"); done
+          for annotation in "${annotations[@]}"; do create_args+=(--annotation "$annotation"); done
+          for digest in *; do create_args+=("${IMAGE_REF}@sha256:${digest}"); done
+
+          docker buildx imagetools create "${create_args[@]}"
 
 
   lxc:

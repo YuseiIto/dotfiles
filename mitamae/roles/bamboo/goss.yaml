@@ -9,6 +9,7 @@ gossfile:
   ../../cookbooks/lazygit/goss.yaml: {}
   ../../cookbooks/awscli/goss.yaml: {}
   ../../cookbooks/cargo-lambda/goss.yaml: {}
+  ../../cookbooks/prowler/goss.yaml: {}
   ../../cookbooks/gh/goss.yaml: {}
   ../../cookbooks/docker/goss.yaml: {}
   ../../cookbooks/devcontainer-cli/goss.yaml: {}
@@ -18,6 +19,7 @@ gossfile:
   ../../cookbooks/gemini-cli/goss.yaml: {}
   ../../cookbooks/opencode/goss.yaml: {}
   ../../cookbooks/imagemagick/goss.yaml: {}
+  ../../cookbooks/graphviz/goss.yaml: {}
   ../../cookbooks/sqlite/goss.yaml: {}
   ../../cookbooks/mysql-client/goss.yaml: {}
   ../../cookbooks/llvm/goss.yaml: {}

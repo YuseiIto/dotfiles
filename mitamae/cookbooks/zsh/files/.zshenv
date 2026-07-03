@@ -3,3 +3,8 @@
 # PATH and environment exports live in the shell-agnostic ~/.shell-env.sh (shared with bash),
 # symlinked by the shell-env cookbook.
 [ -f "$HOME/.shell-env.sh" ] && . "$HOME/.shell-env.sh"
+
+# Ref: https://docs.docker.com/engine/cli/completion/
+if [ -d "$HOME/.docker/completions" ]; then
+  fpath=("$HOME/.docker/completions" $fpath)
+fi

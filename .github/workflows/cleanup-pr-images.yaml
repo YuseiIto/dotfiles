@@ -32,10 +32,14 @@ jobs:
         run: echo "name=$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_OUTPUT"
 
       # Deleting the tagged multi-arch index also removes its now-untagged child
-      # platform manifests, so no dangling residue is left behind. The wildcards
-      # only match per-PR tags (main tags are <variant>-latest / <variant>-main /
-      # <variant>-<sha>): *-pr-<PR#> covers Docker manifest lists, *-<PR#>-merge
-      # covers LXC images.
+      # platform manifests. The wildcards only match per-PR tags (main tags are
+      # <variant>-latest / <variant>-main / <variant>-<sha>): *-pr-<PR#> covers
+      # Docker manifest lists, *-<PR#>-merge covers LXC images.
+      # NOTE: this only deletes the finally-tagged versions. Untagged versions
+      # orphaned by superseded pushes or cancelled runs within a PR still
+      # accumulate; cleaning those needs a scheduled delete-untagged sweep,
+      # which must avoid racing in-flight builds (digests are pushed before the
+      # manifest list that references them).
       - name: Delete per-PR image tags from GHCR
         uses: dataaxiom/ghcr-cleanup-action@d52806a0dc70b430571a37da1fde39733ffd640f # v1.2.2
         with:

@@ -31,12 +31,14 @@ format: mitamae/bin/rubocop
 
 .PHONY: shellcheck dry-run dry-run-linux dry-run-macos
 
-# Lint shell scripts. *.sh files are discovered with git; the few extensionless
-# shell commands are listed explicitly. zsh scripts carry an inline
-# `# shellcheck disable=SC1071` directive so shellcheck skips them — no file
-# filtering is needed here. CI runs this same target.
+# Lint shell scripts. *.sh files are discovered with git; extensionless shell
+# commands and dotfiles the '*.sh' glob misses are listed explicitly. zsh files
+# are outside the glob except docker/entrypoint.sh, which opts out via an
+# inline `# shellcheck disable=SC1071` directive. CI runs this same target.
 SHELLCHECK_EXTRA_FILES = \
 	mitamae/bin/setup \
+	mitamae/cookbooks/bash/files/.bash_profile \
+	mitamae/cookbooks/bash/files/.bashrc \
 	mitamae/cookbooks/claude-code/files/claude-tmux-notify \
 	mitamae/cookbooks/git-commit-claude/files/git-commit-claude
 

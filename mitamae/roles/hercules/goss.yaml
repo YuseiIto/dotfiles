@@ -4,6 +4,8 @@ gossfile:
   ../../cookbooks/rust/goss.yaml: {}
   ../../cookbooks/uv/goss.yaml: {}
   ../../cookbooks/nodenv/goss.yaml: {}
+  ../../cookbooks/ruby/goss.yaml: {}
+  ../../cookbooks/dotfiles-utils/goss.yaml: {}
   ../../cookbooks/zsh/goss.yaml: {}
   ../../cookbooks/neovim/goss.yaml: {}
   ../../cookbooks/base_tools/goss.yaml: {}
@@ -12,15 +14,21 @@ gossfile:
   ../../cookbooks/direnv/goss.yaml: {}
   ../../cookbooks/lazygit/goss.yaml: {}
   ../../cookbooks/zoxide/goss.yaml: {}
+  ../../cookbooks/fastfetch/goss.yaml: {}
   ../../cookbooks/cloudflared/goss.yaml: {}
   ../../cookbooks/nmap/goss.yaml: {}
   ../../cookbooks/awscli/goss.yaml: {}
+  ../../cookbooks/prowler/goss.yaml: {}
   ../../cookbooks/cfn-lint/goss.yaml: {}
+  ../../cookbooks/terraform/goss.yaml: {}
   ../../cookbooks/gh/goss.yaml: {}
+  ../../cookbooks/docker/goss.yaml: {}
+  ../../cookbooks/devcontainer-cli/goss.yaml: {}
   ../../cookbooks/ollama/goss.yaml: {}
   ../../cookbooks/huggingface-cli/goss.yaml: {}
   ../../cookbooks/aider/goss.yaml: {}
   ../../cookbooks/claude-code/goss.yaml: {}
+  ../../cookbooks/git-commit-claude/goss.yaml: {}
   ../../cookbooks/gemini-cli/goss.yaml: {}
   ../../cookbooks/opencode/goss.yaml: {}
   ../../cookbooks/ocaml/goss.yaml: {}
@@ -30,6 +38,7 @@ gossfile:
   ../../cookbooks/cloc/goss.yaml: {}
   ../../cookbooks/ffmpeg/goss.yaml: {}
   ../../cookbooks/imagemagick/goss.yaml: {}
+  ../../cookbooks/graphviz/goss.yaml: {}
   ../../cookbooks/pandoc/goss.yaml: {}
   ../../cookbooks/sqlite/goss.yaml: {}
   ../../cookbooks/mysql-client/goss.yaml: {}

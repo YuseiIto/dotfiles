@@ -1,7 +1,3 @@
-if node[:platform] == 'darwin'
-  brew_cask 'openscad'
-elsif %w[ubuntu debian].include?(node[:platform])
-  package 'openscad' do
-    user 'root'
-  end
+cross_platform_package 'openscad' do
+  darwin_cask true
 end

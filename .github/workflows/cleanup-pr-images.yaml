@@ -1,0 +1,49 @@
+name: Cleanup PR images
+
+# build.yaml pushes per-PR images to GHCR on every pull_request: Docker
+# manifest lists tagged <variant>-pr-<PR#> and LXC images tagged
+# <variant>-<ref>-merge (e.g. pine-15-merge). Without cleanup these tags pile
+# up forever. Delete them once the PR is closed (merged or not). build.yaml
+# only pushes these images on pull_request events, so PR-close is the right
+# trigger.
+
+on:
+  pull_request:
+    types: [closed]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  cleanup:
+    name: Delete per-PR GHCR images
+    runs-on: ubuntu-latest
+    # Fork PRs run with a read-only token and never push images, so there is
+    # nothing to clean up — only same-repo PRs produce GHCR tags.
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    steps:
+      - name: Set lowercase owner
+        id: owner
+        run: echo "name=$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_OUTPUT"
+
+      # Deleting the tagged multi-arch index also removes its now-untagged child
+      # platform manifests. The wildcards only match per-PR tags (main tags are
+      # <variant>-latest / <variant>-main / <variant>-<sha>): *-pr-<PR#> covers
+      # Docker manifest lists, *-<PR#>-merge covers LXC images.
+      # NOTE: this only deletes the finally-tagged versions. Untagged versions
+      # orphaned by superseded pushes or cancelled runs within a PR still
+      # accumulate; cleaning those needs a scheduled delete-untagged sweep,
+      # which must avoid racing in-flight builds (digests are pushed before the
+      # manifest list that references them).
+      - name: Delete per-PR image tags from GHCR
+        uses: dataaxiom/ghcr-cleanup-action@d52806a0dc70b430571a37da1fde39733ffd640f # v1.2.2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          owner: ${{ steps.owner.outputs.name }}
+          packages: ${{ steps.owner.outputs.name }}-dev,${{ steps.owner.outputs.name }}-dev-lxc
+          delete-tags: "*-pr-${{ github.event.pull_request.number }},*-${{ github.event.pull_request.number }}-merge"

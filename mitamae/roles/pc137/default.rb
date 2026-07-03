@@ -20,6 +20,8 @@ include_recipe '../../cookbooks/git'
 include_recipe '../../cookbooks/rust'
 include_recipe '../../cookbooks/uv'
 include_recipe '../../cookbooks/nodenv'
+include_recipe '../../cookbooks/ruby'
+include_recipe '../../cookbooks/dotfiles-utils'
 
 # Shell & Terminal
 include_recipe '../../cookbooks/zsh'
@@ -31,22 +33,26 @@ include_recipe '../../cookbooks/direnv'
 include_recipe '../../cookbooks/zoxide'
 include_recipe '../../cookbooks/lazygit'
 include_recipe '../../cookbooks/alacritty'
+include_recipe '../../cookbooks/fastfetch'
 
 # Networking
 include_recipe '../../cookbooks/cloudflared'
 
 # Cloud & DevOps
 include_recipe '../../cookbooks/awscli'
+include_recipe '../../cookbooks/prowler'
 include_recipe '../../cookbooks/google-cloud-sdk'
 include_recipe '../../cookbooks/cfn-lint'
 include_recipe '../../cookbooks/gh'
 include_recipe '../../cookbooks/docker'
+include_recipe '../../cookbooks/devcontainer-cli'
 
 # AI & Coding Assistants
 include_recipe '../../cookbooks/ollama'
 include_recipe '../../cookbooks/huggingface-cli'
 include_recipe '../../cookbooks/aider'
 include_recipe '../../cookbooks/claude-code'
+include_recipe '../../cookbooks/git-commit-claude'
 include_recipe '../../cookbooks/gemini-cli'
 include_recipe '../../cookbooks/opencode'
 
@@ -62,6 +68,10 @@ include_recipe '../../cookbooks/lua-language-server'
 include_recipe '../../cookbooks/kotlin-lsp'
 include_recipe '../../cookbooks/cloc'
 include_recipe '../../cookbooks/goss'
+
+# Data & Document Processing
+include_recipe '../../cookbooks/imagemagick'
+include_recipe '../../cookbooks/graphviz'
 
 # macOS GUI
 include_recipe '../../cookbooks/feature_macos_fonts'

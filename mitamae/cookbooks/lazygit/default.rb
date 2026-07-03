@@ -19,4 +19,8 @@ elsif %w[ubuntu debian].include?(node[:platform])
     user 'root'
     not_if "lazygit --version 2>/dev/null | grep -q '#{lazygit_version}'"
   end
+else
+  unsupported_platform! node[:platform]
 end
+
+dotconfig 'lazygit'

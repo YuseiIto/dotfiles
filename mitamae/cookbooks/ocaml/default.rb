@@ -6,19 +6,8 @@ disable_sandboxing = if node[:is_container]
                        ''
                      end
 
-if %w[ubuntu debian].include?(node[:platform])
-  package 'ocaml' do
-    user 'root'
-  end
-  package 'opam' do
-    user 'root'
-  end
-
-elsif node[:platform] == 'darwin'
-  package 'ocaml'
-  package 'opam'
-
-end
+cross_platform_package 'ocaml'
+cross_platform_package 'opam'
 
 execute 'Init opam' do
   command "opam init --auto-setup --quiet #{disable_sandboxing}"
@@ -27,5 +16,9 @@ end
 
 execute 'Install ocaml-lsp-server via opam' do
   command 'opam install -y ocaml-lsp-server'
-  not_if 'command -v ocamllsp'
+  # opam installs into the switch's bin (~/.opam/default/bin) which is not on
+  # PATH during the mitamae run, so `command -v ocamllsp` would never
+  # short-circuit. Test the installed binary directly so the install only
+  # runs once.
+  not_if "test -x #{ENV['HOME']}/.opam/default/bin/ocamllsp"
 end

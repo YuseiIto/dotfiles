@@ -19,6 +19,8 @@ include_recipe '../plum'
 include_recipe '../../cookbooks/rust'
 include_recipe '../../cookbooks/uv'
 include_recipe '../../cookbooks/nodenv'
+include_recipe '../../cookbooks/ruby'
+include_recipe '../../cookbooks/dotfiles-utils'
 
 # Shell & Terminal
 include_recipe '../../cookbooks/starship'
@@ -26,8 +28,10 @@ include_recipe '../../cookbooks/lazygit'
 
 # Cloud & DevOps
 include_recipe '../../cookbooks/awscli'
+include_recipe '../../cookbooks/prowler'
 include_recipe '../../cookbooks/gh'
 include_recipe '../../cookbooks/docker'
+include_recipe '../../cookbooks/devcontainer-cli'
 
 # AI & Coding Assistants
 include_recipe '../../cookbooks/huggingface-cli'
@@ -37,6 +41,8 @@ include_recipe '../../cookbooks/gemini-cli'
 include_recipe '../../cookbooks/opencode'
 
 # Data & Document Processing
+include_recipe '../../cookbooks/imagemagick'
+include_recipe '../../cookbooks/graphviz'
 include_recipe '../../cookbooks/sqlite'
 include_recipe '../../cookbooks/mysql-client'
 

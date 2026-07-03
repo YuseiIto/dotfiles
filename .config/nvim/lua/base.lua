@@ -1,5 +1,5 @@
 vim.g.mapleader = " "  -- Remap Leader to <Space>
-vim.opt.clipboard = "unnamed"  -- Share clipboard with system
+vim.opt.clipboard = "unnamedplus"  -- Share clipboard with system
 vim.opt.number = true      -- Display line number
 vim.opt.autoindent = true  -- Indent automatically
 vim.opt.hls = true         -- Highlight search
@@ -24,6 +24,7 @@ vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
 vim.opt.expandtab = true
 vim.opt.list = true
+vim.opt.showmode = false -- Don't show the mode to avoid conflict with statusline plugins
 
 -- Remember the place of cursor
 vim.api.nvim_create_autocmd("BufReadPost", {

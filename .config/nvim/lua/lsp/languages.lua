@@ -58,6 +58,10 @@ vim.lsp.enable('prismals')
 
 -- Kotlin LSP
 -- https://github.com/Kotlin/kotlin-lsp
+vim.lsp.config('kotlin_lsp',
+  { cmd = { 'kotlin-lsp', '--stdio' },
+  });
+
 vim.lsp.enable('kotlin_lsp')
 
 -- Rust

@@ -9,11 +9,12 @@ if node[:platform] == 'darwin'
     onyx
     utm
     vnc-viewer
-    raspberry-pi-imager
     zap
   ]
 
   casks.each do |cask|
     brew_cask cask
   end
+else
+  unsupported_platform! node[:platform]
 end

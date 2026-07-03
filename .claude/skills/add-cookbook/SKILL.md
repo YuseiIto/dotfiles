@@ -75,14 +75,57 @@ cross_platform_package 'sqlite',
 
 Debian installs run as root automatically. Darwin uses brew.
 
+### `apt_repository` — third-party APT repositories (Debian/Ubuntu)
+
+Use inside the Debian/Ubuntu branch when a tool ships via its own APT repo
+instead of the base distro. It fetches the signing key, normalizes it to binary
+with `gpg --dearmor` (works for both armored and already-binary keys), stores it
+at `/etc/apt/keyrings/<name>.gpg`, writes `/etc/apt/sources.list.d/<name>.list`
+(scoped to that key via `signed-by` and pinned to the host arch), and runs
+`apt-get update`. `curl`, `ca-certificates`, and `gnupg` are installed
+automatically. Always prefer this over hand-rolling the key/sources/update dance
+in a raw `execute` — apt's `signed-by` is extension-sensitive, and getting the
+key format wrong silently breaks verification.
+
+```ruby
+apt_repository 'google-chrome' do
+  key_url 'https://dl.google.com/linux/linux_signing_key.pub'
+  repo 'https://dl.google.com/linux/chrome/deb/ stable main'
+end
+
+# A codename-keyed repo embeds shell directly in `repo`:
+codename = '$(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}")'
+apt_repository 'docker' do
+  key_url "https://download.docker.com/linux/#{node[:platform]}/gpg"
+  repo "https://download.docker.com/linux/#{node[:platform]} #{codename} stable"
+end
+```
+
+`repo` is everything after the `[options]` block of the sources line. Pair it
+with an explicit `package '<name>' do user 'root' end` for the actual install
+and an `unsupported_platform!` fallback for other platforms.
+
 ### `brew_cask` — macOS GUI applications
 
-Only available on macOS. Use for `.app` bundles (not CLI tools).
+Only available on macOS. Use for `.app` bundles (not CLI tools). Pair it with
+an explicit `unsupported_platform!` fallback so the cookbook fails loudly if it
+is ever reached on a non-macOS host (see "Unsupported platforms" below).
 
 ```ruby
 if node[:platform] == 'darwin'
   brew_cask 'wezterm'
+else
+  unsupported_platform! node[:platform]
 end
+```
+
+### `unsupported_platform!` — fail loudly on platforms you don't support
+
+Always terminate platform branches with this helper instead of silently
+skipping. See "Unsupported platforms" below for the full policy.
+
+```ruby
+unsupported_platform! node[:platform]
 ```
 
 ### `cargo_package` — Rust binaries
@@ -156,6 +199,8 @@ elsif %w[ubuntu debian].include?(node[:platform])
     user 'root'
     not_if 'snap list | grep -q mytool'
   end
+else
+  unsupported_platform! node[:platform]
 end
 ```
 
@@ -181,6 +226,28 @@ end
 node[:platform] == 'darwin'                        # macOS
 %w[ubuntu debian].include?(node[:platform])        # Debian/Ubuntu Linux
 ```
+
+### Unsupported platforms (required)
+
+Every cookbook must handle each platform it supports explicitly and **fail
+loudly on the rest** by calling `unsupported_platform! node[:platform]`. Never
+leave a bare `if`/`elsif` without an `else`, and never write
+`... if node[:platform] == 'darwin'` as a silent guard — both hide
+role/platform misconfigurations behind a no-op.
+
+```ruby
+if node[:platform] == 'darwin'
+  package 'mytool'
+elsif %w[ubuntu debian].include?(node[:platform])
+  # ... Linux install ...
+else
+  unsupported_platform! node[:platform]
+end
+```
+
+Cookbooks built solely on `cross_platform_package`, `cargo_package`,
+`uv_tool_package`, or `npm_global_package` already embed this policy and need no
+extra branch.
 
 ### Architecture
 
@@ -212,6 +279,8 @@ elsif %w[ubuntu debian].include?(node[:platform])
     user 'root'
     not_if "mytool --version 2>/dev/null | grep -q '#{mytool_version}'"
   end
+else
+  unsupported_platform! node[:platform]
 end
 ```
 

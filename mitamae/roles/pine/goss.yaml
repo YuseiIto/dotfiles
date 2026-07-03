@@ -7,13 +7,13 @@ gossfile:
   ../../cookbooks/nikto/goss.yaml: {}
   ../../cookbooks/cfn-lint/goss.yaml: {}
   ../../cookbooks/ollama/goss.yaml: {}
+  ../../cookbooks/git-commit-claude/goss.yaml: {}
   ../../cookbooks/sdkman/goss.yaml: {}
   ../../cookbooks/kotlin/goss.yaml: {}
   ../../cookbooks/cmake/goss.yaml: {}
   ../../cookbooks/ccls/goss.yaml: {}
   ../../cookbooks/cloc/goss.yaml: {}
   ../../cookbooks/ffmpeg/goss.yaml: {}
-  ../../cookbooks/imagemagick/goss.yaml: {}
   ../../cookbooks/pandoc/goss.yaml: {}
   ../../cookbooks/asciinema/goss.yaml: {}
   ../../cookbooks/arduino-cli/goss.yaml: {}

@@ -1,0 +1,63 @@
+name: Lint
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  rubocop:
+    name: RuboCop
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          bundler-cache: true
+          working-directory: mitamae
+      - name: Run RuboCop
+        run: bundle exec rubocop
+        working-directory: mitamae
+
+  shellcheck:
+    name: ShellCheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+      # Use the Makefile target as the single source of truth so local
+      # `make shellcheck` and CI always lint the same set of files.
+      # shellcheck is preinstalled on GitHub-hosted ubuntu runners.
+      - name: Run ShellCheck
+        run: make shellcheck
+
+  role-variant:
+    name: Role variant matches role name
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+      - name: Check that each role's variant equals its directory name
+        run: |
+          status=0
+          for dir in mitamae/roles/*/; do
+            role="$(basename "$dir")"
+            file="${dir}default.rb"
+            [ -f "$file" ] || continue
+            variant="$(sed -nE "s/^[[:space:]]*variant:[[:space:]]*'([^']*)'.*/\1/p" "$file")"
+            if [ -z "$variant" ]; then
+              echo "::error file=$file::no 'variant:' found"
+              status=1
+            elif [ "$variant" != "$role" ]; then
+              echo "::error file=$file::variant '$variant' does not match role name '$role'"
+              status=1
+            fi
+          done
+          exit $status

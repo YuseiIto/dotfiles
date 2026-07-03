@@ -1,0 +1,12 @@
+# Keep host-built / platform-specific artifacts out of the Linux image build context.
+# The mitamae binary is git-ignored and built for the host's OS/arch; bin/setup
+# re-downloads the correct binary for the target platform during provisioning, so
+# copying the host's copy in would shadow it and fail to exec (e.g. darwin binary on linux).
+.git
+mitamae/bin/mitamae
+mitamae/bin/mitamae-*
+mitamae/bin/*.tar.gz
+
+# LXC build outputs (scripts/build-lxc.sh)
+rootfs-*.squashfs
+lxd-*.tar.xz

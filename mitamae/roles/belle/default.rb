@@ -20,6 +20,8 @@ include_recipe '../../cookbooks/git'
 include_recipe '../../cookbooks/rust'
 include_recipe '../../cookbooks/uv'
 include_recipe '../../cookbooks/nodenv'
+include_recipe '../../cookbooks/ruby'
+include_recipe '../../cookbooks/dotfiles-utils'
 
 # Shell & Terminal
 include_recipe '../../cookbooks/zsh'
@@ -31,6 +33,7 @@ include_recipe '../../cookbooks/direnv'
 include_recipe '../../cookbooks/zoxide'
 include_recipe '../../cookbooks/lazygit'
 include_recipe '../../cookbooks/alacritty'
+include_recipe '../../cookbooks/fastfetch'
 
 # Networking & Security
 include_recipe '../../cookbooks/cloudflared'
@@ -40,14 +43,18 @@ include_recipe '../../cookbooks/nikto'
 
 # Cloud & DevOps
 include_recipe '../../cookbooks/awscli'
+include_recipe '../../cookbooks/prowler'
 include_recipe '../../cookbooks/cfn-lint'
 include_recipe '../../cookbooks/gh'
+include_recipe '../../cookbooks/docker'
+include_recipe '../../cookbooks/devcontainer-cli'
 
 # AI & Coding Assistants
 include_recipe '../../cookbooks/ollama'
 include_recipe '../../cookbooks/huggingface-cli'
 include_recipe '../../cookbooks/aider'
 include_recipe '../../cookbooks/claude-code'
+include_recipe '../../cookbooks/git-commit-claude'
 include_recipe '../../cookbooks/gemini-cli'
 include_recipe '../../cookbooks/opencode'
 
@@ -64,6 +71,7 @@ include_recipe '../../cookbooks/cloc'
 # Data & Document Processing
 include_recipe '../../cookbooks/ffmpeg'
 include_recipe '../../cookbooks/imagemagick'
+include_recipe '../../cookbooks/graphviz'
 include_recipe '../../cookbooks/pandoc'
 include_recipe '../../cookbooks/sqlite'
 include_recipe '../../cookbooks/mysql-client'
@@ -91,9 +99,11 @@ include_recipe '../../cookbooks/kicad'
 include_recipe '../../cookbooks/freecad'
 include_recipe '../../cookbooks/openscad'
 include_recipe '../../cookbooks/processing'
+include_recipe '../../cookbooks/raspberry-pi-imager'
 include_recipe '../../cookbooks/postico'
 include_recipe '../../cookbooks/stoplight-studio'
 include_recipe '../../cookbooks/flatcam'
+include_recipe '../../cookbooks/affinity'
 
 # Development Tools & LSPs
 include_recipe '../../cookbooks/llvm'

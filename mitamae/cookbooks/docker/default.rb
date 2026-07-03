@@ -1,34 +1,12 @@
 if node[:platform] == 'darwin'
   brew_cask 'docker'
 elsif %w[ubuntu debian].include?(node[:platform])
-  # Prerequisites
-  package 'ca-certificates' do
-    user 'root'
-  end
+  # Docker's repository is keyed by distro codename (e.g. noble/bookworm).
+  codename = '$(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}")'
 
-  package 'curl' do
-    user 'root'
-  end
-
-  # Add Docker's official GPG key
-  execute 'add docker gpg key' do
-    command <<~EOC
-      install -m 0755 -d /etc/apt/keyrings
-      curl -fsSL https://download.docker.com/linux/#{node[:platform]}/gpg -o /etc/apt/keyrings/docker.asc
-      chmod a+r /etc/apt/keyrings/docker.asc
-    EOC
-    user 'root'
-    not_if 'test -f /etc/apt/keyrings/docker.asc'
-  end
-
-  # Add Docker apt repository
-  execute 'add docker apt repository' do
-    command <<~EOC
-      echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/#{node[:platform]} $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}") stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
-      apt-get update -qq
-    EOC
-    user 'root'
-    not_if 'test -f /etc/apt/sources.list.d/docker.list'
+  apt_repository 'docker' do
+    key_url "https://download.docker.com/linux/#{node[:platform]}/gpg"
+    repo "https://download.docker.com/linux/#{node[:platform]} #{codename} stable"
   end
 
   # Install Docker Engine and plugins. docker-ce-rootless-extras ships the
@@ -54,4 +32,6 @@ elsif %w[ubuntu debian].include?(node[:platform])
       user 'root'
     end
   end
+else
+  unsupported_platform! node[:platform]
 end

@@ -1,7 +1,13 @@
 name: Lint
 on:
   push:
+    branches:
+      - main
   pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
@@ -12,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
@@ -26,18 +32,18 @@ jobs:
     name: ShellCheck
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
-      - uses: ludeeus/action-shellcheck@2.0.0
-        with:
-          scandir: '.'
-          additional_files: 'mitamae/bin/setup'
-          ignore_names: '.zshrc entrypoint.sh'
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
+      # Use the Makefile target as the single source of truth so local
+      # `make shellcheck` and CI always lint the same set of files.
+      # shellcheck is preinstalled on GitHub-hosted ubuntu runners.
+      - name: Run ShellCheck
+        run: make shellcheck
 
   role-variant:
     name: Role variant matches role name
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
       - name: Check that each role's variant equals its directory name
         run: |
           status=0

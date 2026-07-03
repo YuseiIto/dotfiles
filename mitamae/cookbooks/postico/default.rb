@@ -1,1 +1,5 @@
-brew_cask 'postico' if node[:platform] == 'darwin'
+if node[:platform] == 'darwin'
+  brew_cask 'postico'
+else
+  unsupported_platform! node[:platform]
+end

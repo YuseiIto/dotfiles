@@ -21,4 +21,6 @@ if %w[ubuntu debian].include?(node[:platform])
 elsif node[:platform] == 'darwin'
   package 'asciinema'
   package 'agg'
+else
+  unsupported_platform! node[:platform]
 end

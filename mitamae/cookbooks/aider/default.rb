@@ -5,4 +5,6 @@ elsif %w[ubuntu debian].include?(node[:platform])
     command 'curl -fsSL https://aider.chat/install.sh | sh'
     not_if 'command -v aider'
   end
+else
+  unsupported_platform! node[:platform]
 end

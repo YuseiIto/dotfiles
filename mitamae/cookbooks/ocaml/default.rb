@@ -6,19 +6,8 @@ disable_sandboxing = if node[:is_container]
                        ''
                      end
 
-if %w[ubuntu debian].include?(node[:platform])
-  package 'ocaml' do
-    user 'root'
-  end
-  package 'opam' do
-    user 'root'
-  end
-
-elsif node[:platform] == 'darwin'
-  package 'ocaml'
-  package 'opam'
-
-end
+cross_platform_package 'ocaml'
+cross_platform_package 'opam'
 
 execute 'Init opam' do
   command "opam init --auto-setup --quiet #{disable_sandboxing}"

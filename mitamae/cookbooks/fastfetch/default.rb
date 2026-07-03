@@ -19,4 +19,6 @@ elsif %w[ubuntu debian].include?(node[:platform])
     EOC
     not_if "fastfetch --version 2>/dev/null | grep -q '#{fastfetch_version}'"
   end
+else
+  unsupported_platform! node[:platform]
 end

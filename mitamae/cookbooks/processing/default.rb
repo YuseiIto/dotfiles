@@ -10,4 +10,6 @@ elsif %w[debian ubuntu].include?(node[:platform])
     user 'root'
     not_if 'snap list | grep -q processing'
   end
+else
+  unsupported_platform! node[:platform]
 end

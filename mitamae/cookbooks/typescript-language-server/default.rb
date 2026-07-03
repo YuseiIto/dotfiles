@@ -5,4 +5,6 @@ elsif %w[ubuntu debian].include?(node[:platform])
     bin_name 'tsc'
   end
   npm_global_package 'typescript-language-server'
+else
+  unsupported_platform! node[:platform]
 end

@@ -1,0 +1,4 @@
+command:
+  command -v prowler:
+    exit-status: 0
+    timeout: 10000

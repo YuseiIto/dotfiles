@@ -22,5 +22,6 @@ if %w[ubuntu debian].include?(node[:platform])
     command "sed -i 's/sdkman_auto_answer=false/sdkman_auto_answer=true/' #{sdkman_dir}/etc/config"
     only_if "grep -q 'sdkman_auto_answer=false' #{sdkman_dir}/etc/config"
   end
-
+else
+  unsupported_platform! node[:platform]
 end

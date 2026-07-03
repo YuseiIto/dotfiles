@@ -1,11 +1,5 @@
-if %w[ubuntu debian].include?(node[:platform])
-  package 'tmux' do
-    user 'root'
-  end
-else
-  # macOS, Arch Linux
-  package 'tmux'
-end
+# Install tmux
+cross_platform_package 'tmux'
 
 home = ENV['HOME']
 

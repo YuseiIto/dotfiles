@@ -28,6 +28,7 @@ include_recipe '../../cookbooks/lazygit'
 
 # Cloud & DevOps
 include_recipe '../../cookbooks/awscli'
+include_recipe '../../cookbooks/prowler'
 include_recipe '../../cookbooks/gh'
 include_recipe '../../cookbooks/docker'
 include_recipe '../../cookbooks/devcontainer-cli'
@@ -41,6 +42,7 @@ include_recipe '../../cookbooks/opencode'
 
 # Data & Document Processing
 include_recipe '../../cookbooks/imagemagick'
+include_recipe '../../cookbooks/graphviz'
 include_recipe '../../cookbooks/sqlite'
 include_recipe '../../cookbooks/mysql-client'
 

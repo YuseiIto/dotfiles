@@ -28,6 +28,8 @@ elsif %w[ubuntu debian].include?(node[:platform])
     command "git clone https://github.com/nodenv/node-build.git #{nodenv_root}/plugins/node-build"
     not_if "test -d #{nodenv_root}/plugins/node-build"
   end
+else
+  unsupported_platform! node[:platform]
 end
 
 # Install and set the global Node version as two separate resources so a

@@ -9,4 +9,6 @@ if node[:platform] == 'darwin'
   casks.each do |cask|
     brew_cask cask
   end
+else
+  unsupported_platform! node[:platform]
 end

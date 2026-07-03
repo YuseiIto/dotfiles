@@ -1,13 +1,7 @@
 include_recipe '../shell-env'
 
 # Install zsh
-if node[:platform] == 'darwin'
-  package 'zsh'
-elsif %w[ubuntu debian].include?(node[:platform])
-  package 'zsh' do
-    user 'root'
-  end
-end
+cross_platform_package 'zsh'
 
 dotfile '.zshenv' do
   cookbook_dir File.dirname(__FILE__)

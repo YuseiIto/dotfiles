@@ -40,6 +40,7 @@ include_recipe '../../cookbooks/cloudflared'
 
 # Cloud & DevOps
 include_recipe '../../cookbooks/awscli'
+include_recipe '../../cookbooks/prowler'
 include_recipe '../../cookbooks/google-cloud-sdk'
 include_recipe '../../cookbooks/cfn-lint'
 include_recipe '../../cookbooks/gh'
@@ -70,6 +71,7 @@ include_recipe '../../cookbooks/goss'
 
 # Data & Document Processing
 include_recipe '../../cookbooks/imagemagick'
+include_recipe '../../cookbooks/graphviz'
 
 # macOS GUI
 include_recipe '../../cookbooks/feature_macos_fonts'

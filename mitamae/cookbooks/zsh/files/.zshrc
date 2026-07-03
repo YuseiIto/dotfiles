@@ -42,6 +42,13 @@ if command -v nvim > /dev/null 2>&1; then
   export EDITOR=nvim
 fi
 
+# Point Docker clients at the per-user rootless daemon when one is running (e.g. inside a devcontainer).
+# The socket path depends on the current UID, so resolve it here instead of hardcoding it in container config.
+# Hosts using the system daemon are unaffected: the rootless socket does not exist there, and an explicitly set DOCKER_HOST always wins.
+if [ -z "${DOCKER_HOST:-}" ] && [ -S "/run/user/$(id -u)/docker.sock" ]; then
+  export DOCKER_HOST="unix:///run/user/$(id -u)/docker.sock"
+fi
+
 # Initialize direnv if it's installed
 if command -v direnv > /dev/null 2>&1; then
   eval "$(direnv hook zsh)"

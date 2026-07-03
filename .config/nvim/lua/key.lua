@@ -14,9 +14,10 @@ vim.keymap.set('n', ']B', '<cmd>blast<CR>', { silent = true, desc = "Go to last 
 vim.cmd([[cnoreabbrev tn tabnew]])
 -- Avoid using <Tab> as a mapping prefix: in a terminal <Tab> and <C-i> share
 -- the same keycode, so prefixing with <Tab> shadows <C-i> (jumplist forward)
--- behind a timeoutlen wait. Use bracket pairs, consistent with [b/]b above.
-vim.keymap.set('n', '[t', 'gT', { silent = true, desc = "Go to previous tab" })
-vim.keymap.set('n', ']t', 'gt', { silent = true, desc = "Go to next tab" })
+-- behind a timeoutlen wait. Bracket pairs like [t/]t are also out: Neovim 0.11
+-- reserves them for the built-in tag-matchlist navigation. Use <leader> instead.
+vim.keymap.set('n', '<leader>[', 'gT', { silent = true, desc = "Go to previous tab" })
+vim.keymap.set('n', '<leader>]', 'gt', { silent = true, desc = "Go to next tab" })
 
 for i = 1, 9, 1 do
   vim.keymap.set('n', '<leader>' .. i, i .. 'gt', { desc = string.format("Jump to %d-th tab.", i) })

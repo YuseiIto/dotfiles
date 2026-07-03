@@ -1,5 +1,5 @@
 if node[:platform] == 'darwin'
-  package 'hashicorp/tap/terraform-ls'
+  package 'hashicorp/tap/terraform'
 elsif %w[ubuntu debian].include?(node[:platform])
   # HashiCorp's repository is keyed by distro codename (e.g. noble/bookworm).
   codename = '$(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}")'
@@ -9,7 +9,7 @@ elsif %w[ubuntu debian].include?(node[:platform])
     repo "https://apt.releases.hashicorp.com #{codename} main"
   end
 
-  package 'terraform-ls' do
+  package 'terraform' do
     user 'root'
   end
 else

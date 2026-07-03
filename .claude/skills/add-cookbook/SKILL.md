@@ -75,6 +75,36 @@ cross_platform_package 'sqlite',
 
 Debian installs run as root automatically. Darwin uses brew.
 
+### `apt_repository` — third-party APT repositories (Debian/Ubuntu)
+
+Use inside the Debian/Ubuntu branch when a tool ships via its own APT repo
+instead of the base distro. It fetches the signing key, normalizes it to binary
+with `gpg --dearmor` (works for both armored and already-binary keys), stores it
+at `/etc/apt/keyrings/<name>.gpg`, writes `/etc/apt/sources.list.d/<name>.list`
+(scoped to that key via `signed-by` and pinned to the host arch), and runs
+`apt-get update`. `curl`, `ca-certificates`, and `gnupg` are installed
+automatically. Always prefer this over hand-rolling the key/sources/update dance
+in a raw `execute` — apt's `signed-by` is extension-sensitive, and getting the
+key format wrong silently breaks verification.
+
+```ruby
+apt_repository 'google-chrome' do
+  key_url 'https://dl.google.com/linux/linux_signing_key.pub'
+  repo 'https://dl.google.com/linux/chrome/deb/ stable main'
+end
+
+# A codename-keyed repo embeds shell directly in `repo`:
+codename = '$(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}")'
+apt_repository 'docker' do
+  key_url "https://download.docker.com/linux/#{node[:platform]}/gpg"
+  repo "https://download.docker.com/linux/#{node[:platform]} #{codename} stable"
+end
+```
+
+`repo` is everything after the `[options]` block of the sources line. Pair it
+with an explicit `package '<name>' do user 'root' end` for the actual install
+and an `unsupported_platform!` fallback for other platforms.
+
 ### `brew_cask` — macOS GUI applications
 
 Only available on macOS. Use for `.app` bundles (not CLI tools). Pair it with

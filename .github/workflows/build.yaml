@@ -37,6 +37,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6
 
+      # Free up runner disk before building. The images carry full toolchains
+      # (and now prowler's large dependency tree), so exporting/loading them can
+      # exhaust the default runner disk. The arm64 runner image ships far fewer
+      # preinstalled toolchains, so only amd64 needs this.
       - name: Free disk space
         if: matrix.arch == 'amd64'
         uses: jlumbroso/free-disk-space@54081f138730dfa15788a46383842cd2f914a1be # v1.3.1

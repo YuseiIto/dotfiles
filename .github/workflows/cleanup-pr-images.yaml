@@ -1,9 +1,11 @@
 name: Cleanup PR images
 
-# build.yaml pushes a per-PR image to GHCR on every pull_request, tagged
-# <variant>-<ref>-merge (e.g. pine-15-merge). Without cleanup these tags pile up
-# forever. Delete them once the PR is closed (merged or not). build.yaml only
-# pushes branch images on pull_request events, so PR-close is the right trigger.
+# build.yaml pushes per-PR images to GHCR on every pull_request: Docker
+# manifest lists tagged <variant>-pr-<PR#> and LXC images tagged
+# <variant>-<ref>-merge (e.g. pine-15-merge). Without cleanup these tags pile
+# up forever. Delete them once the PR is closed (merged or not). build.yaml
+# only pushes these images on pull_request events, so PR-close is the right
+# trigger.
 
 on:
   pull_request:
@@ -30,12 +32,14 @@ jobs:
         run: echo "name=$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_OUTPUT"
 
       # Deleting the tagged multi-arch index also removes its now-untagged child
-      # platform manifests, so no dangling residue is left behind. The wildcard
-      # only matches per-PR tags (main tags are <variant>-latest / <variant>-<sha>).
-      - name: Delete branch image tags from GHCR
+      # platform manifests, so no dangling residue is left behind. The wildcards
+      # only match per-PR tags (main tags are <variant>-latest / <variant>-main /
+      # <variant>-<sha>): *-pr-<PR#> covers Docker manifest lists, *-<PR#>-merge
+      # covers LXC images.
+      - name: Delete per-PR image tags from GHCR
         uses: dataaxiom/ghcr-cleanup-action@d52806a0dc70b430571a37da1fde39733ffd640f # v1.2.2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           owner: ${{ steps.owner.outputs.name }}
           packages: ${{ steps.owner.outputs.name }}-dev,${{ steps.owner.outputs.name }}-dev-lxc
-          delete-tags: "*-${{ github.event.pull_request.number }}-merge"
+          delete-tags: "*-pr-${{ github.event.pull_request.number }},*-${{ github.event.pull_request.number }}-merge"

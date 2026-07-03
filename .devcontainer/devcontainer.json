@@ -7,16 +7,26 @@
     "DOTFILES_ROLE": "bamboo"
   },
   // The in-container rootless Docker daemon (see start-rootless-docker.sh)
-  // needs to create nested user namespaces and mount fuse-overlayfs, which
-  // the default seccomp/AppArmor profiles block. Relax just those and expose
-  // /dev/fuse; unlike --privileged this grants no access to host devices or
-  // disks, so the escalation path removed by dropping the host socket bind
-  // mount stays closed. Codespaces ignores runArgs but already permits these
-  // operations.
+  // needs three things the default container config blocks:
+  //  - seccomp/AppArmor relaxed: the default profiles deny creating user
+  //    namespaces (and mounting inside them) for processes without
+  //    CAP_SYS_ADMIN, which is the whole point of a rootless daemon.
+  //  - /dev/fuse: for fuse-overlayfs, the rootless storage backend.
+  //  - CAP_SYS_ADMIN in the bounding set: the kernel's uid_map write check
+  //    (map_write) requires the opener to hold CAP_SYS_ADMIN over the child
+  //    namespace. On a normal host setuid newuidmap picks that up
+  //    automatically, but in a container setuid can only elevate to what the
+  //    bounding set allows, so without this the daemon dies with
+  //    "newuidmap: write to uid_map failed: Operation not permitted".
+  // Unlike --privileged this grants no access to host devices or the other
+  // ~25 capabilities (SYS_MODULE, SYS_RAWIO, ...), so the escalation path
+  // removed by dropping the host socket bind mount stays closed. Codespaces
+  // ignores runArgs but already permits these operations.
   "runArgs": [
     "--security-opt", "seccomp=unconfined",
     "--security-opt", "apparmor=unconfined",
-    "--device", "/dev/fuse"
+    "--device", "/dev/fuse",
+    "--cap-add", "SYS_ADMIN"
   ],
   "initializeCommand": "mkdir -p ${localEnv:HOME}/.ssh",
   "mounts": [

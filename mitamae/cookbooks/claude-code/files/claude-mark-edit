@@ -1,0 +1,20 @@
+#!/bin/sh
+# PostToolUse hook: record that this session touched code, so the Stop hook can
+# fire the review reminder only on coding turns (see claude-stop-review-reminder).
+# The settings.json matcher restricts this to Edit|Write|MultiEdit, so reaching
+# here already means a code edit happened -- we only need the session id.
+#
+# Flag is keyed by session_id (not git state) on purpose: the reminder must still
+# fire after the edits have been committed, which a git-diff check would miss.
+
+input=$(cat)
+
+# Portable session_id extraction (no jq: keep parity with claude-stop-review-reminder,
+# which avoids jq for macOS/Debian portability). sed BRE works on both BSD and GNU.
+session_id=$(printf '%s' "$input" | sed -n 's/.*"session_id"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p')
+[ -n "$session_id" ] || exit 0
+
+flag_dir=/tmp/claude-code-edit-flags
+mkdir -p "$flag_dir" || exit 0
+: > "$flag_dir/$session_id"
+exit 0

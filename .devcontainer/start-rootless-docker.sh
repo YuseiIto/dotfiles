@@ -84,4 +84,14 @@ done
 warn "daemon did not become ready within 30s; docker will be unavailable"
 warn "last lines of ${log_file}:"
 tail -n 20 "${log_file}" >&2 || true
+
+# Ubuntu 23.10+ hosts restrict user namespaces for unconfined unprivileged
+# processes via AppArmor, which fails rootlesskit's UID/GID map setup with
+# EPERM. The sysctl is host-global and readable from inside the container,
+# so give a targeted hint instead of leaving only a generic timeout.
+restrict="/proc/sys/kernel/apparmor_restrict_unprivileged_userns"
+if [ -r "${restrict}" ] && [ "$(cat "${restrict}")" = "1" ]; then
+  warn "the HOST kernel restricts unprivileged user namespaces (AppArmor)."
+  warn "fix on the host: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0"
+fi
 exit 0

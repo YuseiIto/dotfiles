@@ -42,6 +42,7 @@ gossfile:
   ../../cookbooks/ffmpeg/goss.yaml: {}
   ../../cookbooks/imagemagick/goss.yaml: {}
   ../../cookbooks/graphviz/goss.yaml: {}
+  ../../cookbooks/ghostscript/goss.yaml: {}
   ../../cookbooks/pandoc/goss.yaml: {}
   ../../cookbooks/sqlite/goss.yaml: {}
   ../../cookbooks/mysql-client/goss.yaml: {}

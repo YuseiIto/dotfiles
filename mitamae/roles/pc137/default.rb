@@ -71,6 +71,7 @@ include_recipe '../../cookbooks/goss'
 # Data & Document Processing
 include_recipe '../../cookbooks/imagemagick'
 include_recipe '../../cookbooks/graphviz'
+include_recipe '../../cookbooks/ghostscript'
 
 # macOS GUI
 include_recipe '../../cookbooks/feature_macos_fonts'

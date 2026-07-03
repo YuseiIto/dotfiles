@@ -42,3 +42,4 @@ gossfile:
   ../../cookbooks/cloc/goss.yaml: {}
   ../../cookbooks/imagemagick/goss.yaml: {}
   ../../cookbooks/graphviz/goss.yaml: {}
+  ../../cookbooks/ghostscript/goss.yaml: {}

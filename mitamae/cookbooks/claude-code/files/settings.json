@@ -138,6 +138,7 @@
       "Bash(uv run pytest *)",
       "Bash(uv run python -m pytest *)",
       "Bash(uv run ruff *)",
+      "Bash(uv run pyright *)",
       "Bash(uv sync *)",
       "Bash(uv lock *)",
       "Bash(uv add *)",
@@ -150,6 +151,13 @@
       "Bash(gcloud run services describe *)",
       "Bash(gcloud logging read *)",
       "Bash(aws s3 ls *)",
+      "Bash(terraform validate *)",
+      "Bash(terraform fmt *)",
+      "Bash(terraform plan *)",
+      "Bash(terraform providers *)",
+      "Bash(terraform graph *)",
+      "Bash(terraform version *)",
+      "Bash(terraform state list *)",
       "Bash(bash -n *)",
       "Bash(shellcheck *)",
       "mcp__plugin_context7_context7",
@@ -201,6 +209,9 @@
       "Bash(git update-ref *)",
       "Bash(git reflog expire *)",
       "Bash(git gc --prune *)",
+      "Bash(gh auth *)",
+      "Bash(gh secret *)",
+      "Bash(gh repo delete *)",
       "Bash(npm publish *)",
       "Bash(yarn publish *)",
       "Bash(pnpm publish *)",
@@ -209,6 +220,10 @@
       "Bash(npm login *)",
       "Bash(npm logout *)",
       "Bash(uv auth *)",
+      "Bash(terraform destroy *)",
+      "Bash(terraform state push *)",
+      "Bash(terraform login *)",
+      "Bash(terraform logout *)",
       "Read(~/.ssh/**)",
       "Read(~/.aws/**)",
       "Read(~/.config/gcloud/**)",
@@ -229,14 +244,30 @@
       "Read(**/secrets*)"
     ],
     "ask": [
-      "Bash(git reset --hard *)",
+      "Bash(git rebase *)",
+      "Bash(git reset *)",
+      "Bash(git restore *)",
       "Bash(git push *)",
       "Bash(git push --force-with-lease *)",
       "Bash(chmod *)",
       "Bash(chown *)",
       "Bash(brew install *)",
       "Bash(npm install -g *)",
-      "Bash(cargo install *)"
+      "Bash(cargo install *)",
+      "Bash(terraform init *)",
+      "Bash(terraform get *)",
+      "Bash(terraform apply *)",
+      "Bash(terraform import *)",
+      "Bash(terraform refresh *)",
+      "Bash(terraform taint *)",
+      "Bash(terraform untaint *)",
+      "Bash(terraform show *)",
+      "Bash(terraform output *)",
+      "Bash(terraform state show *)",
+      "Bash(terraform state mv *)",
+      "Bash(terraform state rm *)",
+      "Bash(terraform force-unlock *)",
+      "Bash(terraform test *)"
     ]
   },
   "hooks": {
@@ -272,7 +303,18 @@
     "frontend-design@claude-plugins-official": true,
     "playground@claude-plugins-official": true,
     "playwright@claude-plugins-official": true,
-    "pyright-lsp@claude-plugins-official": true
+    "pyright-lsp@claude-plugins-official": true,
+    "agent-sdk-dev@claude-plugins-official": true,
+    "figma@claude-plugins-official": true,
+    "pm-data-analytics@pm-skills": true,
+    "pm-execution@pm-skills": true,
+    "pm-go-to-market@pm-skills": true,
+    "pm-market-research@pm-skills": true,
+    "pm-marketing-growth@pm-skills": true,
+    "pm-product-discovery@pm-skills": true,
+    "pm-product-strategy@pm-skills": true,
+    "pm-toolkit@pm-skills": true,
+    "example-skills@anthropic-agent-skills": true
   },
   "extraKnownMarketplaces": {
     "pm-skills": {
@@ -280,8 +322,15 @@
         "source": "github",
         "repo": "phuryn/pm-skills"
       }
+    },
+    "anthropic-agent-skills": {
+      "source": {
+        "source": "github",
+        "repo": "anthropics/skills"
+      }
     }
   },
+  "tui": "fullscreen",
   "theme": "dark",
   "agentPushNotifEnabled": true,
   "skipAutoPermissionPrompt": true,

@@ -1,9 +1,3 @@
-if node[:platform] == 'darwin'
-  brew_cask 'freecad'
-elsif %w[ubuntu debian].include?(node[:platform])
-  package 'freecad' do
-    user 'root'
-  end
-else
-  unsupported_platform! node[:platform]
+cross_platform_package 'freecad' do
+  darwin_cask true
 end

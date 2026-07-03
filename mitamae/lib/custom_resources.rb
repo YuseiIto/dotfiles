@@ -100,16 +100,72 @@ define :npm_global_package, version: nil, bin_name: nil do
   end
 end
 
+# Configure a third-party APT repository on Debian/Ubuntu.
+#
+# Centralizes the "fetch signing key -> write sources.list -> apt-get update"
+# boilerplate that every external-repo cookbook used to hand-roll, where the
+# keyring location and arch pinning drifted arbitrarily. The signing key is
+# normalized to binary with `gpg --dearmor` (which accepts both ASCII-armored
+# and already-binary keys) and stored under /etc/apt/keyrings as `<name>.gpg`.
+# Normalizing matters: apt's `signed-by` is extension-sensitive and rejects an
+# armored key behind a `.gpg` name (NO_PUBKEY), so always dearmoring is what
+# lets a single `.gpg` convention work for every upstream key. The source is
+# scoped to that key via `signed-by` and pinned to the host architecture.
+#
+#   apt_repository 'docker' do
+#     key_url "https://download.docker.com/linux/#{node[:platform]}/gpg"
+#     repo    "https://download.docker.com/linux/#{node[:platform]} stable"
+#   end
+#
+# `repo` is everything after the `[options]` block of the sources line, so it
+# may embed shell (e.g. the distro codename via `$(. /etc/os-release; ...)`).
+define :apt_repository, key_url: nil, repo: nil do
+  name = params[:name]
+  keyring = "/etc/apt/keyrings/#{name}.gpg"
+  list = "/etc/apt/sources.list.d/#{name}.list"
+
+  # The command below relies on curl (download), ca-certificates (TLS), and
+  # gnupg (`gpg --dearmor`). Install them explicitly so the cookbook works on a
+  # minimal base image instead of assuming these tools happen to be present.
+  %w[ca-certificates curl gnupg].each do |pkg|
+    package pkg do
+      user 'root'
+    end
+  end
+
+  execute "Add #{name} APT repository" do
+    command <<~EOC
+      install -d -m 0755 /etc/apt/keyrings
+      curl -fsSL #{params[:key_url]} | gpg --dearmor --yes -o #{keyring}
+      chmod a+r #{keyring}
+      echo "deb [arch=$(dpkg --print-architecture) signed-by=#{keyring}] #{params[:repo]}" > #{list}
+      apt-get update
+    EOC
+    user 'root'
+    not_if "test -f #{list}"
+  end
+end
+
 # Install a system package with platform-specific name overrides
 # Automatically handles debian/ubuntu vs darwin platform differences.
 # Supports packages with the same name across platforms (e.g., ffmpeg)
 # or different names (e.g., sqlite3 on debian, sqlite on darwin).
-define :cross_platform_package, darwin_name: nil, debian_name: nil do
+# Set `darwin_cask true` when the macOS counterpart ships as a Homebrew
+# Cask (e.g., kicad, freecad, openscad) instead of a regular formula.
+define :cross_platform_package, darwin_name: nil, debian_name: nil, darwin_cask: false do
   pkg = params[:name]
   if %w[ubuntu debian].include?(node[:platform])
     package(params[:debian_name] || pkg) { user 'root' }
   elsif node[:platform] == 'darwin'
-    package(params[:darwin_name] || pkg)
+    if params[:darwin_cask]
+      cask_name = params[:darwin_name] || pkg
+      execute "install #{cask_name} via homebrew cask" do
+        command "brew install --cask #{cask_name}"
+        not_if "brew list --cask #{cask_name} >/dev/null 2>&1"
+      end
+    else
+      package(params[:darwin_name] || pkg)
+    end
   else
     unsupported_platform! node[:platform]
   end

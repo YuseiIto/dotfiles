@@ -9,7 +9,6 @@ if node[:platform] == 'darwin'
     onyx
     utm
     vnc-viewer
-    raspberry-pi-imager
     zap
   ]
 

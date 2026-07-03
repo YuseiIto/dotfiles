@@ -17,6 +17,7 @@ gossfile:
   ../../cookbooks/fastfetch/goss.yaml: {}
   ../../cookbooks/cloudflared/goss.yaml: {}
   ../../cookbooks/awscli/goss.yaml: {}
+  ../../cookbooks/cargo-lambda/goss.yaml: {}
   ../../cookbooks/prowler/goss.yaml: {}
   ../../cookbooks/google-cloud-sdk/goss.yaml: {}
   ../../cookbooks/cfn-lint/goss.yaml: {}

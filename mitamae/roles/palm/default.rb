@@ -52,6 +52,7 @@ include_recipe '../../cookbooks/kotlin-lsp'
 # Cloud & DevOps
 include_recipe '../../cookbooks/docker'
 include_recipe '../../cookbooks/awscli'
+include_recipe '../../cookbooks/cargo-lambda'
 include_recipe '../../cookbooks/gh'
 include_recipe '../../cookbooks/google-cloud-sdk'
 include_recipe '../../cookbooks/cfn-lint'

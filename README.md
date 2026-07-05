@@ -52,9 +52,8 @@ This repository is designed to be navigated and enhanced by **Coding Agents** (l
 - `docker/`: Dockerfiles for the containerized environments.
 
 > [!TIP]
-> mitamae guarantees declared packages are installed, but not that *undeclared*
-> ones are absent. Run `make audit` to detect drift — see
-> [mitamae/audit/README.md](./mitamae/audit/README.md).
+> Run `make audit` to find packages installed outside mitamae's control —
+> see [mitamae/audit/README.md](./mitamae/audit/README.md).
 
 ---
 

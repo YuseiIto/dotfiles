@@ -93,3 +93,55 @@ fi
 
 # Enable Ctrl-a and other keybindings in tmux
 bindkey -e
+
+# Natural-language command widget: press Ctrl-G, describe what you want in plain
+# words, and Claude fills in a shell command at the cursor. A zsh/ZLE port of
+# bashguy (https://github.com/mattn/bashguy), which is bash-only because it relies
+# on readline's `bind -x` and $READLINE_LINE; ZLE needs a `zle -N` widget over
+# $BUFFER/$CURSOR instead. Must sit after `bindkey -e`, which would otherwise
+# reset the keymap and drop the Ctrl-G binding below.
+if command -v claude > /dev/null 2>&1; then
+  # zsh's own minibuffer reader; handles ZLE state that a raw tty read would not.
+  autoload -Uz read-from-minibuffer
+
+  _bashguy_widget() {
+    emulate -L zsh
+    # Split at the cursor so a partially typed line is completed in place rather
+    # than overwritten, mirroring bashguy's prefix/suffix handling.
+    local prefix="${BUFFER[1,CURSOR]}" suffix="${BUFFER[CURSOR+1,-1]}"
+
+    read-from-minibuffer '[bashguy] ' || return   # aborted (Ctrl-G / Ctrl-C)
+    local prompt="$REPLY"
+    [[ -n "$prompt" ]] || return
+
+    zle -R "[bashguy] generating..."   # transient status; next redraw clears it
+
+    local system
+    if [[ -n "$prefix" || -n "$suffix" ]]; then
+      system="You are a shell command generator. The user has a partially written command line.
+The text before the cursor is: ${prefix}
+The text after the cursor is: ${suffix}
+Output ONLY the text to insert at the cursor position (no explanation, no markdown, no code fences, no trailing newline). The inserted text combined with the existing text should form a valid shell command. OS: $(uname -s). Current directory: $(pwd)"
+    else
+      system="You are a shell command generator. The user describes what they want to do in natural language. Output ONLY a single shell command (no explanation, no markdown, no code fences, no trailing newline). The command must work on this OS: $(uname -s). Current directory: $(pwd)"
+    fi
+
+    # Pass --model only when BASHGUY_MODEL is set, so the account default (kept
+    # current by the claude-code cookbook) is used instead of a pinned model.
+    # Built as an array because zsh does not word-split unquoted expansions.
+    local -a model_args
+    [[ -n "$BASHGUY_MODEL" ]] && model_args=(--model "$BASHGUY_MODEL")
+
+    local result
+    result=$(claude --no-session-persistence -p "${model_args[@]}" \
+      --system-prompt "$system" "$prompt" 2>/dev/null)
+
+    if [[ -n "$result" ]]; then
+      BUFFER="${prefix}${result}${suffix}"
+      CURSOR=$(( ${#prefix} + ${#result} ))
+    fi
+    zle -R   # clear the transient status line
+  }
+  zle -N _bashguy_widget
+  bindkey '^G' _bashguy_widget
+fi

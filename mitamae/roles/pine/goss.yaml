@@ -21,3 +21,5 @@ gossfile:
   ../../cookbooks/icarus-verilog/goss.yaml: {}
   ../../cookbooks/openocd/goss.yaml: {}
   ../../cookbooks/platformio/goss.yaml: {}
+  ../../cookbooks/gum/goss.yaml: {}
+  ../../cookbooks/installer/goss.yaml: {}

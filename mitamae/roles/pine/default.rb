@@ -50,3 +50,7 @@ include_recipe '../../cookbooks/avrdude'
 include_recipe '../../cookbooks/icarus-verilog'
 include_recipe '../../cookbooks/openocd'
 include_recipe '../../cookbooks/platformio'
+
+# Live Environment Support
+include_recipe '../../cookbooks/gum'
+include_recipe '../../cookbooks/installer'

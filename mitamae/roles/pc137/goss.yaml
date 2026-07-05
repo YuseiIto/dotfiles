@@ -29,7 +29,6 @@ gossfile:
   ../../cookbooks/aider/goss.yaml: {}
   ../../cookbooks/claude-code/goss.yaml: {}
   ../../cookbooks/git-commit-claude/goss.yaml: {}
-  ../../cookbooks/gemini-cli/goss.yaml: {}
   ../../cookbooks/opencode/goss.yaml: {}
   ../../cookbooks/corretto21/goss.yaml: {}
   ../../cookbooks/llvm/goss.yaml: {}

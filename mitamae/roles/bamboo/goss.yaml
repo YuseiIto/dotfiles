@@ -16,7 +16,6 @@ gossfile:
   ../../cookbooks/huggingface-cli/goss.yaml: {}
   ../../cookbooks/aider/goss.yaml: {}
   ../../cookbooks/claude-code/goss.yaml: {}
-  ../../cookbooks/gemini-cli/goss.yaml: {}
   ../../cookbooks/opencode/goss.yaml: {}
   ../../cookbooks/imagemagick/goss.yaml: {}
   ../../cookbooks/graphviz/goss.yaml: {}

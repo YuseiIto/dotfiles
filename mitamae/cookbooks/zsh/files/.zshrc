@@ -94,12 +94,16 @@ fi
 # Enable Ctrl-a and other keybindings in tmux
 bindkey -e
 
-# Natural-language command widget: press Ctrl-G, describe what you want in plain
-# words, and Claude fills in a shell command at the cursor. A zsh/ZLE port of
-# bashguy (https://github.com/mattn/bashguy), which is bash-only because it relies
-# on readline's `bind -x` and $READLINE_LINE; ZLE needs a `zle -N` widget over
-# $BUFFER/$CURSOR instead. Must sit after `bindkey -e`, which would otherwise
-# reset the keymap and drop the Ctrl-G binding below.
+# Natural-language command widget: press Ctrl-X Ctrl-G, describe what you want in
+# plain words, and Claude fills in a shell command at the cursor. A zsh/ZLE port
+# of bashguy (https://github.com/mattn/bashguy), which is bash-only because it
+# relies on readline's `bind -x` and $READLINE_LINE; ZLE needs a `zle -N` widget
+# over $BUFFER/$CURSOR instead. Must sit after `bindkey -e`, which would otherwise
+# reset the keymap and drop the binding below.
+#
+# Bound to the ^X^G chord (unbound by default) rather than a lone ^G so we keep
+# ^G = send-break; every free single Ctrl key in the emacs keymap already has a
+# useful default. Override BASHGUY_KEY to rebind.
 if command -v claude > /dev/null 2>&1; then
   # zsh's own minibuffer reader; handles ZLE state that a raw tty read would not.
   autoload -Uz read-from-minibuffer
@@ -143,5 +147,6 @@ Output ONLY the text to insert at the cursor position (no explanation, no markdo
     zle -R   # clear the transient status line
   }
   zle -N _bashguy_widget
-  bindkey '^G' _bashguy_widget
+  # ~/.zshrc_specific is sourced earlier, so a host can set BASHGUY_KEY there.
+  bindkey "${BASHGUY_KEY:-^X^G}" _bashguy_widget
 fi

@@ -37,7 +37,6 @@ include_recipe '../../cookbooks/devcontainer-cli'
 include_recipe '../../cookbooks/huggingface-cli'
 include_recipe '../../cookbooks/aider'
 include_recipe '../../cookbooks/claude-code'
-include_recipe '../../cookbooks/gemini-cli'
 include_recipe '../../cookbooks/opencode'
 
 # Data & Document Processing

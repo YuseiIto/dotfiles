@@ -75,6 +75,7 @@ include_recipe '../../cookbooks/graphviz'
 include_recipe '../../cookbooks/ghostscript'
 
 # macOS GUI
+include_recipe '../../cookbooks/android-studio'
 include_recipe '../../cookbooks/feature_macos_fonts'
 include_recipe '../../cookbooks/feature_macos_media'
 include_recipe '../../cookbooks/slack'

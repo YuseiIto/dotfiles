@@ -1,4 +1,9 @@
-global_ruby_version = '4.0.5'
+# Single source of truth: read the version from mitamae/.ruby-version, which
+# rbenv also consults when running inside this repo. Hardcoding it here caused
+# CI to break whenever Renovate bumped .ruby-version alone (the cookbook kept
+# installing the old version, so `rbenv exec` for the new one failed).
+mitamae_dir = File.expand_path('../..', File.dirname(__FILE__))
+global_ruby_version = File.read("#{mitamae_dir}/.ruby-version").strip
 
 home = ENV['HOME']
 rbenv_root = "#{home}/.rbenv"

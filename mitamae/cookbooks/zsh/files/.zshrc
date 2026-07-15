@@ -94,31 +94,31 @@ fi
 # Enable Ctrl-a and other keybindings in tmux
 bindkey -e
 
-# Natural-language command widget: press Ctrl-X Ctrl-G, describe what you want in
-# plain words, and Claude fills in a shell command at the cursor. A zsh/ZLE port
-# of bashguy (https://github.com/mattn/bashguy), which is bash-only because it
+# zshguy: natural-language command widget. Press Ctrl-X Ctrl-G, describe what you
+# want in plain words, and Claude fills in a shell command at the cursor. A zsh/ZLE
+# port of bashguy (https://github.com/mattn/bashguy), which is bash-only because it
 # relies on readline's `bind -x` and $READLINE_LINE; ZLE needs a `zle -N` widget
 # over $BUFFER/$CURSOR instead. Must sit after `bindkey -e`, which would otherwise
 # reset the keymap and drop the binding below.
 #
 # Bound to the ^X^G chord (unbound by default) rather than a lone ^G so we keep
 # ^G = send-break; every free single Ctrl key in the emacs keymap already has a
-# useful default. Override BASHGUY_KEY to rebind.
+# useful default. Override ZSHGUY_KEY to rebind.
 if command -v claude > /dev/null 2>&1; then
   # zsh's own minibuffer reader; handles ZLE state that a raw tty read would not.
   autoload -Uz read-from-minibuffer
 
-  _bashguy_widget() {
+  _zshguy_widget() {
     emulate -L zsh
     # Split at the cursor so a partially typed line is completed in place rather
     # than overwritten, mirroring bashguy's prefix/suffix handling.
     local prefix="${BUFFER[1,CURSOR]}" suffix="${BUFFER[CURSOR+1,-1]}"
 
-    read-from-minibuffer '[bashguy] ' || return   # aborted (Ctrl-G / Ctrl-C)
+    read-from-minibuffer '[zshguy] ' || return   # aborted (Ctrl-G / Ctrl-C)
     local prompt="$REPLY"
     [[ -n "$prompt" ]] || return
 
-    zle -R "[bashguy] generating..."   # transient status; next redraw clears it
+    zle -R "[zshguy] generating..."   # transient status; next redraw clears it
 
     local system
     if [[ -n "$prefix" || -n "$suffix" ]]; then
@@ -130,11 +130,11 @@ Output ONLY the text to insert at the cursor position (no explanation, no markdo
       system="You are a shell command generator. The user describes what they want to do in natural language. Output ONLY a single shell command (no explanation, no markdown, no code fences, no trailing newline). The command must work on this OS: $(uname -s). Current directory: $(pwd)"
     fi
 
-    # Pass --model only when BASHGUY_MODEL is set, so the account default (kept
+    # Pass --model only when ZSHGUY_MODEL is set, so the account default (kept
     # current by the claude-code cookbook) is used instead of a pinned model.
     # Built as an array because zsh does not word-split unquoted expansions.
     local -a model_args
-    [[ -n "$BASHGUY_MODEL" ]] && model_args=(--model "$BASHGUY_MODEL")
+    [[ -n "$ZSHGUY_MODEL" ]] && model_args=(--model "$ZSHGUY_MODEL")
 
     local result
     result=$(claude --no-session-persistence -p "${model_args[@]}" \
@@ -146,7 +146,7 @@ Output ONLY the text to insert at the cursor position (no explanation, no markdo
     fi
     zle -R   # clear the transient status line
   }
-  zle -N _bashguy_widget
-  # ~/.zshrc_specific is sourced earlier, so a host can set BASHGUY_KEY there.
-  bindkey "${BASHGUY_KEY:-^X^G}" _bashguy_widget
+  zle -N _zshguy_widget
+  # ~/.zshrc_specific is sourced earlier, so a host can set ZSHGUY_KEY there.
+  bindkey "${ZSHGUY_KEY:-^X^G}" _zshguy_widget
 fi

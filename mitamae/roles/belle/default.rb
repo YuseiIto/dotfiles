@@ -21,6 +21,7 @@ include_recipe '../../cookbooks/uv'
 include_recipe '../../cookbooks/nodenv'
 include_recipe '../../cookbooks/ruby'
 include_recipe '../../cookbooks/dotfiles-utils'
+include_recipe '../../cookbooks/gpg'
 
 # Shell & Terminal
 include_recipe '../../cookbooks/zsh'

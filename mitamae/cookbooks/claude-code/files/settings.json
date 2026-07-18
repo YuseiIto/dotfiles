@@ -314,7 +314,11 @@
     "pm-product-discovery@pm-skills": true,
     "pm-product-strategy@pm-skills": true,
     "pm-toolkit@pm-skills": true,
-    "example-skills@anthropic-agent-skills": true
+    "example-skills@anthropic-agent-skills": true,
+    "yuseiito-dev@cc-plugins-private": true,
+    "ultraresearch@cc-plugins": true,
+    "ja-proofread@cc-plugins": true,
+    "planning-poker@cc-plugins": true
   },
   "extraKnownMarketplaces": {
     "pm-skills": {
@@ -328,11 +332,23 @@
         "source": "github",
         "repo": "anthropics/skills"
       }
+    },
+    "cc-plugins": {
+      "source": {
+        "source": "github",
+        "repo": "YuseiIto/cc-plugins"
+      }
+    },
+    "cc-plugins-private": {
+      "source": {
+        "source": "github",
+        "repo": "YuseiIto/cc-plugins-private"
+      }
     }
   },
   "tui": "fullscreen",
+  "skipWorkflowUsageWarning": true,
   "theme": "dark",
   "agentPushNotifEnabled": true,
-  "skipAutoPermissionPrompt": true,
-  "skipWorkflowUsageWarning": true
+  "skipAutoPermissionPrompt": true
 }

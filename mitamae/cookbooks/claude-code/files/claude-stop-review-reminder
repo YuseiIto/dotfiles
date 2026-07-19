@@ -1,0 +1,34 @@
+#!/bin/sh
+# Stop hook: remind Claude to self-review before ending a turn -- but only on
+# turns that actually touched code. claude-mark-edit (PostToolUse on Edit|Write|
+# MultiEdit) drops a per-session flag; we fire the reminder only when it exists,
+# so research/chat/doc-only turns stay silent.
+# The reminder is injected as hookSpecificOutput.additionalContext, which
+# continues the turn so Claude can act on it (see https://code.claude.com/docs/en/hooks).
+
+input=$(cat)
+
+# stop_hook_active is true when this stop is itself a continuation triggered by a
+# previous Stop hook. Bail out, otherwise injecting context again would loop
+# forever (inject -> continue -> stop -> inject ...).
+case "$input" in
+*'"stop_hook_active":true'* | *'"stop_hook_active": true'*) exit 0 ;;
+esac
+
+# Portable session_id extraction (no jq: macOS/Debian portability). BRE works on
+# both BSD and GNU sed.
+session_id=$(printf '%s' "$input" | sed -n 's/.*"session_id"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p')
+[ -n "$session_id" ] || exit 0
+
+flag="/tmp/claude-code-edit-flags/$session_id"
+# No code edited this session -> nothing to review, finish silently.
+[ -f "$flag" ] || exit 0
+# Consume the flag so a follow-up no-edit stop does not re-prompt. If the review
+# itself edits code, claude-mark-edit re-creates the flag and we review again.
+rm -f "$flag"
+
+# Static reminder, so emit the JSON literally (no jq dependency -> portable on
+# macOS and Debian). The wording lets Claude no-op on non-coding turns.
+cat <<'EOF'
+{"hookSpecificOutput":{"hookEventName":"Stop","additionalContext":"Before finishing this turn: if you authored or modified code this turn that has not yet been reviewed, run /code-review and then /security-review on the pending diff and address any findings before stopping. If there is nothing to review (no code changes this turn, or a non-coding turn), simply finish without comment."}}
+EOF

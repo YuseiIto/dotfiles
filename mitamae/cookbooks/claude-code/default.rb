@@ -25,7 +25,7 @@ else
   unsupported_platform! node[:platform]
 end
 
-%w[settings.json statusline-command.sh skills claude-tmux-notify CLAUDE.md rules].each do |entry|
+%w[settings.json statusline-command.sh skills claude-tmux-notify CLAUDE.md rules claude-stop-review-reminder claude-mark-edit].each do |entry|
   claude_dotfile entry do
     cookbook_dir File.dirname(__FILE__)
   end

@@ -1,7 +1,8 @@
 #!/bin/bash
 set -euo pipefail
 
-cd mitamae
+# Resolve paths relative to this script so it can be invoked from any cwd
+cd "$(dirname "$0")/mitamae"
 bin/setup
 
 # Determine the target role based on the DOTFILES_ROLE environment variable or the hostname

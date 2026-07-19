@@ -7,6 +7,26 @@
     ":gitSignOff"
   ],
   "labels": ["dependencies"],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Update mitamae version in bin/setup",
+      "managerFilePatterns": ["/^mitamae/bin/setup$/"],
+      "matchStrings": ["mitamae_version=\"(?<currentValue>.*?)\""],
+      "depNameTemplate": "itamae-kitchen/mitamae",
+      "datasourceTemplate": "github-releases",
+      "extractVersionTemplate": "^v(?<version>.+)$"
+    },
+    {
+      "customType": "regex",
+      "description": "Update goss version in cookbooks/goss/default.rb",
+      "managerFilePatterns": ["/^mitamae/cookbooks/goss/default.rb$/"],
+      "matchStrings": ["goss_version = '(?<currentValue>.*?)'"],
+      "depNameTemplate": "goss-org/goss",
+      "datasourceTemplate": "github-releases",
+      "extractVersionTemplate": "^v(?<version>.+)$"
+    }
+  ],
   "packageRules": [
     {
       "description": "Group GitHub Actions updates",

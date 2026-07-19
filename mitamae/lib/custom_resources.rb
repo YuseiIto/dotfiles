@@ -146,6 +146,77 @@ define :apt_repository, key_url: nil, repo: nil do
   end
 end
 
+# Install a single executable from a GitHub release into /usr/local/bin.
+#
+# Collapses the "resolve arch -> build download URL -> curl -> unpack ->
+# install -> chmod" boilerplate that every prebuilt-binary cookbook used to
+# hand-roll. Crucially it derives the architecture from the already-normalized
+# `node[:os_arch]` instead of re-deriving it with a shell `uname -m` case, which
+# several cookbooks did and which drifted out of sync with lib's normalization.
+#
+# Upstreams disagree on how they spell the arch in the asset name (arm64 vs
+# aarch64, x86_64 vs amd64 vs x64), so the asset file name per arch is passed
+# verbatim via `arm64_name` / `x86_64_name` rather than assembled here. The tag
+# is assumed to be `v<version>`, which matches every release this repo pins.
+#
+# The unpack strategy is inferred from the asset's extension so callers never
+# describe how the binary is packed, only its name:
+#   - `.tar.gz` / `.tgz` -> extract the `archive_member` binary (defaults to bin)
+#   - `.gz`              -> gunzip a single compressed binary
+#   - anything else      -> treat the asset as the raw executable
+#
+# Targets Debian/Ubuntu (installs curl via apt, writes as root). macOS variants
+# of these tools come from Homebrew, so call this only from the Linux branch.
+#
+#   github_release_binary 'lazygit' do
+#     repo           'jesseduffield/lazygit'
+#     version        '0.59.0'
+#     arm64_name     "lazygit_0.59.0_Linux_arm64.tar.gz"
+#     x86_64_name    "lazygit_0.59.0_Linux_x86_64.tar.gz"
+#     archive_member 'lazygit'
+#     not_if         "lazygit --version 2>/dev/null | grep -q '0.59.0'"
+#   end
+define :github_release_binary,
+       repo: nil,
+       version: nil,
+       bin_name: nil,
+       arm64_name: nil,
+       x86_64_name: nil,
+       archive_member: nil,
+       not_if: nil do
+  bin = params[:bin_name] || params[:name]
+  asset = node[:os_arch] == 'arm64' ? params[:arm64_name] : params[:x86_64_name]
+  url = "https://github.com/#{params[:repo]}/releases/download/v#{params[:version]}/#{asset}"
+  dest = "/usr/local/bin/#{bin}"
+  tmp = "/tmp/#{asset}"
+
+  unpack =
+    if asset.end_with?('.tar.gz', '.tgz')
+      member = params[:archive_member] || bin
+      # -O streams the single member to stdout, so nothing but the binary lands
+      # on disk and there is no extracted tree to clean up afterwards.
+      "tar -xzf #{tmp} -O #{member} > #{dest} && chmod +x #{dest}"
+    elsif asset.end_with?('.gz')
+      "gunzip -c #{tmp} > #{dest} && chmod +x #{dest}"
+    else
+      "install -m 0755 #{tmp} #{dest}"
+    end
+
+  package 'curl' do
+    user 'root'
+  end
+
+  execute "Install #{bin} from GitHub release" do
+    command <<~EOC
+      curl -fsSL -o #{tmp} "#{url}"
+      #{unpack}
+      rm -f #{tmp}
+    EOC
+    user 'root'
+    not_if params[:not_if] if params[:not_if]
+  end
+end
+
 # Install a system package with platform-specific name overrides
 # Automatically handles debian/ubuntu vs darwin platform differences.
 # Supports packages with the same name across platforms (e.g., ffmpeg)

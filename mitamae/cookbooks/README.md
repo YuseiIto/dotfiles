@@ -8,6 +8,9 @@ Categorization is done at the role level (see [roles/](../roles/)).
 
 Many simple cross-platform package cookbooks use the `cross_platform_package`
 custom resource defined in [`lib/custom_resources.rb`](../lib/custom_resources.rb).
+Cookbooks that install a prebuilt executable from a GitHub release use the
+`github_release_binary` resource from the same file, which resolves the arch from
+`node[:os_arch]` instead of re-deriving it in shell.
 
 ## Handling unsupported platforms
 

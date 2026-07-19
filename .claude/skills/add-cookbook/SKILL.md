@@ -30,8 +30,9 @@ Use WebSearch to find:
 | 2nd | `cargo_package` | A Rust binary; cargo gives the latest version |
 | 3rd | `uv_tool_package` | A Python CLI tool |
 | 4th | `npm_global_package` | A Node.js CLI tool |
-| 5th | `execute` + official installer script | When package managers give stale versions or the tool isn't packaged |
-| 6th | `snap` (Linux only) | Tool is officially distributed via Snap Store; macOS uses brew/cask |
+| 5th | `github_release_binary` | A prebuilt single binary on a GitHub release (Debian/Ubuntu); macOS via brew |
+| 6th | `execute` + official installer script | When package managers give stale versions or the tool isn't packaged |
+| 7th | `snap` (Linux only) | Tool is officially distributed via Snap Store; macOS uses brew/cask |
 | Last | sdkman or other version managers | Only when absolutely necessary |
 
 If the apt/brew package is significantly outdated, note this explicitly and fall back to the next method.
@@ -104,6 +105,49 @@ end
 `repo` is everything after the `[options]` block of the sources line. Pair it
 with an explicit `package '<name>' do user 'root' end` for the actual install
 and an `unsupported_platform!` fallback for other platforms.
+
+### `github_release_binary` — prebuilt executables from GitHub releases (Debian/Ubuntu)
+
+Use inside the Debian/Ubuntu branch when a tool ships a prebuilt binary on its
+GitHub releases page and no current apt package exists. It resolves the arch
+from `node[:os_arch]`, builds the `v<version>` download URL, fetches the asset,
+unpacks it, and installs it to `/usr/local/bin` as root. Prefer it over a raw
+`execute` heredoc — in particular, never re-derive the arch with a shell
+`uname -m` case; that duplicates lib's normalization and drifts out of sync.
+
+Upstreams spell the arch differently (`arm64` vs `aarch64`, `x86_64` vs `amd64`
+vs `x64`), so pass the asset file name per arch via `arm64_name` / `x86_64_name`.
+The unpack strategy is inferred from the asset extension: `.tar.gz`/`.tgz`
+extracts `archive_member` (defaults to the binary name), `.gz` gunzips a single
+binary, anything else is treated as the raw executable. `curl` is installed
+automatically. `not_if` guards the download (usually a version check).
+
+```ruby
+# Raw binary asset:
+github_release_binary 'goss' do
+  repo 'goss-org/goss'
+  version '0.4.9'
+  arm64_name 'goss-linux-arm64'
+  x86_64_name 'goss-linux-amd64'
+  not_if 'command -v goss'
+end
+
+# .tar.gz asset — extract one member:
+github_release_binary 'lazygit' do
+  repo 'jesseduffield/lazygit'
+  version '0.59.0'
+  arm64_name "lazygit_0.59.0_Linux_arm64.tar.gz"
+  x86_64_name "lazygit_0.59.0_Linux_x86_64.tar.gz"
+  archive_member 'lazygit'
+  not_if "lazygit --version 2>/dev/null | grep -q '0.59.0'"
+end
+```
+
+macOS variants of these tools come from Homebrew, so call this only from the
+Linux branch and pair it with a `package`/`unsupported_platform!` fallback. For
+assets that unpack into a directory tree (extract to `/opt` + symlink) or that
+are `.deb` packages (`apt-get install`), keep a raw `execute` — this helper is
+for a single executable landing in `/usr/local/bin`.
 
 ### `brew_cask` — macOS GUI applications
 
@@ -263,20 +307,21 @@ url = "https://github.com/example/releases/download/v#{version}/tool-linux-#{nod
 
 ### Multi-platform example with arch-specific binary download
 
+Reach for `github_release_binary` (see its idiom above) whenever the Linux asset
+is a single executable — it resolves the arch and handles the download/unpack:
+
 ```ruby
 mytool_version = '1.2.3'  # Always verify this is the latest — check GitHub releases!
 
 if node[:platform] == 'darwin'
   package 'mytool'
 elsif %w[ubuntu debian].include?(node[:platform])
-  execute 'install mytool' do
-    command <<~EOC
-      curl -fsSLO "https://github.com/example/mytool/releases/download/v#{mytool_version}/mytool-linux-#{node[:os_arch]}.tar.gz"
-      tar xzf "mytool-linux-#{node[:os_arch]}.tar.gz" mytool
-      install mytool /usr/local/bin/mytool
-      rm -f mytool "mytool-linux-#{node[:os_arch]}.tar.gz"
-    EOC
-    user 'root'
+  github_release_binary 'mytool' do
+    repo 'example/mytool'
+    version mytool_version
+    arm64_name "mytool-linux-arm64.tar.gz"
+    x86_64_name "mytool-linux-x86_64.tar.gz"
+    archive_member 'mytool'
     not_if "mytool --version 2>/dev/null | grep -q '#{mytool_version}'"
   end
 else

@@ -2,6 +2,9 @@ goss_version = '0.4.9'
 goss_arch = node[:os_arch] == 'arm64' ? 'arm64' : 'amd64'
 
 if node[:platform] == 'darwin'
+  # macOS provisioning runs unprivileged, so this path shells out to sudo for
+  # the /usr/local/bin write and cannot use the github_release_binary helper
+  # (which installs as the root user on Debian/Ubuntu).
   execute 'install goss' do
     command <<~EOC
       set -e
@@ -12,13 +15,11 @@ if node[:platform] == 'darwin'
     not_if 'command -v goss'
   end
 elsif %w[ubuntu debian].include?(node[:platform])
-  execute 'install goss' do
-    command <<~EOC
-      curl -fsSL "https://github.com/goss-org/goss/releases/download/v#{goss_version}/goss-linux-#{goss_arch}" \
-        -o /usr/local/bin/goss
-      chmod +x /usr/local/bin/goss
-    EOC
-    user 'root'
+  github_release_binary 'goss' do
+    repo 'goss-org/goss'
+    version goss_version
+    arm64_name 'goss-linux-arm64'
+    x86_64_name 'goss-linux-amd64'
     not_if 'command -v goss'
   end
 else

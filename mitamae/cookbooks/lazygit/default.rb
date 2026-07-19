@@ -3,20 +3,12 @@ if node[:platform] == 'darwin'
 elsif %w[ubuntu debian].include?(node[:platform])
   lazygit_version = '0.59.0'
 
-  execute 'Install lazygit' do
-    command <<~EOC
-      arch=$(uname -m)
-      case "$arch" in
-        aarch64|arm64) arch="arm64" ;;
-        x86_64|amd64) arch="x86_64" ;;
-      esac
-      lazygit_archive="lazygit_#{lazygit_version}_Linux_${arch}.tar.gz"
-      curl -fsSLO "https://github.com/jesseduffield/lazygit/releases/download/v#{lazygit_version}/${lazygit_archive}"
-      tar xzf "${lazygit_archive}" lazygit
-      install lazygit /usr/local/bin/lazygit
-      rm -f lazygit "${lazygit_archive}"
-    EOC
-    user 'root'
+  github_release_binary 'lazygit' do
+    repo 'jesseduffield/lazygit'
+    version lazygit_version
+    arm64_name "lazygit_#{lazygit_version}_Linux_arm64.tar.gz"
+    x86_64_name "lazygit_#{lazygit_version}_Linux_x86_64.tar.gz"
+    archive_member 'lazygit'
     not_if "lazygit --version 2>/dev/null | grep -q '#{lazygit_version}'"
   end
 else

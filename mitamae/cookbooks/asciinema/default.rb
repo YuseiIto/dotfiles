@@ -5,17 +5,11 @@ if %w[ubuntu debian].include?(node[:platform])
 
   agg_version = '1.5.0'
 
-  execute 'Install agg (asciinema gif generator)' do
-    command <<~EOC
-      arch=$(uname -m)
-      case "$arch" in
-        aarch64|arm64) arch="aarch64" ;;
-        x86_64|amd64) arch="x86_64" ;;
-      esac
-      curl -fsSL -o /usr/local/bin/agg "https://github.com/asciinema/agg/releases/download/v#{agg_version}/agg-${arch}-unknown-linux-gnu"
-      chmod +x /usr/local/bin/agg
-    EOC
-    user 'root'
+  github_release_binary 'agg' do
+    repo 'asciinema/agg'
+    version agg_version
+    arm64_name 'agg-aarch64-unknown-linux-gnu'
+    x86_64_name 'agg-x86_64-unknown-linux-gnu'
     not_if "agg --version 2>/dev/null | grep -q '#{agg_version}'"
   end
 elsif node[:platform] == 'darwin'

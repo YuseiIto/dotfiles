@@ -26,6 +26,7 @@ gossfile:
   ../../cookbooks/gh/goss.yaml: {}
   ../../cookbooks/docker/goss.yaml: {}
   ../../cookbooks/devcontainer-cli/goss.yaml: {}
+  ../../cookbooks/wrangler/goss.yaml: {}
   ../../cookbooks/ollama/goss.yaml: {}
   ../../cookbooks/huggingface-cli/goss.yaml: {}
   ../../cookbooks/aider/goss.yaml: {}

@@ -48,6 +48,7 @@ include_recipe '../../cookbooks/terraform'
 include_recipe '../../cookbooks/gh'
 include_recipe '../../cookbooks/docker'
 include_recipe '../../cookbooks/devcontainer-cli'
+include_recipe '../../cookbooks/wrangler'
 
 # AI & Coding Assistants
 include_recipe '../../cookbooks/ollama'

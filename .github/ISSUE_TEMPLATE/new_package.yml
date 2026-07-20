@@ -28,6 +28,7 @@ body:
         - Pine
         - Bamboo
         - Plum
+        - Palm
         - Other
     validations:
       required: true

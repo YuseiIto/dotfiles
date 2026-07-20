@@ -29,10 +29,6 @@ fi
 
 # Check if the mitamae binary is already present in the bin directory
 if ! [ -f "bin/${mitamae_bin}" ]; then
-	# NOTE: Since v2.0.0 the release ships the stripped binary as a raw, uncompressed
-	# asset (mitamae-<arch>-<os>) rather than a .tar.gz; only the *.debug files are
-	# gzipped. Downloading a .tar.gz therefore 404s.
-	# Ref: https://github.com/itamae-kitchen/mitamae/releases/tag/v2.0.0
 	mitamae_download_name="mitamae-${arch}-${platform}"
 	mitamae_binary_url="https://github.com/itamae-kitchen/mitamae/releases/download/v${mitamae_version}/${mitamae_download_name}"
 

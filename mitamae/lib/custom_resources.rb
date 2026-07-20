@@ -17,7 +17,7 @@ define :unsupported_platform! do
 end
 
 # Symlink dotfiles to the user's home directory
-# Pass `cookbook_dir: __dir__` from the calling cookbook so the files/ path resolves correctly.
+# Pass `cookbook_dir: File.dirname(__FILE__)` from the calling cookbook so the files/ path resolves correctly.
 define :dotfile, source: nil, cookbook_dir: nil do
   source_file = params[:source] || params[:name]
   dir = params[:cookbook_dir]

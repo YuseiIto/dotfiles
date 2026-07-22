@@ -212,7 +212,7 @@ npm_global_package 'opencode-ai', bin_name: 'opencode'
 
 ```ruby
 dotfile '.tool-config' do
-  cookbook_dir __dir__
+  cookbook_dir File.dirname(__FILE__)
 end
 ```
 

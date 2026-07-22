@@ -10,7 +10,8 @@ body:
         - macOS (Apple Silicon)
         - Debian / Ubuntu (aarch64)
         - Debian / Ubuntu (x86_64)
-        - Docker (pine, bamboo, plum)
+        - Docker (pine, bamboo, plum, palm)
+        - LXC (pine, bamboo, plum)
         - devcontainer
     validations:
       required: true

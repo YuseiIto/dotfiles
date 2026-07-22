@@ -18,7 +18,8 @@
 - [ ] macOS (Apple Silicon)
 - [ ] Debian / Ubuntu (aarch64)
 - [ ] Debian / Ubuntu (x86_64)
-- [ ] Docker (specify variant: pine / bamboo / plum)
+- [ ] Docker (specify variant: pine / bamboo / plum / palm)
+- [ ] LXC (specify variant: pine / bamboo / plum)
 - [ ] N/A (no platform-specific changes)
 
 ## Checklist

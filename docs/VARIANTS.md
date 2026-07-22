@@ -1,6 +1,6 @@
 # Variants
 
-This repository offers three distinct configuration variants to cater to different development needs and resource constraints. Each variant is designed with specific use cases in mind, allowing us to choose the one that best fits their workflow and environment.
+This repository offers four distinct configuration variants to cater to different development needs and resource constraints. Each variant is designed with specific use cases in mind, allowing us to choose the one that best fits their workflow and environment.
 
 ### Pine (Full-Featured / AI-Native)
 

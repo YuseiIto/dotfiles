@@ -22,7 +22,8 @@ To manage variety of configurations, this repository is organized into three :
 ## Common Tasks
 
 ### Creating new role
-// TBD
+
+Use the `dotfiles-add-role` skill (`.claude/skills/add-role/SKILL.md`) for step-by-step guidance on scoping a new host or container variant, selecting cookbooks, and wiring up node attributes.
 
 ## Adding new package
 

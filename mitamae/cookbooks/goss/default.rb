@@ -12,7 +12,7 @@ if node[:platform] == 'darwin'
         -o /usr/local/bin/goss
       sudo chmod +x /usr/local/bin/goss
     EOC
-    not_if 'command -v goss'
+    not_if "goss --version 2>/dev/null | grep -q '#{goss_version}'"
   end
 elsif %w[ubuntu debian].include?(node[:platform])
   github_release_binary 'goss' do
@@ -20,7 +20,7 @@ elsif %w[ubuntu debian].include?(node[:platform])
     version goss_version
     arm64_name 'goss-linux-arm64'
     x86_64_name 'goss-linux-amd64'
-    not_if 'command -v goss'
+    not_if "goss --version 2>/dev/null | grep -q '#{goss_version}'"
   end
 else
   unsupported_platform! node[:platform]

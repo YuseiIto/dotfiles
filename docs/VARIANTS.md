@@ -25,7 +25,7 @@ The Plum variant is the most lightweight configuration. It strictly avoids backg
 
 ### Palm (Headless Agent Sandbox)
 
-The Palm variant is an `ubuntu:24.04` image (same base as Bamboo/Pine) intended as a base image for [OpenHands](https://github.com/openhands/OpenHands), the AI software-engineering agent. It carries the full set of language runtimes, and headless utilities, but deliberately omits interactive tooling and bundled AI coding agents to keep the image focused on headless execution.
+The Palm variant is an `ubuntu:26.04` image (same base as Bamboo/Pine) intended as a base image for [OpenHands](https://github.com/openhands/OpenHands), the AI software-engineering agent. It carries the full set of language runtimes, and headless utilities, but deliberately omits interactive tooling and bundled AI coding agents to keep the image focused on headless execution.
 
 * **Target Use Case:** A base image for OpenHands sandbox containers, where the agent runs non-interactively and supplies its own coding agent.
 * **Key Features:** Complete language runtimes, toolchains, LSPs, cloud/devops, security, and embedded compilers. Runtime `PATH` is exposed shell-agnostically via `~/.shell-env.sh` plus bash.

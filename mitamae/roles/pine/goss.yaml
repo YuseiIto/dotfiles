@@ -11,7 +11,9 @@ gossfile:
   ../../cookbooks/sdkman/goss.yaml: {}
   ../../cookbooks/kotlin/goss.yaml: {}
   ../../cookbooks/cmake/goss.yaml: {}
-  ../../cookbooks/ccls/goss.yaml: {}
+  # ccls is intentionally omitted here: the ccls apt package no longer exists
+  # on Ubuntu 26.04 (see cookbooks/ccls), so pine relies on clangd (llvm
+  # cookbook) for its C/C++ LSP. hercules/belle keep the ccls check (Homebrew).
   ../../cookbooks/cloc/goss.yaml: {}
   ../../cookbooks/ffmpeg/goss.yaml: {}
   ../../cookbooks/pandoc/goss.yaml: {}

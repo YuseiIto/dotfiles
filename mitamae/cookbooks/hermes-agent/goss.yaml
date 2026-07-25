@@ -1,0 +1,4 @@
+command:
+  hermes version:
+    exit-status: 0
+    timeout: 30000

@@ -57,6 +57,7 @@ include_recipe '../../cookbooks/aider'
 include_recipe '../../cookbooks/claude-code'
 include_recipe '../../cookbooks/git-commit-claude'
 include_recipe '../../cookbooks/opencode'
+include_recipe '../../cookbooks/hermes-agent'
 
 # Languages & Runtimes
 include_recipe '../../cookbooks/kotlin'

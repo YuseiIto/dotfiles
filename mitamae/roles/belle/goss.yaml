@@ -34,6 +34,7 @@ gossfile:
   ../../cookbooks/claude-code/goss.yaml: {}
   ../../cookbooks/git-commit-claude/goss.yaml: {}
   ../../cookbooks/opencode/goss.yaml: {}
+  ../../cookbooks/hermes-agent/goss.yaml: {}
   ../../cookbooks/kotlin/goss.yaml: {}
   ../../cookbooks/ocaml/goss.yaml: {}
   ../../cookbooks/lua-language-server/goss.yaml: {}

@@ -21,6 +21,7 @@ gossfile:
   ../../cookbooks/typescript-language-server/goss.yaml: {}
   ../../cookbooks/lua-language-server/goss.yaml: {}
   ../../cookbooks/terraform-ls/goss.yaml: {}
+  ../../cookbooks/opentofu/goss.yaml: {}
   ../../cookbooks/ccls/goss.yaml: {}
   ../../cookbooks/biome/goss.yaml: {}
   ../../cookbooks/prisma-language-server/goss.yaml: {}

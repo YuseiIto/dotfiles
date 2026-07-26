@@ -117,12 +117,29 @@ end
 #     repo    "https://download.docker.com/linux/#{node[:platform]} stable"
 #   end
 #
+# `key_url` also accepts an array when an upstream splits trust across several
+# keys (e.g. one signing the packages and one signing the repository metadata).
+# Extra keys land beside the first as `<name>-1.gpg`, `<name>-2.gpg`, ... and all
+# of them are listed in `signed-by`; apt requires every key that could have
+# signed the Release file to be present there, so dropping one breaks
+# verification intermittently rather than outright.
+#
 # `repo` is everything after the `[options]` block of the sources line, so it
 # may embed shell (e.g. the distro codename via `$(. /etc/os-release; ...)`).
 define :apt_repository, key_url: nil, repo: nil do
   name = params[:name]
-  keyring = "/etc/apt/keyrings/#{name}.gpg"
+  key_urls = params[:key_url].is_a?(Array) ? params[:key_url] : [params[:key_url]]
   list = "/etc/apt/sources.list.d/#{name}.list"
+
+  # The first key keeps the bare `<name>.gpg` path so single-key repositories are
+  # byte-for-byte unaffected by multi-key support; extras are numbered beside it.
+  keyrings = ["/etc/apt/keyrings/#{name}.gpg"]
+  (1...key_urls.size).each { |i| keyrings << "/etc/apt/keyrings/#{name}-#{i}.gpg" }
+
+  fetch_keys = []
+  key_urls.each_with_index do |url, index|
+    fetch_keys << "curl -fsSL #{url} | gpg --dearmor --yes -o #{keyrings[index]}"
+  end
 
   # The command below relies on curl (download), ca-certificates (TLS), and
   # gnupg (`gpg --dearmor`). Install them explicitly so the cookbook works on a
@@ -136,9 +153,9 @@ define :apt_repository, key_url: nil, repo: nil do
   execute "Add #{name} APT repository" do
     command <<~EOC
       install -d -m 0755 /etc/apt/keyrings
-      curl -fsSL #{params[:key_url]} | gpg --dearmor --yes -o #{keyring}
-      chmod a+r #{keyring}
-      echo "deb [arch=$(dpkg --print-architecture) signed-by=#{keyring}] #{params[:repo]}" > #{list}
+      #{fetch_keys.join("\n")}
+      chmod a+r #{keyrings.join(' ')}
+      echo "deb [arch=$(dpkg --print-architecture) signed-by=#{keyrings.join(',')}] #{params[:repo]}" > #{list}
       apt-get update
     EOC
     user 'root'

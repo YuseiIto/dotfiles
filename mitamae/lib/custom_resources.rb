@@ -162,6 +162,7 @@ end
 # The unpack strategy is inferred from the asset's extension so callers never
 # describe how the binary is packed, only its name:
 #   - `.tar.gz` / `.tgz` -> extract the `archive_member` binary (defaults to bin)
+#   - `.zip`             -> extract the `archive_member` binary (defaults to bin)
 #   - `.gz`              -> gunzip a single compressed binary
 #   - anything else      -> treat the asset as the raw executable
 #
@@ -190,20 +191,28 @@ define :github_release_binary,
   dest = "/usr/local/bin/#{bin}"
   tmp = "/tmp/#{asset}"
 
+  member = params[:archive_member] || bin
+  zip = asset.end_with?('.zip')
+
   unpack =
     if asset.end_with?('.tar.gz', '.tgz')
-      member = params[:archive_member] || bin
-      # -O streams the single member to stdout, so nothing but the binary lands
-      # on disk and there is no extracted tree to clean up afterwards.
+      # -O (and unzip's -p below) streams the single member to stdout, so nothing
+      # but the binary lands on disk and there is no extracted tree to clean up.
       "tar -xzf #{tmp} -O #{member} > #{dest} && chmod +x #{dest}"
+    elsif zip
+      # Zip entries routinely carry FAT permissions with no unix exec bit, so the
+      # chmod is what makes the binary runnable rather than a belt-and-braces call.
+      "unzip -p #{tmp} #{member} > #{dest} && chmod +x #{dest}"
     elsif asset.end_with?('.gz')
       "gunzip -c #{tmp} > #{dest} && chmod +x #{dest}"
     else
       "install -m 0755 #{tmp} #{dest}"
     end
 
-  package 'curl' do
-    user 'root'
+  (zip ? %w[curl unzip] : %w[curl]).each do |pkg|
+    package pkg do
+      user 'root'
+    end
   end
 
   execute "Install #{bin} from GitHub release" do

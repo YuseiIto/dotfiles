@@ -22,3 +22,11 @@ Naming/HeredocDelimiterNaming:
 # Set max line length to 150
 Layout/LineLength:
   Max: 150
+
+# `define` bodies are mitamae's resource DSL, not procedural code: their length
+# tracks how many archive formats / platforms a resource covers, so the metric
+# reports growth in surface area as if it were complexity.
+Metrics/BlockLength:
+  AllowedMethods:
+    - define
+    - refine # RuboCop's own default, preserved since AllowedMethods replaces it.

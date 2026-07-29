@@ -1,0 +1,4 @@
+command:
+  tflint --version:
+    exit-status: 0
+    timeout: 5000

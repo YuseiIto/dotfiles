@@ -50,6 +50,7 @@ include_recipe '../../cookbooks/mysql-client'
 # Development Tools & LSPs
 include_recipe '../../cookbooks/llvm'
 include_recipe '../../cookbooks/terraform-ls'
+include_recipe '../../cookbooks/tflint'
 include_recipe '../../cookbooks/pylsp'
 include_recipe '../../cookbooks/typescript-language-server'
 include_recipe '../../cookbooks/biome'

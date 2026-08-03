@@ -24,8 +24,8 @@ sudo tar -xzf "oras_${ORAS_VERSION}_linux_amd64.tar.gz" -C /usr/local/bin oras
 | Variant | Base OS | GHCR Tag |
 |---|---|---|
 | `plum` | Debian Bookworm | `ghcr.io/yuseiito/yuseiito-dev-lxc:plum-latest` |
-| `bamboo` | Ubuntu 24.04 | `ghcr.io/yuseiito/yuseiito-dev-lxc:bamboo-latest` |
-| `pine` | Ubuntu 24.04 | `ghcr.io/yuseiito/yuseiito-dev-lxc:pine-latest` |
+| `bamboo` | Ubuntu 26.04 | `ghcr.io/yuseiito/yuseiito-dev-lxc:bamboo-latest` |
+| `pine` | Ubuntu 26.04 | `ghcr.io/yuseiito/yuseiito-dev-lxc:pine-latest` |
 
 Branch builds are tagged as `<variant>-<branch-name>` (slashes replaced with hyphens).
 

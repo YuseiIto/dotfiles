@@ -4,7 +4,7 @@ set -euo pipefail
 # Resolve paths relative to this script so it can be invoked from any cwd
 cd "$(dirname "$0")/.."
 
-mitamae_version="2.0.0"
+mitamae_version="2.0.3"
 
 mitamae_bin="mitamae-${mitamae_version}"
 

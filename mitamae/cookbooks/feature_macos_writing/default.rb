@@ -1,8 +1,9 @@
 # Writing and documentation tools
+include_recipe '../drawio'
+
 if node[:platform] == 'darwin'
   casks = %w[
     obsidian
-    drawio
     mactex-no-gui
   ]
 

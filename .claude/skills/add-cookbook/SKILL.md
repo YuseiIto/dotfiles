@@ -117,10 +117,11 @@ unpacks it, and installs it to `/usr/local/bin` as root. Prefer it over a raw
 
 Upstreams spell the arch differently (`arm64` vs `aarch64`, `x86_64` vs `amd64`
 vs `x64`), so pass the asset file name per arch via `arm64_name` / `x86_64_name`.
-The unpack strategy is inferred from the asset extension: `.tar.gz`/`.tgz`
-extracts `archive_member` (defaults to the binary name), `.gz` gunzips a single
-binary, anything else is treated as the raw executable. `curl` is installed
-automatically. `not_if` guards the download (usually a version check).
+The unpack strategy is inferred from the asset extension: `.tar.gz`/`.tgz` and
+`.zip` extract `archive_member` (defaults to the binary name), `.gz` gunzips a
+single binary, anything else is treated as the raw executable. `curl` (plus
+`unzip` for zip assets) is installed automatically. `not_if` guards the download
+(usually a version check).
 
 ```ruby
 # Raw binary asset:
@@ -132,7 +133,7 @@ github_release_binary 'goss' do
   not_if 'command -v goss'
 end
 
-# .tar.gz asset — extract one member:
+# .tar.gz / .zip asset — extract one member:
 github_release_binary 'lazygit' do
   repo 'jesseduffield/lazygit'
   version '0.59.0'

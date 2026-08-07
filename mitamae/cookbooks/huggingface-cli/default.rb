@@ -1,5 +1,5 @@
 if node[:platform] == 'darwin'
-  package 'huggingface-cli'
+  package 'hf'
 elsif %w[ubuntu debian].include?(node[:platform])
   uv_tool_package 'hf'
 else

@@ -51,6 +51,7 @@ gossfile:
   ../../cookbooks/arduino-cli/goss.yaml: {}
   ../../cookbooks/avrdude/goss.yaml: {}
   ../../cookbooks/icarus-verilog/goss.yaml: {}
+  ../../cookbooks/lpc21isp/goss.yaml: {}
   ../../cookbooks/openocd/goss.yaml: {}
   ../../cookbooks/platformio/goss.yaml: {}
   ../../cookbooks/llvm/goss.yaml: {}

@@ -1,5 +1,8 @@
-# Repo-local dev tooling for this dotfiles repository itself.
-# Currently: ensures `bundle exec rubocop` works against mitamae/Gemfile.
+# Repo-local dev tooling for this dotfiles repository itself:
+# - shellcheck        -> `make shellcheck`, which CI runs as well
+# - bundler + rubocop -> `make lint`, against mitamae/Gemfile
+cross_platform_package 'shellcheck'
+
 include_recipe '../ruby'
 
 mitamae_dir = File.expand_path('../..', File.dirname(__FILE__))

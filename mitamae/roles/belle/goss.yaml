@@ -49,6 +49,7 @@ gossfile:
   ../../cookbooks/mysql-client/goss.yaml: {}
   ../../cookbooks/asciinema/goss.yaml: {}
   ../../cookbooks/arduino-cli/goss.yaml: {}
+  ../../cookbooks/arm-none-eabi-gcc/goss.yaml: {}
   ../../cookbooks/avrdude/goss.yaml: {}
   ../../cookbooks/icarus-verilog/goss.yaml: {}
   ../../cookbooks/lpc21isp/goss.yaml: {}

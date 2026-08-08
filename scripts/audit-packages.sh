@@ -27,15 +27,19 @@ esac
 
 # Names mitamae would manage for this role. Captured from a debug-level dry run
 # so already-installed packages are still listed (a plain dry run only reports
-# pending changes). Homebrew casks run via `execute[install <name> via homebrew
-# cask]`, so they are matched separately.
+# pending changes). Anything not installed through the `package` resource has to
+# announce itself in its execute name: `install <name> via homebrew cask` (what
+# the brew_cask definition emits) or `install <name> via homebrew formula` (for
+# recipes that must shell out to brew directly). <name> has to match what brew
+# reports, so tap-qualified names use the canonical short form -- brew accepts
+# `user/homebrew-repo/pkg` on input but always prints `user/repo/pkg`.
 declared_packages() {
   local log
   log="$(cd "${MITAMAE_DIR}" && DOTFILES_ROLE="${ROLE}" \
     bin/mitamae local --dry-run -l debug lib/custom_resources.rb "${ROLE_PATH}" 2>&1)"
   {
     printf '%s\n' "${log}" | grep -oE 'package\[[^]]+\]' | sed -E 's/^package\[(.*)\]$/\1/'
-    printf '%s\n' "${log}" | sed -nE 's/.*execute\[install (.+) via homebrew cask\].*/\1/p'
+    printf '%s\n' "${log}" | sed -nE 's/.*execute\[install (.+) via homebrew (cask|formula)\].*/\1/p'
   } | sort -u
 }
 

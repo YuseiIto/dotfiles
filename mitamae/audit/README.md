@@ -16,6 +16,12 @@ drift = installed_manual_packages - declared_packages - baseline
   (`mitamae --dry-run -l debug`). The recipes remain the single source of truth;
   there is no hand-kept list of "my" packages to maintain, and both
   `cross_platform_package` and raw `package` resources are captured.
+
+  A recipe that installs by shelling out to `brew` instead of using `package`
+  is invisible to that scrape unless it names its `execute` accordingly:
+  `install <name> via homebrew cask` or `install <name> via homebrew formula`.
+  Use brew's canonical tap spelling for `<name>` (`user/repo/pkg`, never
+  `user/homebrew-repo/pkg`) so it matches what brew reports back.
 - **baseline** — packages that legitimately exist outside mitamae's control:
   the base image seed and any one-offs you have explicitly accepted. Stored in
   `baseline.<role>.txt` (keyed by role, because each role's base image seeds a

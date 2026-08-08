@@ -8,7 +8,6 @@ if node[:platform] == 'darwin'
     keycastr
     onyx
     utm
-    zap
   ]
 
   casks.each do |cask|

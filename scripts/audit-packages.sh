@@ -40,11 +40,15 @@ declared_packages() {
 }
 
 # Packages explicitly installed on this host (excluding automatic dependencies).
+# Formulae come from the install receipts rather than `brew leaves
+# --installed-on-request`, which silently omits anything from an untrusted tap;
+# see scripts/brew-manual-formulae.py. Casks are read straight from the
+# Caskroom, which needs no formula loading and so has no such blind spot.
 installed_manual() {
   case "${PLATFORM}" in
     debian) apt-mark showmanual ;;
     darwin)
-      brew leaves --installed-on-request
+      python3 "${SCRIPT_DIR}/brew-manual-formulae.py" "$(brew --cellar)"
       brew list --cask -1 2>/dev/null || true
       ;;
   esac | sort -u

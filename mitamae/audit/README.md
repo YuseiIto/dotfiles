@@ -57,8 +57,13 @@ known-good starting point:
 
 - **Debian/Ubuntu** — manual packages come from `apt-mark showmanual`
   (automatic dependencies are excluded).
-- **macOS** — from `brew leaves --installed-on-request` plus
-  `brew list --cask`.
+- **macOS** — formulae come from the Homebrew install receipts, via
+  `scripts/brew-manual-formulae.py`; casks from `brew list --cask`.
+  `brew leaves --installed-on-request` is deliberately *not* used: it loads
+  every formula, and Homebrew refuses to load formulae from untrusted
+  third-party taps, so packages installed from such a tap never appeared in its
+  output and could never be reported as drift. Reading the receipts keeps the
+  audit independent of Homebrew's tap-trust state.
 
 Non-system package managers (npm, gem, pip) may appear in the declared set; they
 simply never match the system package list and are harmless.

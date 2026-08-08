@@ -69,11 +69,16 @@ define :cargo_package, bin_name: nil do
   end
 end
 
-# Install a macOS application via Homebrew Cask
-define :brew_cask do
+# Install a macOS application via Homebrew Cask.
+#
+# `source` overrides only what is handed to `brew install`, for casks living in
+# a third-party tap: since Homebrew 6.0 an untrusted tap is loaded only when the
+# cask is named in full, but the Caskroom -- and so `brew list --cask` and the
+# package audit -- knows it by its bare token either way.
+define :brew_cask, source: nil do
   cask_name = params[:name]
   execute "install #{cask_name} via homebrew cask" do
-    command "brew install --cask #{cask_name}"
+    command "brew install --cask #{params[:source] || cask_name}"
     not_if "brew list --cask #{cask_name} >/dev/null 2>&1"
   end
 end

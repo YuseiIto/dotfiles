@@ -4,9 +4,20 @@
 tflint_version = '0.64.0'
 
 if node[:platform] == 'darwin'
-  # Upstream's own tap, not homebrew-core: core carried tflint up to 0.47.0 and
-  # has since dropped it, so a bare `tflint` formula no longer resolves.
-  package 'terraform-linters/tap/tflint'
+  # Upstream's own tap, not homebrew-core: tflint embeds Terraform fork code
+  # that is BUSL-1.1, so core removed the formula in 2026-05. What the tap
+  # publishes is a *cask* (the release archive), not a formula.
+  #
+  # Formulae get tapped on demand when named in full; casks do not, so tap
+  # first. `brew install` then needs the fully qualified name because Homebrew
+  # will not load an untrusted third-party tap from a bare token.
+  execute 'brew tap terraform-linters/tap' do
+    not_if 'brew tap | grep -qx terraform-linters/tap'
+  end
+
+  brew_cask 'tflint' do
+    source 'terraform-linters/tap/tflint'
+  end
 elsif %w[ubuntu debian].include?(node[:platform])
   # Upstream publishes no apt repository, and its install_linux.sh is scheduled
   # for removal on Sep 1, 2026, so pin the release asset directly.

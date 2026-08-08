@@ -76,6 +76,21 @@ drift() {
   comm -23 <(undeclared) <(baseline)
 }
 
+# --- installed-but-broken ---
+
+# The drift check asks whether anything undeclared is installed. This asks the
+# opposite: whether anything declared is only pretending to be. A Caskroom entry
+# with no install receipt (interrupted upgrade, partial uninstall, an app that
+# relocated itself) still satisfies the `brew list --cask` guard in brew_cask,
+# so mitamae reads it as installed forever and never repairs it, while brew
+# itself cannot upgrade it. Homebrew ships exactly this check; reuse it rather
+# than reimplement the receipt layout, and name the single check so the rest of
+# `brew doctor`'s advisory warnings do not fail the audit.
+cask_integrity() {
+  [ "${PLATFORM}" = darwin ] || return 0
+  brew doctor check_cask_corrupt_dirs
+}
+
 # --- commands ---
 
 require_role() {
@@ -109,20 +124,23 @@ cmd_update_baseline() {
 }
 
 cmd_audit() {
-  local drift_list
+  local drift_list status=0
   drift_list="$(drift)"
   if [ -z "${drift_list}" ]; then
     echo "OK: no undeclared packages for role '${ROLE}' (${PLATFORM})."
-    exit 0
+  else
+    status=1
+    echo "Undeclared packages for role '${ROLE}' (${PLATFORM}):" >&2
+    echo "  (installed manually but neither declared in mitamae nor baselined)" >&2
+    echo "" >&2
+    printf '%s\n' "${drift_list}"
+    echo "" >&2
+    echo "Resolve each by one of: add a cookbook, add to ${BASELINE_FILE#"${REPO_ROOT}/"}," >&2
+    echo "or remove the package. Re-run with --update-baseline to accept current state." >&2
   fi
-  echo "Undeclared packages for role '${ROLE}' (${PLATFORM}):" >&2
-  echo "  (installed manually but neither declared in mitamae nor baselined)" >&2
-  echo "" >&2
-  printf '%s\n' "${drift_list}"
-  echo "" >&2
-  echo "Resolve each by one of: add a cookbook, add to ${BASELINE_FILE#"${REPO_ROOT}/"}," >&2
-  echo "or remove the package. Re-run with --update-baseline to accept current state." >&2
-  exit 1
+
+  cask_integrity || status=1
+  exit "${status}"
 }
 
 usage() {

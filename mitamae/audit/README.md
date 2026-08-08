@@ -31,6 +31,28 @@ drift = installed_manual_packages - declared_packages - baseline
 
 The audit is **detect-and-report only**. It never installs or removes anything.
 
+## Broken casks (macOS)
+
+Drift asks whether anything *undeclared* is installed. The audit also asks the
+opposite question: whether anything *declared* only looks installed.
+
+A Caskroom entry can survive without its install receipt — an interrupted
+upgrade, a partial uninstall, an app that relocated or updated itself out from
+under Homebrew. `brew_cask` guards on `brew list --cask`, which only checks that
+the Caskroom directory exists, so such an entry reads as installed forever:
+mitamae never repairs it and `brew upgrade` cannot touch it.
+
+Homebrew already detects this, so the audit runs its check rather than
+reimplementing the receipt layout:
+
+```sh
+brew doctor check_cask_corrupt_dirs
+```
+
+Naming the single check matters — a bare `brew doctor` also reports advisory
+warnings (deprecated formulae, unlinked kegs) that should not fail an audit.
+The fix it suggests is `brew reinstall --cask --force <token>`.
+
 ## Usage
 
 ```sh

@@ -83,8 +83,10 @@ include_recipe '../../cookbooks/asciinema'
 # Embedded & Hardware
 include_recipe '../../cookbooks/arduino-cli'
 include_recipe '../../cookbooks/arduino-ide'
+include_recipe '../../cookbooks/arm-none-eabi-gcc'
 include_recipe '../../cookbooks/avrdude'
 include_recipe '../../cookbooks/icarus-verilog'
+include_recipe '../../cookbooks/lpc21isp'
 include_recipe '../../cookbooks/openocd'
 include_recipe '../../cookbooks/platformio'
 

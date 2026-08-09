@@ -27,24 +27,32 @@ esac
 
 # Names mitamae would manage for this role. Captured from a debug-level dry run
 # so already-installed packages are still listed (a plain dry run only reports
-# pending changes). Homebrew casks run via `execute[install <name> via homebrew
-# cask]`, so they are matched separately.
+# pending changes). Anything not installed through the `package` resource has to
+# announce itself in its execute name: `install <name> via homebrew cask` (what
+# the brew_cask definition emits) or `install <name> via homebrew formula` (for
+# recipes that must shell out to brew directly). <name> has to match what brew
+# reports, so tap-qualified names use the canonical short form -- brew accepts
+# `user/homebrew-repo/pkg` on input but always prints `user/repo/pkg`.
 declared_packages() {
   local log
   log="$(cd "${MITAMAE_DIR}" && DOTFILES_ROLE="${ROLE}" \
     bin/mitamae local --dry-run -l debug lib/custom_resources.rb "${ROLE_PATH}" 2>&1)"
   {
     printf '%s\n' "${log}" | grep -oE 'package\[[^]]+\]' | sed -E 's/^package\[(.*)\]$/\1/'
-    printf '%s\n' "${log}" | sed -nE 's/.*execute\[install (.+) via homebrew cask\].*/\1/p'
+    printf '%s\n' "${log}" | sed -nE 's/.*execute\[install (.+) via homebrew (cask|formula)\].*/\1/p'
   } | sort -u
 }
 
 # Packages explicitly installed on this host (excluding automatic dependencies).
+# Formulae come from the install receipts rather than `brew leaves
+# --installed-on-request`, which silently omits anything from an untrusted tap;
+# see scripts/brew-manual-formulae.py. Casks are read straight from the
+# Caskroom, which needs no formula loading and so has no such blind spot.
 installed_manual() {
   case "${PLATFORM}" in
     debian) apt-mark showmanual ;;
     darwin)
-      brew leaves --installed-on-request
+      python3 "${SCRIPT_DIR}/brew-manual-formulae.py" "$(brew --cellar)"
       brew list --cask -1 2>/dev/null || true
       ;;
   esac | sort -u
@@ -66,6 +74,21 @@ undeclared() {
 # undeclared - baseline: the unexplained remainder.
 drift() {
   comm -23 <(undeclared) <(baseline)
+}
+
+# --- installed-but-broken ---
+
+# The drift check asks whether anything undeclared is installed. This asks the
+# opposite: whether anything declared is only pretending to be. A Caskroom entry
+# with no install receipt (interrupted upgrade, partial uninstall, an app that
+# relocated itself) still satisfies the `brew list --cask` guard in brew_cask,
+# so mitamae reads it as installed forever and never repairs it, while brew
+# itself cannot upgrade it. Homebrew ships exactly this check; reuse it rather
+# than reimplement the receipt layout, and name the single check so the rest of
+# `brew doctor`'s advisory warnings do not fail the audit.
+cask_integrity() {
+  [ "${PLATFORM}" = darwin ] || return 0
+  brew doctor check_cask_corrupt_dirs
 }
 
 # --- commands ---
@@ -101,20 +124,23 @@ cmd_update_baseline() {
 }
 
 cmd_audit() {
-  local drift_list
+  local drift_list status=0
   drift_list="$(drift)"
   if [ -z "${drift_list}" ]; then
     echo "OK: no undeclared packages for role '${ROLE}' (${PLATFORM})."
-    exit 0
+  else
+    status=1
+    echo "Undeclared packages for role '${ROLE}' (${PLATFORM}):" >&2
+    echo "  (installed manually but neither declared in mitamae nor baselined)" >&2
+    echo "" >&2
+    printf '%s\n' "${drift_list}"
+    echo "" >&2
+    echo "Resolve each by one of: add a cookbook, add to ${BASELINE_FILE#"${REPO_ROOT}/"}," >&2
+    echo "or remove the package. Re-run with --update-baseline to accept current state." >&2
   fi
-  echo "Undeclared packages for role '${ROLE}' (${PLATFORM}):" >&2
-  echo "  (installed manually but neither declared in mitamae nor baselined)" >&2
-  echo "" >&2
-  printf '%s\n' "${drift_list}"
-  echo "" >&2
-  echo "Resolve each by one of: add a cookbook, add to ${BASELINE_FILE#"${REPO_ROOT}/"}," >&2
-  echo "or remove the package. Re-run with --update-baseline to accept current state." >&2
-  exit 1
+
+  cask_integrity || status=1
+  exit "${status}"
 }
 
 usage() {

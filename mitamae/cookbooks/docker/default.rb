@@ -1,5 +1,5 @@
 if node[:platform] == 'darwin'
-  brew_cask 'docker'
+  brew_cask 'docker-desktop'
 elsif %w[ubuntu debian].include?(node[:platform])
   # Docker's repository is keyed by distro codename (e.g. noble/bookworm).
   codename = '$(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}")'

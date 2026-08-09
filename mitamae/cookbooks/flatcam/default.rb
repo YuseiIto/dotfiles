@@ -6,10 +6,13 @@ if node[:platform] == 'darwin'
   # then, don't sink provisioning over it.
   #
   # mitamae's `package` resource has no `ignore_failure`, so shell out via
-  # `execute` and swallow a non-zero brew exit with `|| true`.
-  execute 'Install flatcam-evo (best effort)' do
-    command 'brew install tomoyanonymous/homebrew-flatcam/flatcam-evo || true'
-    not_if 'brew list --formula tomoyanonymous/homebrew-flatcam/flatcam-evo >/dev/null 2>&1'
+  # `execute` and swallow a non-zero brew exit with `|| true`. The execute name
+  # follows the convention scripts/audit-packages.sh scrapes, so the package
+  # audit can still see this as declared; it uses brew's canonical tap spelling
+  # (no `homebrew-` prefix) so the name matches what brew reports.
+  execute 'install tomoyanonymous/flatcam/flatcam-evo via homebrew formula' do
+    command 'brew install tomoyanonymous/flatcam/flatcam-evo || true'
+    not_if 'brew list --formula tomoyanonymous/flatcam/flatcam-evo >/dev/null 2>&1'
   end
 else
   unsupported_platform! node[:platform]

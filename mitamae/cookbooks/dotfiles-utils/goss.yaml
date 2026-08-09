@@ -2,3 +2,6 @@ command:
   rbenv exec bundle --version:
     exit-status: 0
     timeout: 5000
+  shellcheck --version:
+    exit-status: 0
+    timeout: 5000

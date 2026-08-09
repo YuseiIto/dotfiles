@@ -1,0 +1,5 @@
+# lpc21isp exits 1 even for `-h`, so probe for the binary instead of its version.
+command:
+  command -v lpc21isp:
+    exit-status: 0
+    timeout: 5000

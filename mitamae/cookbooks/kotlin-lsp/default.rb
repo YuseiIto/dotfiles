@@ -7,7 +7,10 @@
 kotlin_lsp_version = '262.2310.0'
 
 if node[:platform] == 'darwin'
-  package 'JetBrains/utils/kotlin-lsp'
+  # JetBrains publishes this through their own tap as a formula, but
+  # homebrew-cask carries the same build at the same version, so use the
+  # official tap and skip the third-party one.
+  brew_cask 'kotlin-lsp'
 elsif %w[ubuntu debian].include?(node[:platform])
   arch = case node[:os_arch]
          when 'arm64' then 'aarch64'

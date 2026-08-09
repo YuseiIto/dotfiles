@@ -6,12 +6,36 @@
   "remoteEnv": {
     "DOTFILES_ROLE": "bamboo"
   },
+  // The in-container rootless Docker daemon (see start-rootless-docker.sh)
+  // needs three things the default container config blocks:
+  //  - seccomp/AppArmor relaxed: the default profiles deny creating user
+  //    namespaces (and mounting inside them) for processes without
+  //    CAP_SYS_ADMIN, which is the whole point of a rootless daemon.
+  //  - /dev/fuse: for fuse-overlayfs, the rootless storage backend.
+  //  - CAP_SYS_ADMIN in the bounding set: the kernel's uid_map write check
+  //    (map_write) requires the opener to hold CAP_SYS_ADMIN over the child
+  //    namespace. On a normal host setuid newuidmap picks that up
+  //    automatically, but in a container setuid can only elevate to what the
+  //    bounding set allows, so without this the daemon dies with
+  //    "newuidmap: write to uid_map failed: Operation not permitted".
+  // Unlike --privileged this grants no access to host devices or the other
+  // ~25 capabilities (SYS_MODULE, SYS_RAWIO, ...), so the escalation path
+  // removed by dropping the host socket bind mount stays closed. Codespaces
+  // ignores runArgs but already permits these operations.
+  "runArgs": [
+    "--security-opt", "seccomp=unconfined",
+    "--security-opt", "apparmor=unconfined",
+    "--device", "/dev/fuse",
+    "--cap-add", "SYS_ADMIN"
+  ],
   "initializeCommand": "mkdir -p ${localEnv:HOME}/.ssh",
   "mounts": [
     "source=dotfiles-zsh-history,target=/home/ubuntu/.local/share/zsh,type=volume",
-    "source=${localEnv:HOME}/.ssh,target=/home/ubuntu/.ssh,type=bind,consistency=cached,readonly=true",
-    "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
+    "source=${localEnv:HOME}/.ssh,target=/home/ubuntu/.ssh,type=bind,consistency=cached,readonly=true"
   ],
+  // Start the rootless daemon after the container is up. The script never
+  // blocks startup: it warns loudly on failure but always exits 0.
+  "postStartCommand": "bash .devcontainer/start-rootless-docker.sh",
   "hostRequirements": {
     "gpu": "optional"
   },

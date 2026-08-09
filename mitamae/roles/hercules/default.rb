@@ -83,6 +83,7 @@ include_recipe '../../cookbooks/asciinema'
 # macOS GUI Specific Features
 include_recipe '../../cookbooks/feature_macos_communication'
 include_recipe '../../cookbooks/feature_macos_fonts'
+include_recipe '../../cookbooks/claude-desktop'
 include_recipe '../../cookbooks/firefox'
 include_recipe '../../cookbooks/kicad'
 include_recipe '../../cookbooks/freecad'

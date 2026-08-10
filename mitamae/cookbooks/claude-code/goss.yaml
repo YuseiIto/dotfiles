@@ -12,9 +12,6 @@ file:
   "{{.Env.HOME}}/.claude/claude-tmux-notify":
     exists: true
     filetype: symlink
-  "{{.Env.HOME}}/.claude/skills":
-    exists: true
-    filetype: symlink
   "{{.Env.HOME}}/.claude/CLAUDE.md":
     exists: true
     filetype: symlink

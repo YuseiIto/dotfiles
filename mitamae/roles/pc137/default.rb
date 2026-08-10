@@ -71,6 +71,7 @@ include_recipe '../../cookbooks/cloc'
 include_recipe '../../cookbooks/goss'
 
 # Data & Document Processing
+include_recipe '../../cookbooks/ffmpeg'
 include_recipe '../../cookbooks/imagemagick'
 include_recipe '../../cookbooks/graphviz'
 include_recipe '../../cookbooks/ghostscript'

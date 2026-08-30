@@ -1,5 +1,9 @@
 AllCops:
   NewCops: enable # Enable new cops by default when RuboCop is updated.
+  # bin/ holds generated binstubs (e.g. the rubocop binstub `make lint` creates),
+  # downloaded mitamae binaries, and the bash setup script -- not project source.
+  Exclude:
+    - 'bin/**/*'
 
 Lint/ShadowingOuterLocalVariable:
   Enabled: false

@@ -1,4 +1,4 @@
-goss_version = '0.4.9'
+goss_version = '0.4.10'
 goss_arch = node[:os_arch] == 'arm64' ? 'arm64' : 'amd64'
 
 if node[:platform] == 'darwin'

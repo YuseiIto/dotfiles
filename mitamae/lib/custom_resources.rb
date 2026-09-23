@@ -16,6 +16,47 @@ define :unsupported_platform! do
   raise "Unsupported platform: #{params[:name]}"
 end
 
+# Run a network-facing command (installer scripts piped from curl, release
+# tarball downloads) with bounded retries. Transient DNS/TLS/connection-reset
+# failures partway through a download are routine when building the CI images,
+# and a single blip otherwise aborts the whole provision. Retries a few times
+# with a fixed delay before giving up.
+#
+# Reads like `execute`: set `command`, and optionally a `not_if`/`only_if`
+# guard so the download is skipped once the tool is present. `retries` and
+# `delay` (seconds) are tunable per call.
+#
+#   retriable_command 'Install aider via official installer' do
+#     command 'curl -fsSL https://aider.chat/install.sh | sh'
+#     not_if 'command -v aider'
+#   end
+define :retriable_command, command: nil, retries: 3, delay: 15, user: nil, not_if: nil, only_if: nil do
+  raise 'retriable_command requires a :command' if params[:command].nil?
+
+  # POSIX sh loop (no bashisms): run the command, exit 0 on success, otherwise
+  # back off and retry until the attempt budget is exhausted.
+  script = <<~SH
+    i=1
+    while :; do
+      if #{params[:command]}; then exit 0; fi
+      if [ "$i" -ge "#{params[:retries]}" ]; then
+        echo "#{params[:name]}: giving up after #{params[:retries]} attempts" >&2
+        exit 1
+      fi
+      echo "#{params[:name]}: attempt ${i}/#{params[:retries]} failed; retrying in #{params[:delay]}s" >&2
+      i=$((i + 1))
+      sleep #{params[:delay]}
+    done
+  SH
+
+  execute params[:name] do
+    command script
+    user params[:user] if params[:user]
+    not_if params[:not_if] if params[:not_if]
+    only_if params[:only_if] if params[:only_if]
+  end
+end
+
 # Symlink dotfiles to the user's home directory
 # Pass `cookbook_dir: File.dirname(__FILE__)` from the calling cookbook so the files/ path resolves correctly.
 define :dotfile, source: nil, cookbook_dir: nil do

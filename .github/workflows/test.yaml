@@ -59,6 +59,12 @@ jobs:
           # 404 errors on casks whose upstream removed old versions (e.g. mactex).
           run: brew update
 
+        - name: brew upgrade
+          run: brew upgrade -y
+
+        - name: brew cleanup
+          run: brew cleanup -s
+
         - name: Run mitamae for role ${{ matrix.role }}
           env:
             DOTFILES_ROLE: ${{ matrix.role }}

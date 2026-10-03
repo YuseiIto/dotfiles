@@ -62,6 +62,9 @@ jobs:
         - name: brew upgrade
           run: brew upgrade -y
 
+        - name: brew cleanup
+          run: brew cleanup -s
+
         - name: Run mitamae for role ${{ matrix.role }}
           env:
             DOTFILES_ROLE: ${{ matrix.role }}

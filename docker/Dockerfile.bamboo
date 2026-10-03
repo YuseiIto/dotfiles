@@ -1,4 +1,4 @@
-FROM ubuntu:24.04@sha256:a853f94d226358a79c740cfc7bce0c289748f3fe3488d921d038ccd752c61b60
+FROM ubuntu:26.04@sha256:3595d7fc4286a33fad0fd853a4063e654287a9c3787437d7937c94ca3f7a804e
 
 LABEL org.opencontainers.image.source=https://github.com/yuseiito/dotfiles
 LABEL org.opencontainers.image.description="Yusei's dotfiles Container. Variant `bamboo`"

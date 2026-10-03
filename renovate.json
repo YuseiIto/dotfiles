@@ -25,6 +25,16 @@
       "depNameTemplate": "goss-org/goss",
       "datasourceTemplate": "github-releases",
       "extractVersionTemplate": "^v(?<version>.+)$"
+    },
+    {
+      "customType": "regex",
+      "description": "Update Alacritty DMG tag and digest in cookbooks/alacritty/default.rb",
+      "managerFilePatterns": ["/^mitamae/cookbooks/alacritty/default.rb$/"],
+      "matchStrings": [
+        "alacritty_tag = '(?<currentValue>[^']+)'\\s+alacritty_dmg_sha256 = '(?<currentDigest>[0-9a-f]{64})'"
+      ],
+      "depNameTemplate": "alacritty/alacritty",
+      "datasourceTemplate": "github-release-attachments"
     }
   ],
   "packageRules": [

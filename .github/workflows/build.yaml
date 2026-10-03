@@ -43,7 +43,7 @@ jobs:
       # preinstalled toolchains, so only amd64 needs this.
       - name: Free disk space
         if: matrix.arch == 'amd64'
-        uses: jlumbroso/free-disk-space@54081f138730dfa15788a46383842cd2f914a1be # v1.3.1
+        uses: jlumbroso/free-disk-space@ceedf095f4ec1a097402bc6bd80831f2e1a6fde6 # v2.0.0
         with:
           large-packages: false
 
@@ -125,7 +125,7 @@ jobs:
   docker-merge:
     name: Docker manifest 📦 [${{ matrix.variant }}]
     needs: docker-build
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     strategy:
       fail-fast: false
       matrix:

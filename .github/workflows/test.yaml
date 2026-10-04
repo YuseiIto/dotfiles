@@ -76,3 +76,23 @@ jobs:
             GOSS_USE_ALPHA: 1
           run: |
             zsh -c "goss --gossfile mitamae/roles/${{ matrix.role }}/goss.yaml validate"
+
+        # Temporary probe for the `aws --version` exit 1 that only reproduces on
+        # the runner; runs in the same zsh env goss uses.
+        - name: Diagnose AWS CLI
+          if: failure()
+          run: |
+            zsh -c '
+              set -x
+              which -a aws
+              for bin in $(whence -pa aws); do
+                ls -l "$bin"
+                "$bin" --version
+                echo "exit=$?"
+              done
+              aws --version --debug 2>&1 | tail -n 80
+              env | grep -iE "^(aws_|python|pyenv|virtual_env|ssl_|requests_ca)"
+              ls -la ~/.aws
+              brew info awscli
+              brew linkage --test awscli
+            ' || true

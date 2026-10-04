@@ -1,8 +1,10 @@
 command:
   "aws --version":
+    # NOTE: stderr is folded into stdout and matched with contain-substring
+    # because goss reports a command's output only on a matcher mismatch;
+    # without both, a broken CLI shows up as a bare exit code.
+    exec: "aws --version 2>&1"
     exit-status: 0
-    # NOTE: Unlike the list form, contain-substring prints the actual stdout on
-    # mismatch, so a broken CLI leaves its output in the report.
     stdout:
       contain-substring: aws-cli/
     timeout: 30000

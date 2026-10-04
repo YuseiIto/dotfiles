@@ -1,4 +1,8 @@
 command:
   "aws --version":
     exit-status: 0
+    # NOTE: Unlike the list form, contain-substring prints the actual stdout on
+    # mismatch, so a broken CLI leaves its output in the report.
+    stdout:
+      contain-substring: aws-cli/
     timeout: 30000

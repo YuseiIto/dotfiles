@@ -92,6 +92,7 @@ include_recipe '../../cookbooks/processing'
 include_recipe '../../cookbooks/raspberry-pi-imager'
 include_recipe '../../cookbooks/postico'
 include_recipe '../../cookbooks/affinity'
+include_recipe '../../cookbooks/zotero'
 
 # Development Tools & LSPs
 include_recipe '../../cookbooks/llvm'

@@ -35,6 +35,15 @@
       ],
       "depNameTemplate": "alacritty/alacritty",
       "datasourceTemplate": "github-release-attachments"
+    },
+    {
+      "customType": "regex",
+      "description": "Update kotlin-lsp version in cookbooks/kotlin-lsp/default.rb",
+      "managerFilePatterns": ["/^mitamae/cookbooks/kotlin-lsp/default.rb$/"],
+      "matchStrings": ["kotlin_lsp_version = '(?<currentValue>.*?)'"],
+      "depNameTemplate": "Kotlin/kotlin-lsp",
+      "datasourceTemplate": "github-releases",
+      "extractVersionTemplate": "^kotlin-lsp/v(?<version>.+)$"
     }
   ],
   "packageRules": [

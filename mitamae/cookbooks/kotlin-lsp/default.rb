@@ -1,10 +1,9 @@
 # Kotlin LSP - Language server for Kotlin
 # https://github.com/Kotlin/kotlin-lsp
-# Linux builds are published on the JetBrains CDN as a self-contained
-# zip that bundles its own JRE under jre/, so the kotlin-lsp.sh launcher
-# needs no system Java.
+# Linux builds are published by JetBrains as a self-contained tarball that
+# bundles its own runtime, so the kotlin-lsp.sh launcher needs no system Java.
 
-kotlin_lsp_version = '262.2310.0'
+kotlin_lsp_version = '263.6379.0'
 
 if node[:platform] == 'darwin'
   # JetBrains publishes this through their own tap as a formula, but
@@ -12,41 +11,30 @@ if node[:platform] == 'darwin'
   # official tap and skip the third-party one.
   brew_cask 'kotlin-lsp'
 elsif %w[ubuntu debian].include?(node[:platform])
-  arch = case node[:os_arch]
-         when 'arm64' then 'aarch64'
-         else 'x64'
-         end
+  # NOTE: JetBrains removes older builds from the CDN, so a stale pin breaks
+  # provisioning outright rather than just lagging behind.
+  arch_suffix = node[:os_arch] == 'arm64' ? '-aarch64' : ''
 
-  archive = "kotlin-lsp-#{kotlin_lsp_version}-linux-#{arch}.zip"
-  url = "https://download-cdn.jetbrains.com/kotlin-lsp/#{kotlin_lsp_version}/#{archive}"
+  archive = "kotlin-server-#{kotlin_lsp_version}#{arch_suffix}.tar.gz"
+  url = "https://download.jetbrains.com/language-server/kotlin-server/#{kotlin_lsp_version}/#{archive}"
+  # The tarball unpacks into kotlin-server-<version>/, so a versioned install
+  # dir lets the guard below pick up version bumps.
+  install_dir = "/opt/kotlin-server-#{kotlin_lsp_version}"
 
-  package 'unzip' do
-    user 'root'
-  end
-
-  directory '/opt/kotlin-lsp' do
-    user 'root'
-  end
-
-  # The zip carries FAT permissions (no unix exec bits), so the bundled JRE binaries land non-executable.
-  # The launcher self-chmods java at runtime, but that fails for the non-root
-  # user the container runs as, so make them executable here (as root) instead.
   execute 'Install kotlin-lsp' do
     command <<~CMD
       curl -fsSL -o /tmp/#{archive} "#{url}" &&
-      unzip -o /tmp/#{archive} -d /opt/kotlin-lsp &&
-      chmod +x /opt/kotlin-lsp/kotlin-lsp.sh &&
-      find /opt/kotlin-lsp/jre -type f \\( -path '*/bin/*' -o -name jspawnhelper \\) -exec chmod a+rx {} + &&
+      tar -xzf /tmp/#{archive} -C /opt &&
       rm -f /tmp/#{archive}
     CMD
     user 'root'
-    not_if 'test -x /opt/kotlin-lsp/jre/bin/java'
+    not_if "test -x #{install_dir}/kotlin-lsp.sh"
   end
 
-  # kotlin-lsp.sh resolves symlinks back to its own directory to locate lib/ and jre/,
-  # so a symlink on PATH works without a wrapper.
+  # Same layout and link target as the homebrew-cask build, which also exposes
+  # kotlin-lsp.sh through a plain symlink.
   link '/usr/local/bin/kotlin-lsp' do
-    to '/opt/kotlin-lsp/kotlin-lsp.sh'
+    to "#{install_dir}/kotlin-lsp.sh"
     user 'root'
     force true
   end

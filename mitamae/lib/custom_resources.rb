@@ -44,13 +44,18 @@ define :dotconfig, source: nil do
 end
 
 # Install a Python tool via uv
-define :uv_tool_package, bin_name: nil do
+#
+# `python` pins the interpreter for tools whose dependencies lag behind the
+# newest CPython uv would otherwise pick.
+define :uv_tool_package, bin_name: nil, python: nil do
   include_recipe File.expand_path('../cookbooks/uv', File.dirname(__FILE__))
 
   pkg_name = params[:name]
   cmd_name = params[:bin_name] || pkg_name
+  python_opt = params[:python] ? " --python #{params[:python]}" : ''
 
   execute "uv tool install #{pkg_name}" do
+    command "uv tool install#{python_opt} #{pkg_name}"
     not_if "command -v #{cmd_name} >/dev/null 2>&1"
   end
 end

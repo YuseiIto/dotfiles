@@ -1,0 +1,52 @@
+{
+  "id": "agent-sandbox",
+  "version": "1.0.0",
+  "name": "Agent sandbox",
+  "description": "Egress allowlist firewall, restricted sudo and persistent Claude Code state for running coding agents with permission prompts disabled.",
+  "documentationURL": "https://github.com/YuseiIto/dotfiles/tree/main/devcontainer-features/src/agent-sandbox",
+  "options": {
+    "allowedDomains": {
+      "type": "string",
+      "default": "",
+      "description": "Comma-separated extra domains to allow (subdomains included)."
+    },
+    "allowHostNetwork": {
+      "type": "boolean",
+      "default": false,
+      "description": "Allow traffic to the Docker host's /24 network."
+    },
+    "restrictSudo": {
+      "type": "boolean",
+      "default": true,
+      "description": "Remove the remote user's sudo rights except running the firewall script."
+    },
+    "allowClaudeAiConnectors": {
+      "type": "boolean",
+      "default": false,
+      "description": "Keep claude.ai connectors (Gmail, Drive, ...) enabled inside the container."
+    }
+  },
+  "capAdd": ["NET_ADMIN", "NET_RAW"],
+  "containerEnv": {
+    "CLAUDE_CONFIG_DIR": "/mnt/agent-sandbox/claude-config"
+  },
+  "mounts": [
+    {
+      "type": "volume",
+      "source": "agent-sandbox-claude-config-${devcontainerId}",
+      "target": "/mnt/agent-sandbox/claude-config"
+    },
+    {
+      "type": "volume",
+      "source": "agent-sandbox-claude-credentials",
+      "target": "/mnt/agent-sandbox/credentials"
+    }
+  ],
+  "postCreateCommand": "/usr/local/share/agent-sandbox/link-credentials.sh",
+  "postStartCommand": "sudo /usr/local/share/agent-sandbox/init-firewall.sh",
+  "customizations": {
+    "vscode": {
+      "extensions": ["anthropic.claude-code"]
+    }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "default": {
+    "image": "ubuntu:24.04",
+    "remoteUser": "ubuntu",
+    "features": {
+      "agent-sandbox": {}
+    }
+  }
+}

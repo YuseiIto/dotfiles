@@ -1,0 +1,33 @@
+# Claude Code. Ref: https://code.claude.com/docs/en/network-config
+# NOTE: storage.googleapis.com is intentionally absent. It is only used by
+# installers older than v2.1.116 and would open every public GCS bucket.
+api.anthropic.com
+claude.ai
+claude.com
+http-intake.logs.us5.datadoghq.com
+browser-intake-us5-datadoghq.com
+
+# GitHub (git over HTTPS, gh, release assets, raw content, GHCR)
+github.com
+githubusercontent.com
+ghcr.io
+
+# Package registries
+registry.npmjs.org
+pypi.org
+files.pythonhosted.org
+crates.io
+rubygems.org
+proxy.golang.org
+sum.golang.org
+archive.ubuntu.com
+security.ubuntu.com
+ports.ubuntu.com
+
+# VS Code server and extensions
+update.code.visualstudio.com
+vscode.download.prss.microsoft.com
+marketplace.visualstudio.com
+gallery.vsassets.io
+gallerycdn.vsassets.io
+vscode.blob.core.windows.net

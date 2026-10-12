@@ -24,7 +24,6 @@ rm -rf /var/lib/apt/lists/*
 
 install -d -m 0755 "$SHARE_DIR" "$CONF_DIR" "$CONF_DIR/allowed-domains.d" /var/lib/agent-sandbox
 install -m 0755 "$FEATURE_DIR/init-firewall.sh" "$SHARE_DIR/init-firewall.sh"
-install -m 0755 "$FEATURE_DIR/link-credentials.sh" "$SHARE_DIR/link-credentials.sh"
 install -m 0644 "$FEATURE_DIR/allowed-domains" "$CONF_DIR/allowed-domains.d/00-default"
 
 printf '%s\n' "$REMOTE_USER" > "$CONF_DIR/remote-user"
@@ -56,3 +55,30 @@ printf '%s ALL=(root) NOPASSWD: %s\n' "$REMOTE_USER" "$SHARE_DIR/init-firewall.s
   > /etc/sudoers.d/agent-sandbox
 chmod 0440 /etc/sudoers.d/agent-sandbox
 visudo -c
+
+# The mount point must exist and be owned by the user before the first mount:
+# Docker seeds an empty named volume from the image directory, including its
+# ownership.
+install -d -m 0700 -o "$REMOTE_USER" -g "$(id -gn "$REMOTE_USER")" \
+  /mnt/agent-sandbox/claude-config
+
+install -d -m 0755 /etc/claude-code
+managed=/etc/claude-code/managed-settings.json
+[ -f "$managed" ] || echo '{}' > "$managed"
+# The config volume is shared by every project, so a hook written by one
+# session would otherwise run in all of them.
+jq '.allowManagedHooksOnly = true' "$managed" > "$managed.tmp"
+mv "$managed.tmp" "$managed"
+if [ "${ALLOWCLAUDEAICONNECTORS:-false}" = true ]; then
+  echo 'mcp-proxy.anthropic.com' >> "$CONF_DIR/allowed-domains.d/10-feature-options"
+  # NOTE: Personal "needs approval" settings on claude.ai do not reach a
+  # bypassPermissions session; managed ask rules do.
+  jq --arg rules "${CONNECTORASKRULES:-}" \
+    '.permissions.ask = ((.permissions.ask // []) + ($rules | split(",") | map(gsub("^\\s+|\\s+$"; "")) | map(select(length > 0))) | unique)' \
+    "$managed" > "$managed.tmp"
+else
+  jq '.disableClaudeAiConnectors = true' "$managed" > "$managed.tmp"
+fi
+mv "$managed.tmp" "$managed"
+chown root:root "$managed"
+chmod 0644 "$managed"

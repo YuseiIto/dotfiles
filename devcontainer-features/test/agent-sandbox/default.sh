@@ -29,4 +29,11 @@ check "still works after re-run" curl -sS --max-time 10 -o /dev/null https://api
 check "general sudo denied" bash -c '! sudo -n true'
 check "sudo limited to firewall script" bash -c '[ "$(sudo -n -l | grep -c NOPASSWD)" = 1 ] && sudo -n -l | grep -q "NOPASSWD: /usr/local/share/agent-sandbox/init-firewall.sh"'
 
+check "CLAUDE_CONFIG_DIR set" bash -c '[ "$CLAUDE_CONFIG_DIR" = /mnt/agent-sandbox/claude-config ]'
+check "config dir writable by user" bash -c 'touch "$CLAUDE_CONFIG_DIR/.probe" && rm "$CLAUDE_CONFIG_DIR/.probe"'
+check "connectors disabled by managed settings" jq -e '.disableClaudeAiConnectors == true' /etc/claude-code/managed-settings.json
+check "hooks restricted to managed settings" jq -e '.allowManagedHooksOnly == true' /etc/claude-code/managed-settings.json
+check "managed settings not user-writable" bash -c '! test -w /etc/claude-code/managed-settings.json'
+check "connector proxy not allowlisted" bash -c '[ -z "$(dig +short +time=2 +tries=1 mcp-proxy.anthropic.com)" ]'
+
 reportResults

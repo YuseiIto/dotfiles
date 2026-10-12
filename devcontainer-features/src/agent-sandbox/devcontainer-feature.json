@@ -24,29 +24,33 @@
       "type": "boolean",
       "default": false,
       "description": "Keep claude.ai connectors (Gmail, Drive, ...) enabled inside the container."
+    },
+    "connectorAskRules": {
+      "type": "string",
+      "default": "mcp__claude_ai_*__create_*,mcp__claude_ai_*__update_*,mcp__claude_ai_*__delete_*,mcp__claude_ai_*__send_*,mcp__claude_ai_*__reply*,mcp__claude_ai_*__forward*,mcp__claude_ai_*__share_*,mcp__claude_ai_*__trash_*,mcp__claude_ai_*__respond_*,mcp__claude_ai_*__*label*,mcp__claude_ai_*__mark_*,mcp__claude_ai_*__copy_*",
+      "description": "Comma-separated permission rules that always prompt (even with --dangerously-skip-permissions) when claude.ai connectors are allowed. Defaults cover write-style connector tools."
     }
   },
-  "capAdd": ["NET_ADMIN", "NET_RAW"],
+  "capAdd": [
+    "NET_ADMIN",
+    "NET_RAW"
+  ],
   "containerEnv": {
     "CLAUDE_CONFIG_DIR": "/mnt/agent-sandbox/claude-config"
   },
   "mounts": [
     {
       "type": "volume",
-      "source": "agent-sandbox-claude-config-${devcontainerId}",
+      "source": "agent-sandbox-claude-config",
       "target": "/mnt/agent-sandbox/claude-config"
-    },
-    {
-      "type": "volume",
-      "source": "agent-sandbox-claude-credentials",
-      "target": "/mnt/agent-sandbox/credentials"
     }
   ],
-  "postCreateCommand": "/usr/local/share/agent-sandbox/link-credentials.sh",
   "postStartCommand": "sudo /usr/local/share/agent-sandbox/init-firewall.sh",
   "customizations": {
     "vscode": {
-      "extensions": ["anthropic.claude-code"]
+      "extensions": [
+        "anthropic.claude-code"
+      ]
     }
   }
 }

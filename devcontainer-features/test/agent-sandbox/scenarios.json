@@ -25,5 +25,24 @@
         "restrictSudo": false
       }
     }
+  },
+  "connectors_allowed": {
+    "image": "ubuntu:24.04",
+    "remoteUser": "ubuntu",
+    "features": {
+      "agent-sandbox": {
+        "allowClaudeAiConnectors": true
+      }
+    }
+  },
+  "connector_ask_custom": {
+    "image": "ubuntu:24.04",
+    "remoteUser": "ubuntu",
+    "features": {
+      "agent-sandbox": {
+        "allowClaudeAiConnectors": true,
+        "connectorAskRules": " mcp__claude_ai_* "
+      }
+    }
   }
 }

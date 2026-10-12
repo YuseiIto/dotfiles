@@ -52,5 +52,9 @@
         "anthropic.claude-code"
       ]
     }
-  }
+  },
+  "init": true,
+  "installsAfter": [
+    "ghcr.io/devcontainers/features/common-utils"
+  ]
 }

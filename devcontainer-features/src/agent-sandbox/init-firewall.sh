@@ -8,6 +8,7 @@ CONF_DIR=/etc/agent-sandbox
 STATE_DIR=/var/lib/agent-sandbox
 RUN_DIR=/run/agent-sandbox
 IPSET_NAME=agent-sandbox-allowed4
+HOST_IPSET_NAME=agent-sandbox-host4
 DNSMASQ_PID="$RUN_DIR/dnsmasq.pid"
 DNSMASQ_CONF="$RUN_DIR/dnsmasq.conf"
 DOMAIN_RE='^([a-z0-9]([a-z0-9-]*[a-z0-9])?\.)+[a-z]{2,}$'
@@ -74,28 +75,54 @@ start_dnsmasq() {
       echo "server=/$domain/$upstream"
       echo "ipset=/$domain/$IPSET_NAME"
     done
+    if allow_host_network; then
+      # Docker Desktop serves the host at host.docker.internal, outside the
+      # gateway /24. Its address goes to a set that is open on every port.
+      echo "server=/host.docker.internal/$upstream"
+      echo "ipset=/host.docker.internal/$HOST_IPSET_NAME"
+    fi
   } > "$DNSMASQ_CONF"
 
-  if [ -s "$DNSMASQ_PID" ] && kill -0 "$(cat "$DNSMASQ_PID")" 2>/dev/null; then
-    kill "$(cat "$DNSMASQ_PID")"
-    while kill -0 "$(cat "$DNSMASQ_PID")" 2>/dev/null; do sleep 0.1; done
-  fi
+  stop_dnsmasq
   dnsmasq --conf-file="$DNSMASQ_CONF"
 }
 
+stop_dnsmasq() {
+  local pid
+  [ -s "$DNSMASQ_PID" ] || return 0
+  pid="$(cat "$DNSMASQ_PID")"
+  # The pid file survives `docker restart`, so the pid may now belong to an
+  # unrelated process. A zombie (PID 1 not reaping) also passes `kill -0`.
+  is_live_dnsmasq "$pid" || return 0
+  kill "$pid"
+  for _ in $(seq 50); do
+    is_live_dnsmasq "$pid" || return 0
+    sleep 0.1
+  done
+  die "dnsmasq (pid $pid) did not stop"
+}
+
+is_live_dnsmasq() {
+  local pid="$1"
+  [ "$(cat "/proc/$pid/comm" 2>/dev/null)" = dnsmasq ] || return 1
+  ! awk '{ exit ($3 == "Z") ? 0 : 1 }' "/proc/$pid/stat" 2>/dev/null
+}
+
+allow_host_network() { [ "$(cat "$CONF_DIR/allow-host-network")" = true ]; }
+
 apply_rules() {
-  local upstream="$1" proto host_net
+  local upstream="$1" host_net
   ipset create "$IPSET_NAME" hash:ip -exist
   ipset flush "$IPSET_NAME"
+  ipset create "$HOST_IPSET_NAME" hash:ip -exist
+  ipset flush "$HOST_IPSET_NAME"
 
-  for proto in udp tcp; do
-    # NOTE: Docker's embedded DNS DNATs 127.0.0.11:53 to a random port before
-    # the filter table runs, so match on the original destination.
-    iptables -A OUTPUT -p "$proto" -m conntrack --ctorigdst "$upstream" --ctorigdstport 53 \
-      -m owner --uid-owner dnsmasq -j ACCEPT
-    iptables -A OUTPUT -p "$proto" -m conntrack --ctorigdst "$upstream" --ctorigdstport 53 \
-      -j REJECT
-  done
+  # Only dnsmasq may open connections to the upstream resolver, on any port:
+  # Docker's embedded DNS (127.0.0.11) is DNATed to random ports that clients
+  # could otherwise query directly over loopback. Matching NEW keeps the
+  # resolver's replies to dnsmasq, which share the upstream address, flowing.
+  iptables -A OUTPUT -d "$upstream" -m owner --uid-owner dnsmasq -j ACCEPT
+  iptables -A OUTPUT -d "$upstream" -m conntrack --ctstate NEW -j REJECT
   iptables -A OUTPUT -o lo -j ACCEPT
   iptables -A OUTPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
   iptables -A OUTPUT -p tcp -m multiport --dports 80,443 \
@@ -104,11 +131,13 @@ apply_rules() {
   iptables -A INPUT -i lo -j ACCEPT
   iptables -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
 
-  if [ "$(cat "$CONF_DIR/allow-host-network")" = true ]; then
+  if allow_host_network; then
     host_net="$(ip route | awk '/^default/ { print $3; exit }' | sed 's/\.[0-9]*$/.0\/24/')"
     [ -n "$host_net" ] || die "could not detect host network"
     iptables -A OUTPUT -d "$host_net" -j ACCEPT
     iptables -A INPUT -s "$host_net" -j ACCEPT
+    iptables -A OUTPUT -m set --match-set "$HOST_IPSET_NAME" dst -j ACCEPT
+    iptables -A INPUT -m set --match-set "$HOST_IPSET_NAME" src -j ACCEPT
   fi
 
   iptables -A OUTPUT -p tcp -j REJECT --reject-with tcp-reset

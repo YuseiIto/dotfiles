@@ -35,14 +35,15 @@ disabled (`claude --dangerously-skip-permissions`) with a limited blast radius.
 ```
 
 The remote user must be non-root; Claude Code refuses
-`--dangerously-skip-permissions` as root.
+`--dangerously-skip-permissions` as root. Tested on `ubuntu:24.04`-based
+images; the base needs apt and dnsmasq 2.87 or later (for `filter-AAAA`).
 
 ## Options
 
 | Option | Type | Default | Description |
 |---|---|---|---|
 | `allowedDomains` | string | `""` | Comma-separated extra domains to allow (subdomains included). Scheme and path are stripped; invalid entries fail the build. |
-| `allowHostNetwork` | boolean | `false` | Allow traffic to the Docker host's /24 network. |
+| `allowHostNetwork` | boolean | `false` | Allow all traffic to and from the default gateway's /24 and to `host.docker.internal` (Docker Desktop's host address). Also needed for published ports (`appPort`, compose `ports:`). |
 | `restrictSudo` | boolean | `true` | Remove the remote user's sudo rights except running the firewall script. |
 | `allowClaudeAiConnectors` | boolean | `false` | Keep claude.ai connectors enabled and allow `mcp-proxy.anthropic.com`. |
 | `connectorAskRules` | string | write-style globs | Comma-separated permission rules written to managed `permissions.ask` when connectors are allowed. Ask rules prompt even with `--dangerously-skip-permissions`. |
@@ -87,6 +88,11 @@ Use `connectorAskRules` instead.
   user has a different UID cannot write it.
 - **Ipset growth.** Resolved IPs are never removed from the allowed set while
   the container runs.
+- **Inbound traffic and sidecars.** Incoming connections are dropped unless
+  `allowHostNetwork` is on, so published ports do not work by default (VS Code
+  port forwarding does, since it tunnels through `docker exec`). Other
+  containers on the same network, such as compose services, are neither
+  resolvable nor reachable.
 - Container escapes through kernel bugs are out of scope.
 
 ## Maintenance

@@ -83,9 +83,9 @@ Use `connectorAskRules` instead.
 - **Restarts outside dev container tooling.** `docker restart` clears the
   firewall rules; they come back only when `postStartCommand` runs again (VS
   Code or `devcontainer up`).
-- **One remote-user UID per volume.** The config volume is seeded with the
-  remote user's ownership the first time it is mounted. Images whose remote
-  user has a different UID cannot write it.
+- **One remote-user UID at a time.** Each new container takes ownership of
+  the shared config volume (`onCreateCommand`), so running containers whose
+  remote users have different UIDs at the same time locks the older one out.
 - **Ipset growth.** Resolved IPs are never removed from the allowed set while
   the container runs.
 - **Inbound traffic and sidecars.** Incoming connections are dropped unless

@@ -24,6 +24,7 @@ rm -rf /var/lib/apt/lists/*
 
 install -d -m 0755 "$SHARE_DIR" "$CONF_DIR" "$CONF_DIR/allowed-domains.d" /var/lib/agent-sandbox
 install -m 0755 "$FEATURE_DIR/init-firewall.sh" "$SHARE_DIR/init-firewall.sh"
+install -m 0755 "$FEATURE_DIR/fix-state-ownership.sh" "$SHARE_DIR/fix-state-ownership.sh"
 install -m 0644 "$FEATURE_DIR/allowed-domains" "$CONF_DIR/allowed-domains.d/00-default"
 
 printf '%s\n' "$REMOTE_USER" > "$CONF_DIR/remote-user"
@@ -62,8 +63,9 @@ if [ "${RESTRICTSUDO:-true}" = true ]; then
   done
 fi
 
-# postStartCommand runs the firewall script through sudo as the remote user.
-printf '%s ALL=(root) NOPASSWD: %s\n' "$REMOTE_USER" "$SHARE_DIR/init-firewall.sh" \
+# Lifecycle hooks run these root-only scripts through sudo as the remote user.
+printf '%s ALL=(root) NOPASSWD: %s, %s\n' "$REMOTE_USER" \
+  "$SHARE_DIR/init-firewall.sh" "$SHARE_DIR/fix-state-ownership.sh" \
   > /etc/sudoers.d/agent-sandbox
 chmod 0440 /etc/sudoers.d/agent-sandbox
 visudo -c

@@ -164,15 +164,17 @@ self_test() {
 }
 
 audit_sudo() {
-  local user
+  local user extra
   [ "$(cat "$CONF_DIR/restrict-sudo")" = true ] || return 0
   user="$(cat "$CONF_DIR/remote-user")"
-  # Catches grants added after the build (e.g. by a later Feature or layer).
-  if sudo -l -U "$user" | sed -n '/may run the following/,$p' | tail -n +2 \
-      | grep -v -F "NOPASSWD: /usr/local/share/agent-sandbox/init-firewall.sh" \
-      | grep -q '[^[:space:]]'; then
-    die "user '$user' has sudo rights beyond the firewall script"
-  fi
+  # Catches grants added after the build (e.g. by a later Feature or layer):
+  # every command the user may run must be one of the Feature's root scripts.
+  extra="$(sudo -l -U "$user" | sed -n '/may run the following/,$p' | tail -n +2 \
+    | sed -E 's/^[[:space:]]*\(root\) NOPASSWD:[[:space:]]*//' | tr ',' '\n' \
+    | sed -E 's/^[[:space:]]+|[[:space:]]+$//g' | grep -v '^$' \
+    | grep -v -x -e /usr/local/share/agent-sandbox/init-firewall.sh \
+      -e /usr/local/share/agent-sandbox/fix-state-ownership.sh || true)"
+  [ -z "$extra" ] || die "user '$user' has sudo rights beyond the agent-sandbox scripts: $extra"
 }
 
 main() {

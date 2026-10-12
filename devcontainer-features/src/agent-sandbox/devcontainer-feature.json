@@ -56,5 +56,6 @@
   "init": true,
   "installsAfter": [
     "ghcr.io/devcontainers/features/common-utils"
-  ]
+  ],
+  "onCreateCommand": "sudo /usr/local/share/agent-sandbox/fix-state-ownership.sh"
 }

@@ -33,6 +33,18 @@ printf '%s\n' "${RESTRICTSUDO:-true}" > "$CONF_DIR/restrict-sudo"
 chmod 0644 "$CONF_DIR"/remote-user "$CONF_DIR"/allow-host-network \
   "$CONF_DIR"/restrict-sudo "$CONF_DIR/allowed-domains.d/10-feature-options"
 
+IFS=',' read -r -a extra_domains <<< "${ALLOWEDDOMAINS:-}"
+for d in "${extra_domains[@]}"; do
+  d="$(echo "$d" | tr -d '[:space:]' | tr '[:upper:]' '[:lower:]')"
+  d="${d#http://}"; d="${d#https://}"; d="${d%%/*}"
+  [ -z "$d" ] && continue
+  if ! [[ "$d" =~ ^([a-z0-9]([a-z0-9-]*[a-z0-9])?\.)+[a-z]{2,}$ ]]; then
+    echo "agent-sandbox: invalid entry in allowedDomains: '$d'" >&2
+    exit 1
+  fi
+  echo "$d" >> "$CONF_DIR/allowed-domains.d/10-feature-options"
+done
+
 if [ "${RESTRICTSUDO:-true}" = true ]; then
   # Drop every sudoers rule that names the remote user, so it cannot run
   # `iptables -F` and disable the firewall.

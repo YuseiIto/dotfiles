@@ -44,5 +44,23 @@
         "connectorAskRules": " mcp__claude_ai_* "
       }
     }
+  },
+  "allowed_domains": {
+    "image": "ubuntu:24.04",
+    "remoteUser": "ubuntu",
+    "features": {
+      "agent-sandbox": {
+        "allowedDomains": " Example.org , https://httpbin.org/get"
+      }
+    }
+  },
+  "host_network": {
+    "image": "ubuntu:24.04",
+    "remoteUser": "ubuntu",
+    "features": {
+      "agent-sandbox": {
+        "allowHostNetwork": true
+      }
+    }
   }
 }

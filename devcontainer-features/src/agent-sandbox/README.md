@@ -50,7 +50,8 @@ images; the base needs apt and dnsmasq 2.87 or later (for `filter-AAAA`).
 
 The default allowlist lives in [`allowed-domains`](allowed-domains) and covers
 Claude Code, GitHub, npm, PyPI, crates.io, RubyGems, the Go module proxy,
-Ubuntu mirrors and VS Code.
+Ubuntu mirrors, VS Code, a few documentation sites, Google Fonts, Playwright
+browser downloads, Terraform and selected Google Cloud APIs.
 
 ## Authentication
 

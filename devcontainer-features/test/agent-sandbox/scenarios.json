@@ -5,5 +5,25 @@
     "features": {
       "agent-sandbox": {}
     }
+  },
+  "restrict_sudo_preexisting": {
+    "build": {
+      "dockerfile": "Dockerfile"
+    },
+    "remoteUser": "ubuntu",
+    "features": {
+      "agent-sandbox": {}
+    }
+  },
+  "restrict_sudo_false": {
+    "build": {
+      "dockerfile": "Dockerfile"
+    },
+    "remoteUser": "ubuntu",
+    "features": {
+      "agent-sandbox": {
+        "restrictSudo": false
+      }
+    }
   }
 }

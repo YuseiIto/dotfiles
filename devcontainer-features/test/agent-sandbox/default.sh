@@ -26,4 +26,7 @@ check "IPv6 egress blocked" bash -c '! curl -6 -sS --max-time 5 -o /dev/null "ht
 check "firewall re-run is idempotent" sudo -n /usr/local/share/agent-sandbox/init-firewall.sh
 check "still works after re-run" curl -sS --max-time 10 -o /dev/null https://api.github.com/zen
 
+check "general sudo denied" bash -c '! sudo -n true'
+check "sudo limited to firewall script" bash -c '[ "$(sudo -n -l | grep -c NOPASSWD)" = 1 ] && sudo -n -l | grep -q "NOPASSWD: /usr/local/share/agent-sandbox/init-firewall.sh"'
+
 reportResults

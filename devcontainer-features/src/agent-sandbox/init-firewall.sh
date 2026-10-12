@@ -134,7 +134,17 @@ self_test() {
     || die "self-test: api.github.com unreachable"
 }
 
-audit_sudo() { :; }
+audit_sudo() {
+  local user
+  [ "$(cat "$CONF_DIR/restrict-sudo")" = true ] || return 0
+  user="$(cat "$CONF_DIR/remote-user")"
+  # Catches grants added after the build (e.g. by a later Feature or layer).
+  if sudo -l -U "$user" | sed -n '/may run the following/,$p' | tail -n +2 \
+      | grep -v -F "NOPASSWD: /usr/local/share/agent-sandbox/init-firewall.sh" \
+      | grep -q '[^[:space:]]'; then
+    die "user '$user' has sudo rights beyond the firewall script"
+  fi
+}
 
 main() {
   local upstream

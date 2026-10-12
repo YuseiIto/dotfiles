@@ -34,8 +34,24 @@ printf '%s\n' "${RESTRICTSUDO:-true}" > "$CONF_DIR/restrict-sudo"
 chmod 0644 "$CONF_DIR"/remote-user "$CONF_DIR"/allow-host-network \
   "$CONF_DIR"/restrict-sudo "$CONF_DIR/allowed-domains.d/10-feature-options"
 
+if [ "${RESTRICTSUDO:-true}" = true ]; then
+  # Drop every sudoers rule that names the remote user, so it cannot run
+  # `iptables -F` and disable the firewall.
+  for f in /etc/sudoers /etc/sudoers.d/*; do
+    [ -f "$f" ] || continue
+    [ "$f" = /etc/sudoers.d/agent-sandbox ] && continue
+    sed -i -E "/^[[:space:]]*${REMOTE_USER}[[:space:]]/d" "$f"
+    [ -s "$f" ] || [ "$f" = /etc/sudoers ] || rm -f "$f"
+  done
+  # Group grants (`%sudo`, `%admin`) are left alone. Instead, remove the user from those groups.
+  for g in sudo admin wheel; do
+    if getent group "$g" | cut -d: -f4 | tr ',' '\n' | grep -qx "$REMOTE_USER"; then
+      gpasswd -d "$REMOTE_USER" "$g"
+    fi
+  done
+fi
+
 # postStartCommand runs the firewall script through sudo as the remote user.
-# Task 3 inserts the removal of other sudo rights directly above this block.
 printf '%s ALL=(root) NOPASSWD: %s\n' "$REMOTE_USER" "$SHARE_DIR/init-firewall.sh" \
   > /etc/sudoers.d/agent-sandbox
 chmod 0440 /etc/sudoers.d/agent-sandbox

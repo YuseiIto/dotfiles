@@ -40,6 +40,7 @@ SHELLCHECK_EXTRA_FILES = \
 	mitamae/cookbooks/bash/files/.bash_profile \
 	mitamae/cookbooks/bash/files/.bashrc \
 	mitamae/cookbooks/claude-code/files/claude-tmux-notify \
+	mitamae/cookbooks/claude-code/files/claude-dotfiles-link \
 	mitamae/cookbooks/git-commit-claude/files/git-commit-claude
 
 shellcheck:

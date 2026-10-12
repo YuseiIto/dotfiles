@@ -2,6 +2,8 @@ command:
   claude --version:
     exit-status: 0
     timeout: 30000
+  CLAUDE_CONFIG_DIR=/tmp/claude-link-test claude-dotfiles-link && test -L /tmp/claude-link-test/settings.json && test -L /tmp/claude-link-test/rules:
+    exit-status: 0
 file:
   "{{.Env.HOME}}/.claude/settings.json":
     exists: true
@@ -16,5 +18,8 @@ file:
     exists: true
     filetype: symlink
   "{{.Env.HOME}}/.claude/rules":
+    exists: true
+    filetype: symlink
+  "{{.Env.HOME}}/.local/bin/claude-dotfiles-link":
     exists: true
     filetype: symlink

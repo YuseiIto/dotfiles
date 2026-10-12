@@ -25,8 +25,21 @@ else
   unsupported_platform! node[:platform]
 end
 
-%w[settings.json statusline-command.sh claude-tmux-notify CLAUDE.md rules].each do |entry|
+cookbook_dir = File.dirname(__FILE__)
+# Shared with files/claude-dotfiles-link so both link the same entries.
+# NOTE: mitamae runs on mruby, which lacks File.readlines.
+entries = File.read(File.join(cookbook_dir, 'files', 'dotfile-entries')).split("\n").reject(&:empty?)
+
+entries.each do |entry|
   claude_dotfile entry do
-    cookbook_dir File.dirname(__FILE__)
+    cookbook_dir cookbook_dir
   end
+end
+
+bin_dir = "#{ENV['HOME']}/.local/bin"
+directory bin_dir
+
+link "#{bin_dir}/claude-dotfiles-link" do
+  to File.join(cookbook_dir, 'files', 'claude-dotfiles-link')
+  force true
 end

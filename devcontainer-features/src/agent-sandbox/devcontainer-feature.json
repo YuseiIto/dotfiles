@@ -20,6 +20,11 @@
       "default": true,
       "description": "Remove the remote user's sudo rights except running the firewall script."
     },
+    "bypassPermissions": {
+      "type": "boolean",
+      "default": true,
+      "description": "Start Claude Code sessions in bypassPermissions mode (as with --dangerously-skip-permissions) without the warning dialog."
+    },
     "allowClaudeAiConnectors": {
       "type": "boolean",
       "default": false,

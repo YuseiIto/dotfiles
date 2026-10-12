@@ -83,6 +83,13 @@ managed=/etc/claude-code/managed-settings.json
 # session would otherwise run in all of them.
 jq '.allowManagedHooksOnly = true' "$managed" > "$managed.tmp"
 mv "$managed.tmp" "$managed"
+if [ "${BYPASSPERMISSIONS:-true}" = true ]; then
+  # NOTE: Managed rather than user settings so the warning dialog does not
+  # rewrite a settings.json that dotfiles keep as a symlink.
+  jq '.permissions.defaultMode = "bypassPermissions" | .skipDangerousModePermissionPrompt = true' \
+    "$managed" > "$managed.tmp"
+  mv "$managed.tmp" "$managed"
+fi
 if [ "${ALLOWCLAUDEAICONNECTORS:-false}" = true ]; then
   echo 'mcp-proxy.anthropic.com' >> "$CONF_DIR/allowed-domains.d/10-feature-options"
   # NOTE: Personal "needs approval" settings on claude.ai do not reach a

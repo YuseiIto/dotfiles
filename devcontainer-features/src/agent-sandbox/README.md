@@ -45,6 +45,7 @@ images; the base needs apt and dnsmasq 2.87 or later (for `filter-AAAA`).
 | `allowedDomains` | string | `""` | Comma-separated extra domains to allow (subdomains included). Scheme and path are stripped; invalid entries fail the build. |
 | `allowHostNetwork` | boolean | `false` | Allow all traffic to and from the default gateway's /24 and to `host.docker.internal` (Docker Desktop's host address). Also needed for published ports (`appPort`, compose `ports:`). |
 | `restrictSudo` | boolean | `true` | Remove the remote user's sudo rights except running the firewall script. |
+| `bypassPermissions` | boolean | `true` | Start Claude Code in `bypassPermissions` mode (the same as `--dangerously-skip-permissions`) and skip its warning dialog, both through managed settings. Shift+Tab still switches modes. |
 | `allowClaudeAiConnectors` | boolean | `false` | Keep claude.ai connectors enabled and allow `mcp-proxy.anthropic.com`. |
 | `connectorAskRules` | string | write-style globs | Comma-separated permission rules written to managed `permissions.ask` when connectors are allowed. Ask rules prompt even with `--dangerously-skip-permissions`. |
 

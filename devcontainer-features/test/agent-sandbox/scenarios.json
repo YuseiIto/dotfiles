@@ -95,5 +95,14 @@
       },
       "agent-sandbox": {}
     }
+  },
+  "bypass_disabled": {
+    "image": "ubuntu:24.04",
+    "remoteUser": "ubuntu",
+    "features": {
+      "agent-sandbox": {
+        "bypassPermissions": false
+      }
+    }
   }
 }

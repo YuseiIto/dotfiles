@@ -6,6 +6,8 @@ claude.ai
 claude.com
 http-intake.logs.us5.datadoghq.com
 browser-intake-us5-datadoghq.com
+# Artifact content reads (matches *.frame.claudeusercontent.com)
+frame.claudeusercontent.com
 
 # GitHub (git over HTTPS, gh, release assets, raw content, GHCR)
 github.com

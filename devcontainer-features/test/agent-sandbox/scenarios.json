@@ -40,7 +40,7 @@
     "remoteUser": "ubuntu",
     "features": {
       "agent-sandbox": {
-        "allowedDomains": " Example.org , https://httpbin.org/get"
+        "allowedDomains": " Example.org , https://www.iana.org/domains"
       }
     }
   },

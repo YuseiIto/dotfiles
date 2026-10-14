@@ -1,0 +1,108 @@
+{
+  "default": {
+    "image": "ubuntu:24.04",
+    "remoteUser": "ubuntu",
+    "features": {
+      "agent-sandbox": {}
+    }
+  },
+  "restrict_sudo_preexisting": {
+    "build": {
+      "dockerfile": "Dockerfile"
+    },
+    "remoteUser": "ubuntu",
+    "features": {
+      "agent-sandbox": {}
+    }
+  },
+  "restrict_sudo_false": {
+    "build": {
+      "dockerfile": "Dockerfile"
+    },
+    "remoteUser": "ubuntu",
+    "features": {
+      "agent-sandbox": {
+        "restrictSudo": false
+      }
+    }
+  },
+  "connectors_allowed": {
+    "image": "ubuntu:24.04",
+    "remoteUser": "ubuntu",
+    "features": {
+      "agent-sandbox": {
+        "allowClaudeAiConnectors": true
+      }
+    }
+  },
+  "allowed_domains": {
+    "image": "ubuntu:24.04",
+    "remoteUser": "ubuntu",
+    "features": {
+      "agent-sandbox": {
+        "allowedDomains": " Example.org , https://www.iana.org/domains"
+      }
+    }
+  },
+  "host_network": {
+    "image": "ubuntu:24.04",
+    "remoteUser": "ubuntu",
+    "features": {
+      "agent-sandbox": {
+        "allowHostNetwork": true
+      }
+    }
+  },
+  "connector_ask_custom": {
+    "image": "ubuntu:24.04",
+    "remoteUser": "ubuntu",
+    "features": {
+      "agent-sandbox": {
+        "allowClaudeAiConnectors": true,
+        "connectorAskRules": " mcp__claude_ai_* "
+      }
+    }
+  },
+  "custom_network": {
+    "image": "ubuntu:24.04",
+    "remoteUser": "ubuntu",
+    "initializeCommand": "docker network inspect agent-sandbox-test >/dev/null 2>&1 || docker network create agent-sandbox-test >/dev/null",
+    "runArgs": [
+      "--network=agent-sandbox-test"
+    ],
+    "features": {
+      "agent-sandbox": {}
+    }
+  },
+  "no_reaper_pid1": {
+    "build": {
+      "dockerfile": "Dockerfile"
+    },
+    "overrideCommand": false,
+    "remoteUser": "ubuntu",
+    "features": {
+      "agent-sandbox": {}
+    }
+  },
+  "with_common_utils": {
+    "image": "ubuntu:24.04",
+    "remoteUser": "ubuntu",
+    "features": {
+      "ghcr.io/devcontainers/features/common-utils:2": {
+        "username": "ubuntu",
+        "installZsh": false,
+        "installOhMyZsh": false
+      },
+      "agent-sandbox": {}
+    }
+  },
+  "bypass_disabled": {
+    "image": "ubuntu:24.04",
+    "remoteUser": "ubuntu",
+    "features": {
+      "agent-sandbox": {
+        "bypassPermissions": false
+      }
+    }
+  }
+}

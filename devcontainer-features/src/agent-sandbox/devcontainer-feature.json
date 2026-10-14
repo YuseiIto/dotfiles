@@ -1,0 +1,66 @@
+{
+  "id": "agent-sandbox",
+  "version": "1.0.0",
+  "name": "Agent sandbox",
+  "description": "Egress allowlist firewall, restricted sudo and persistent Claude Code state for running coding agents with permission prompts disabled.",
+  "documentationURL": "https://github.com/YuseiIto/dotfiles/tree/main/devcontainer-features/src/agent-sandbox",
+  "options": {
+    "allowedDomains": {
+      "type": "string",
+      "default": "",
+      "description": "Comma-separated extra domains to allow (subdomains included)."
+    },
+    "allowHostNetwork": {
+      "type": "boolean",
+      "default": false,
+      "description": "Allow traffic to the Docker host's /24 network."
+    },
+    "restrictSudo": {
+      "type": "boolean",
+      "default": true,
+      "description": "Remove the remote user's sudo rights except running the firewall script."
+    },
+    "bypassPermissions": {
+      "type": "boolean",
+      "default": true,
+      "description": "Start Claude Code sessions in bypassPermissions mode (as with --dangerously-skip-permissions) without the warning dialog."
+    },
+    "allowClaudeAiConnectors": {
+      "type": "boolean",
+      "default": false,
+      "description": "Keep claude.ai connectors (Gmail, Drive, ...) enabled inside the container."
+    },
+    "connectorAskRules": {
+      "type": "string",
+      "default": "mcp__claude_ai_*__create_*,mcp__claude_ai_*__update_*,mcp__claude_ai_*__delete_*,mcp__claude_ai_*__send_*,mcp__claude_ai_*__reply*,mcp__claude_ai_*__forward*,mcp__claude_ai_*__share_*,mcp__claude_ai_*__trash_*,mcp__claude_ai_*__respond_*,mcp__claude_ai_*__*label*,mcp__claude_ai_*__mark_*,mcp__claude_ai_*__copy_*",
+      "description": "Comma-separated permission rules that always prompt (even with --dangerously-skip-permissions) when claude.ai connectors are allowed. Defaults cover write-style connector tools."
+    }
+  },
+  "capAdd": [
+    "NET_ADMIN",
+    "NET_RAW"
+  ],
+  "containerEnv": {
+    "CLAUDE_CONFIG_DIR": "/mnt/agent-sandbox/claude-config"
+  },
+  "mounts": [
+    {
+      "type": "volume",
+      "source": "agent-sandbox-claude-config",
+      "target": "/mnt/agent-sandbox/claude-config"
+    }
+  ],
+  "postStartCommand": "sudo /usr/local/share/agent-sandbox/init-firewall.sh",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "anthropic.claude-code"
+      ]
+    }
+  },
+  "init": true,
+  "installsAfter": [
+    "ghcr.io/devcontainers/features/common-utils"
+  ],
+  "onCreateCommand": "sudo /usr/local/share/agent-sandbox/fix-state-ownership.sh"
+}

@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# Links this cookbook's files into the Claude config dir. mitamae links the
+# same entries at provision time; containers whose config dir is a volume run
+# this from postCreateCommand because the volume hides the image's links.
+set -euo pipefail
+
+files_dir="$(dirname "$(readlink -f "$0")")"
+config_dir="${CLAUDE_CONFIG_DIR:-$HOME/.claude}"
+
+mkdir -p "$config_dir"
+while IFS= read -r entry || [ -n "$entry" ]; do
+  [ -z "$entry" ] && continue
+  ln -sfn "$files_dir/$entry" "$config_dir/$entry"
+done < "$files_dir/dotfile-entries"

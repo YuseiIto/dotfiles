@@ -2,7 +2,7 @@ DOCKER:=docker
 IMAGE_NAME:=yuseiito-dev
 BUNDLER:=bundle
 
-.PHONY: build-pine build-bamboo build-plum
+.PHONY: build-pine build-bamboo build-plum build-devcontainer
 
 build-pine:
 	$(DOCKER) build -t $(IMAGE_NAME):pine -f docker/Dockerfile.pine .
@@ -12,6 +12,9 @@ build-bamboo:
 
 build-plum:
 	$(DOCKER) build -t $(IMAGE_NAME):plum -f docker/Dockerfile.plum .
+
+build-devcontainer:
+	$(DOCKER) build -t $(IMAGE_NAME):devcontainer -f docker/Dockerfile.devcontainer .
 
 .PHONY: build-lxc-pine build-lxc-bamboo build-lxc-plum
 
@@ -40,6 +43,7 @@ SHELLCHECK_EXTRA_FILES = \
 	mitamae/cookbooks/bash/files/.bash_profile \
 	mitamae/cookbooks/bash/files/.bashrc \
 	mitamae/cookbooks/claude-code/files/claude-tmux-notify \
+	mitamae/cookbooks/claude-code/files/claude-dotfiles-link \
 	mitamae/cookbooks/git-commit-claude/files/git-commit-claude
 
 shellcheck:

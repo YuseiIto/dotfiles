@@ -1,6 +1,6 @@
 # Variants
 
-This repository offers four distinct configuration variants to cater to different development needs and resource constraints. Each variant is designed with specific use cases in mind, allowing us to choose the one that best fits their workflow and environment.
+This repository offers five distinct configuration variants to cater to different development needs and resource constraints. Each variant is designed with specific use cases in mind, allowing us to choose the one that best fits their workflow and environment.
 
 ### Pine (Full-Featured / AI-Native)
 
@@ -31,3 +31,10 @@ The Palm variant is an `ubuntu:24.04` image (same base as Bamboo/Pine) intended 
 * **Key Features:** Complete language runtimes, toolchains, LSPs, cloud/devops, security, and embedded compilers. Runtime `PATH` is exposed shell-agnostically via `~/.shell-env.sh` plus bash.
 
 > **Note:** When OpenHands runs the agent as its own `openhands` user (UID 10001), toolchains installed under the build user's home are not on that user's `PATH`. Configure the OpenHands sandbox to run as the existing user / matching UID so the installed toolchains resolve correctly.
+
+### Devcontainer (Agent Sandbox Base)
+
+The Devcontainer variant is the image for dev containers that run coding agents with permission prompts disabled, paired with the [`agent-sandbox`](../devcontainer-features/src/agent-sandbox/README.md) Dev Container Feature that supplies the egress firewall and Claude Code state.
+
+* **Target Use Case:** Per-project dev containers where Claude Code runs as `claude --dangerously-skip-permissions`.
+* **Key Features:** Bamboo's tool set without Docker (no Docker socket is exposed), and no sudo for the `ubuntu` user, so an agent cannot disable the firewall.

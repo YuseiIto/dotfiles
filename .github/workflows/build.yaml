@@ -24,7 +24,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        variant: [pine, bamboo, plum, palm]
+        variant: [pine, bamboo, plum, palm, devcontainer]
         arch: [amd64, arm64]
         include:
           - arch: amd64
@@ -129,7 +129,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        variant: [pine, bamboo, plum, palm]
+        variant: [pine, bamboo, plum, palm, devcontainer]
     steps:
       - name: Set lower username
         id: owner

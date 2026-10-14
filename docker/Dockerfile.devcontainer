@@ -1,0 +1,46 @@
+FROM ubuntu:24.04@sha256:534baea6a22c03a63003dbc8dbe78fe34bc0d7e595d9a9dc9834884ff530eb55
+
+LABEL org.opencontainers.image.source=https://github.com/yuseiito/dotfiles
+LABEL org.opencontainers.image.description="Yusei's dotfiles Container. Variant `devcontainer`"
+LABEL org.opencontainers.image.licenses=MIT
+
+# Suppress interactive prompts during package installation
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Minimal setup before running setup.sh
+RUN apt-get update && \
+    apt-get install -y sudo curl ca-certificates tar
+
+# Allow passwordless sudo for the ubuntu user
+RUN echo "ubuntu ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/ubuntu && \
+    chmod 0440 /etc/sudoers.d/ubuntu
+
+USER ubuntu
+ENV HOME=/home/ubuntu
+ENV USER=ubuntu
+ENV LOGNAME=ubuntu
+ENV LANG=C.UTF-8
+ENV TZ=Asia/Tokyo
+ENV SHELL=/usr/bin/zsh
+
+COPY --chown=ubuntu:ubuntu ./ /home/ubuntu/dotfiles/
+WORKDIR /home/ubuntu/dotfiles/
+
+
+ENV DOTFILES_ROLE=devcontainer
+# Sudo is needed by setup.sh but must not survive into the image: an agent
+# with sudo could disable the agent-sandbox firewall. ubuntu:24.04 also puts
+# the ubuntu user in the sudo group, so dropping the NOPASSWD rule alone would
+# leave sudo guarded only by the locked password.
+RUN bash setup.sh && \
+    sudo install -m 755 docker/entrypoint.sh /usr/local/bin/entrypoint.sh && \
+    sudo gpasswd -d ubuntu sudo && \
+    sudo rm -f /etc/sudoers.d/ubuntu
+
+WORKDIR /home/ubuntu
+
+HEALTHCHECK --interval=60s --timeout=30s --start-period=5s --retries=3 \
+    CMD ["/usr/local/bin/entrypoint.sh", "goss", "--gossfile", "/home/ubuntu/dotfiles/mitamae/roles/devcontainer/goss.yaml", "validate"]
+
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+CMD ["/usr/bin/zsh"]

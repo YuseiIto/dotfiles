@@ -27,6 +27,14 @@
     },
     {
       "customType": "regex",
+      "description": "Update release asset digests pinned as '<tag>@<sha256>' in mitamae cookbooks",
+      "managerFilePatterns": ["/^mitamae/cookbooks/.+\\.rb$/"],
+      "matchStrings": [
+        "# renovate: datasource=(?<datasource>github-release-attachments) depName=(?<depName>\\S+)\\s+[^'\\n]*'(?<currentValue>[^'@]+)@(?<currentDigest>[0-9a-f]{64})'"
+      ]
+    },
+    {
+      "customType": "regex",
       "description": "Update Alacritty DMG tag and digest in cookbooks/alacritty/default.rb",
       "managerFilePatterns": ["/^mitamae/cookbooks/alacritty/default.rb$/"],
       "matchStrings": [
@@ -37,6 +45,12 @@
     }
   ],
   "packageRules": [
+    {
+      "description": "Bump a cookbook's version pin and its asset digests in one PR, since a version without matching digests fails to install",
+      "matchManagers": ["custom.regex"],
+      "matchFileNames": ["mitamae/cookbooks/**"],
+      "groupName": "{{{depName}}}"
+    },
     {
       "description": "Group GitHub Actions updates",
       "matchManagers": ["github-actions"],

@@ -12,6 +12,11 @@ when 'ubuntu', 'debian'
   end
 
   nvim_release = "nvim-linux-#{node[:os_arch]}"
+  # renovate: datasource=github-release-attachments depName=neovim/neovim
+  nvim_arm64_sha256 = 'v0.11.6@8ddc0c101846145e830b17bbca50782ca9307eee4fab539d9e2ddaf8793c06f1'
+  # renovate: datasource=github-release-attachments depName=neovim/neovim
+  nvim_x86_64_sha256 = 'v0.11.6@2fc90b962327f73a78afbfb8203fd19db8db9cdf4ee5e2bef84704339add89cc'
+  nvim_sha256 = (node[:os_arch] == 'arm64' ? nvim_arm64_sha256 : nvim_x86_64_sha256).split('@', 2).last
   nvim_archive = "#{nvim_release}.tar.gz"
   url = "https://github.com/neovim/neovim/releases/download/v#{nvim_version}/#{nvim_archive}"
 
@@ -21,6 +26,7 @@ when 'ubuntu', 'debian'
       work_dir="$(mktemp -d)"
       trap 'rm -rf "$work_dir"' EXIT
       curl -fsSL -o "$work_dir/#{nvim_archive}" #{url}
+      echo "#{nvim_sha256}  $work_dir/#{nvim_archive}" | sha256sum -c -
       tar -C /opt -xzf "$work_dir/#{nvim_archive}"
     EOC
     user 'root'

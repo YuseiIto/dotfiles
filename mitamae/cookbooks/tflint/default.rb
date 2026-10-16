@@ -27,6 +27,10 @@ elsif %w[ubuntu debian].include?(node[:platform])
     version tflint_version
     arm64_name 'tflint_linux_arm64.zip'
     x86_64_name 'tflint_linux_amd64.zip'
+    # renovate: datasource=github-release-attachments depName=terraform-linters/tflint
+    arm64_sha256 'v0.64.0@560da89aacf59389d4eb029730dd5b109b7288096c32f2726a0d9e783a5ea8eb'
+    # renovate: datasource=github-release-attachments depName=terraform-linters/tflint
+    x86_64_sha256 'v0.64.0@cca9d13e2e1d7a2c627af60ff899a3c9b74212899416aeb96ec764d2ef954537'
     not_if "tflint --version 2>/dev/null | grep -q '#{tflint_version}'"
   end
 else

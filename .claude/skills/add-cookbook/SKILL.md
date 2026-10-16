@@ -123,6 +123,15 @@ single binary, anything else is treated as the raw executable. `curl` (plus
 `unzip` for zip assets) is installed automatically. `not_if` guards the download
 (usually a version check).
 
+`arm64_sha256` / `x86_64_sha256` are required: each pins its asset as
+`'<tag>@<sha256>'`, and the install aborts on a mismatch. Put a
+`# renovate: datasource=github-release-attachments depName=<owner/repo>` line
+above each so Renovate refreshes the digests when it bumps the version. Take
+the digest from the upstream checksum file when one is published, otherwise
+hash the downloaded asset (`curl -fsSL <url> | sha256sum`). Raw `execute`
+downloads verify the same way with
+`echo "<sha256>  <file>" | sha256sum -c -` (`shasum -a 256 -c -` on macOS).
+
 ```ruby
 # Raw binary asset:
 github_release_binary 'goss' do
@@ -130,6 +139,10 @@ github_release_binary 'goss' do
   version '0.4.9'
   arm64_name 'goss-linux-arm64'
   x86_64_name 'goss-linux-amd64'
+  # renovate: datasource=github-release-attachments depName=goss-org/goss
+  arm64_sha256 'v0.4.9@14fd24ac08236559f4809e6a627792d1b947ed98654bba1662ef1d6122d77e18'
+  # renovate: datasource=github-release-attachments depName=goss-org/goss
+  x86_64_sha256 'v0.4.9@87dd36cfa1b8b50554e6e2ca29168272e26755b19ba5438341f7c66b36decc19'
   not_if 'command -v goss'
 end
 
@@ -140,6 +153,10 @@ github_release_binary 'lazygit' do
   arm64_name "lazygit_0.59.0_Linux_arm64.tar.gz"
   x86_64_name "lazygit_0.59.0_Linux_x86_64.tar.gz"
   archive_member 'lazygit'
+  # renovate: datasource=github-release-attachments depName=jesseduffield/lazygit
+  arm64_sha256 'v0.59.0@a334a6c125169f21942f1a8b02043932575547a6250a1a734d62111efd92aa8f'
+  # renovate: datasource=github-release-attachments depName=jesseduffield/lazygit
+  x86_64_sha256 'v0.59.0@264283f40a40c899d702a338b20622f690221f753f03bac827c1f34e91f516c2'
   not_if "lazygit --version 2>/dev/null | grep -q '0.59.0'"
 end
 ```
@@ -324,6 +341,10 @@ elsif %w[ubuntu debian].include?(node[:platform])
     arm64_name "mytool-linux-arm64.tar.gz"
     x86_64_name "mytool-linux-x86_64.tar.gz"
     archive_member 'mytool'
+    # renovate: datasource=github-release-attachments depName=example/mytool
+    arm64_sha256 'v1.2.3@<sha256 of mytool-linux-arm64.tar.gz>'
+    # renovate: datasource=github-release-attachments depName=example/mytool
+    x86_64_sha256 'v1.2.3@<sha256 of mytool-linux-x86_64.tar.gz>'
     not_if "mytool --version 2>/dev/null | grep -q '#{mytool_version}'"
   end
 else
@@ -335,7 +356,8 @@ end
 
 Put a `# renovate:` annotation on the line directly above every
 `<name>_version = '...'` constant so Renovate keeps it current
-(`make check-version-pins` fails without it). Name the datasource and the
+(`make check-version-pins` fails without it, and also when a digest pin's tag
+matches no version in its file). Name the datasource and the
 upstream as `depName`; add `extractVersion` when the release tag differs from
 the stored value (e.g. `^v(?<version>.+)$` for `v`-prefixed tags).
 

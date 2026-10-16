@@ -176,6 +176,12 @@ end
 #   - `.gz`              -> gunzip a single compressed binary
 #   - anything else      -> treat the asset as the raw executable
 #
+# `arm64_sha256` / `x86_64_sha256` pin each asset as `'<tag>@<sha256>'`; the
+# download is rejected unless it matches. The tag is redundant with `version`
+# but lets Renovate's github-release-attachments datasource recompute the
+# digest on a version bump, which needs the tag and the digest on one line.
+# Annotate each with a `# renovate:` comment so it is picked up.
+#
 # Targets Debian/Ubuntu (installs curl via apt, writes as root). macOS variants
 # of these tools come from Homebrew, so call this only from the Linux branch.
 #
@@ -185,6 +191,10 @@ end
 #     arm64_name     "lazygit_0.59.0_Linux_arm64.tar.gz"
 #     x86_64_name    "lazygit_0.59.0_Linux_x86_64.tar.gz"
 #     archive_member 'lazygit'
+#     # renovate: datasource=github-release-attachments depName=jesseduffield/lazygit
+#     arm64_sha256   'v0.59.0@a334a6c125169f21942f1a8b02043932575547a6250a1a734d62111efd92aa8f'
+#     # renovate: datasource=github-release-attachments depName=jesseduffield/lazygit
+#     x86_64_sha256  'v0.59.0@264283f40a40c899d702a338b20622f690221f753f03bac827c1f34e91f516c2'
 #     not_if         "lazygit --version 2>/dev/null | grep -q '0.59.0'"
 #   end
 define :github_release_binary,
@@ -193,10 +203,17 @@ define :github_release_binary,
        bin_name: nil,
        arm64_name: nil,
        x86_64_name: nil,
+       arm64_sha256: nil,
+       x86_64_sha256: nil,
        archive_member: nil,
        not_if: nil do
   bin = params[:bin_name] || params[:name]
-  asset = node[:os_arch] == 'arm64' ? params[:arm64_name] : params[:x86_64_name]
+  arm64 = node[:os_arch] == 'arm64'
+  asset = arm64 ? params[:arm64_name] : params[:x86_64_name]
+  pin = arm64 ? params[:arm64_sha256] : params[:x86_64_sha256]
+  raise "github_release_binary[#{bin}]: no sha256 pinned for #{node[:os_arch]}" unless pin
+
+  sha256 = pin.split('@', 2).last
   url = "https://github.com/#{params[:repo]}/releases/download/v#{params[:version]}/#{asset}"
   dest = "/usr/local/bin/#{bin}"
   # Shell variable set by the command below; see the note there.
@@ -234,6 +251,7 @@ define :github_release_binary,
       work_dir="$(mktemp -d)"
       trap 'rm -rf "$work_dir"' EXIT
       curl -fsSL -o #{tmp} "#{url}"
+      echo "#{sha256}  #{tmp}" | sha256sum -c -
       #{unpack}
     EOC
     user 'root'

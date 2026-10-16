@@ -93,6 +93,7 @@ include_recipe '../../cookbooks/raspberry-pi-imager'
 include_recipe '../../cookbooks/postico'
 include_recipe '../../cookbooks/affinity'
 include_recipe '../../cookbooks/typora'
+include_recipe '../../cookbooks/bruno'
 include_recipe '../../cookbooks/zotero'
 
 # Development Tools & LSPs

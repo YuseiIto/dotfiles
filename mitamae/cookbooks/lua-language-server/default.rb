@@ -1,6 +1,7 @@
 if node[:platform] == 'darwin'
   package 'lua-language-server'
 elsif %w[ubuntu debian].include?(node[:platform])
+  # renovate: datasource=github-releases depName=LuaLS/lua-language-server
   lls_version = '3.13.5'
 
   arch = case node[:os_arch]

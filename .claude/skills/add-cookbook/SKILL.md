@@ -312,6 +312,7 @@ Reach for `github_release_binary` (see its idiom above) whenever the Linux asset
 is a single executable — it resolves the arch and handles the download/unpack:
 
 ```ruby
+# renovate: datasource=github-releases depName=example/mytool extractVersion=^v(?<version>.+)$
 mytool_version = '1.2.3'  # Always verify this is the latest — check GitHub releases!
 
 if node[:platform] == 'darwin'
@@ -331,6 +332,12 @@ end
 ```
 
 **When pinning a version:** always search the web to confirm the latest release before hardcoding it.
+
+Put a `# renovate:` annotation on the line directly above every
+`<name>_version = '...'` constant so Renovate keeps it current
+(`make check-version-pins` fails without it). Name the datasource and the
+upstream as `depName`; add `extractVersion` when the release tag differs from
+the stored value (e.g. `^v(?<version>.+)$` for `v`-prefixed tags).
 
 ---
 

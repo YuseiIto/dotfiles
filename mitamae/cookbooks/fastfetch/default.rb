@@ -1,6 +1,7 @@
 if node[:platform] == 'darwin'
   package 'fastfetch'
 elsif %w[ubuntu debian].include?(node[:platform])
+  # renovate: datasource=github-releases depName=fastfetch-cli/fastfetch
   fastfetch_version = '2.63.1'
 
   arch = case node[:os_arch]

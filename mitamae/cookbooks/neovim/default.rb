@@ -1,3 +1,4 @@
+# renovate: datasource=github-releases depName=neovim/neovim extractVersion=^v(?<version>.+)$
 nvim_version = '0.11.6'
 
 case node[:platform]

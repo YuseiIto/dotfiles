@@ -3,6 +3,7 @@ if %w[ubuntu debian].include?(node[:platform])
     user 'root'
   end
 
+  # renovate: datasource=github-releases depName=asciinema/agg extractVersion=^v(?<version>.+)$
   agg_version = '1.5.0'
 
   github_release_binary 'agg' do

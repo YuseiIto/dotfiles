@@ -1,6 +1,7 @@
 # TFLint - a pluggable Terraform linter
 # https://github.com/terraform-linters/tflint
 
+# renovate: datasource=github-releases depName=terraform-linters/tflint extractVersion=^v(?<version>.+)$
 tflint_version = '0.64.0'
 
 if node[:platform] == 'darwin'

@@ -1,3 +1,4 @@
+# renovate: datasource=node-version depName=node
 global_nodejs_version = '24.14.0'
 
 home = ENV['HOME']

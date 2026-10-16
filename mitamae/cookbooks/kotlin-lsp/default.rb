@@ -3,6 +3,7 @@
 # Linux builds are published by JetBrains as a self-contained tarball that
 # bundles its own runtime, so the kotlin-lsp.sh launcher needs no system Java.
 
+# renovate: datasource=github-releases depName=Kotlin/kotlin-lsp extractVersion=^kotlin-lsp/v(?<version>.+)$
 kotlin_lsp_version = '263.6379.0'
 
 if node[:platform] == 'darwin'

@@ -1,3 +1,4 @@
+# renovate: datasource=github-releases depName=goss-org/goss extractVersion=^v(?<version>.+)$
 goss_version = '0.4.9'
 goss_arch = node[:os_arch] == 'arm64' ? 'arm64' : 'amd64'
 

@@ -1,3 +1,4 @@
+# renovate: datasource=github-releases depName=tree-sitter/tree-sitter extractVersion=^v(?<version>.+)$
 tree_sitter_version = '0.25.10'
 
 case node[:platform]

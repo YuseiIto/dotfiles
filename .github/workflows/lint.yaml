@@ -46,3 +46,11 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       - name: Check that each role's variant equals its directory name
         run: make check-role-variants
+
+  version-pins:
+    name: Version pins are tracked by Renovate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - name: Check that each cookbook version pin has a Renovate annotation
+        run: make check-version-pins

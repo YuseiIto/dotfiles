@@ -1,6 +1,7 @@
 if node[:platform] == 'darwin'
   package 'lazygit'
 elsif %w[ubuntu debian].include?(node[:platform])
+  # renovate: datasource=github-releases depName=jesseduffield/lazygit extractVersion=^v(?<version>.+)$
   lazygit_version = '0.59.0'
 
   github_release_binary 'lazygit' do

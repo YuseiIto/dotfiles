@@ -19,7 +19,9 @@ if node[:platform] == 'darwin'
 elsif %w[ubuntu debian].include?(node[:platform])
   # NOTE: The claude-security plugin runs its helpers with python3 (>= 3.9).
   # Minimal Debian/Ubuntu images ship without it; macOS provides /usr/bin/python3.
-  package 'python3'
+  package 'python3' do
+    user 'root'
+  end
 
   execute 'install claude-code via official installer' do
     command 'curl -fsSL https://claude.ai/install.sh | bash -s latest'

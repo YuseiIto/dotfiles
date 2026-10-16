@@ -94,3 +94,29 @@ jobs:
           # NOTE: online audits (e.g. known-vulnerable-actions) are off to keep
           # the result reproducible with `make zizmor`, which runs offline.
           online-audits: false
+
+  gitleaks:
+    name: gitleaks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+          # Scan every commit, not just the tip: a secret removed in a later
+          # commit is still published in the history of a public repository.
+          fetch-depth: 0
+      # NOTE: the CLI image rather than gitleaks/gitleaks-action, whose license
+      # moved off MIT in v2 and which wants pull-requests: write to comment.
+      - name: Scan history for secrets
+        uses: docker://ghcr.io/gitleaks/gitleaks:v8.30.1@sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f
+        # NOTE: the container runs as root over a workspace owned by the runner
+        # user, and the image's safe.directory setting lives in /root/.gitconfig
+        # while the step's HOME is /github/home. git then refuses the repository
+        # and gitleaks scans 0 commits yet still exits 0, so pass the setting as
+        # command-scope config instead.
+        env:
+          GIT_CONFIG_COUNT: "1"
+          GIT_CONFIG_KEY_0: safe.directory
+          GIT_CONFIG_VALUE_0: "*"
+        with:
+          args: git --redact --no-banner --verbose .

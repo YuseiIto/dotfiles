@@ -18,8 +18,30 @@ permissions:
   packages: write
 
 jobs:
+  # Evaluates every recipe in seconds, so a recipe error (bad include path,
+  # missing pin, unsupported platform) stops the run before the image builds
+  # below take their runners.
+  dry-run:
+    name: Dry run [${{ matrix.variant }}]
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        variant: [pine, bamboo, plum, palm, devcontainer]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Dry-run mitamae for role ${{ matrix.variant }}
+        env:
+          DOTFILES_ROLE: ${{ matrix.variant }}
+        run: make dry-run
+
   docker-build:
     name: Docker 🐳 [${{ matrix.variant }}/${{ matrix.arch }}]
+    needs: dry-run
     runs-on: ${{ matrix.runner }}
     strategy:
       fail-fast: false
@@ -195,6 +217,7 @@ jobs:
 
   lxc:
     name: LXC 🐧 [${{ matrix.variant }}]
+    needs: dry-run
     runs-on: ubuntu-latest
     strategy:
       matrix:

@@ -32,7 +32,7 @@ lint: mitamae/bin/rubocop
 format: mitamae/bin/rubocop
 	cd mitamae && $(BUNDLER) exec rubocop -a
 
-.PHONY: shellcheck dry-run dry-run-linux dry-run-macos
+.PHONY: shellcheck
 
 # Lint shell scripts. *.sh files are discovered with git; extensionless shell
 # commands and dotfiles the '*.sh' glob misses are listed explicitly. zsh files
@@ -56,6 +56,13 @@ check: lint shellcheck check-role-variants
 
 check-role-variants:
 	scripts/check-role-variants.sh
+
+.PHONY: dry-run
+
+# Evaluate every recipe of a role without changing the host. Set DOTFILES_ROLE
+# to pick a role other than the current hostname.
+dry-run:
+	./setup.sh --dry-run
 
 .PHONY: audit audit-baseline
 

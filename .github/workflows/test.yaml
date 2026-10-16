@@ -14,6 +14,34 @@ permissions:
   contents: read
 
 jobs:
+  # Fails within minutes on recipe errors (bad include paths, missing pins,
+  # unsupported platforms) that the full builds below report much later.
+  dry-run:
+      name: Dry run [${{ matrix.role }}]
+      runs-on: ${{ matrix.runner }}
+      strategy:
+        fail-fast: false
+        matrix:
+          include:
+            - { role: pine, runner: ubuntu-24.04 }
+            - { role: bamboo, runner: ubuntu-24.04 }
+            - { role: plum, runner: ubuntu-24.04 }
+            - { role: palm, runner: ubuntu-24.04 }
+            - { role: devcontainer, runner: ubuntu-24.04 }
+            - { role: belle, runner: macos-latest }
+            - { role: pc137, runner: macos-latest }
+            - { role: hercules, runner: macos-latest }
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+          with:
+            persist-credentials: false
+
+        - name: Dry-run mitamae for role ${{ matrix.role }}
+          env:
+            DOTFILES_ROLE: ${{ matrix.role }}
+          run: make dry-run
+
   devcontainer:
       name: DevContainer
       runs-on: ubuntu-latest

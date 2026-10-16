@@ -16,7 +16,7 @@ if %w[ubuntu debian].include?(node[:platform])
     EOC
     not_if 'command -v cloudflared'
   end
-elsif %w[darwin arch].include?(node[:platform])
+elsif node[:platform] == 'darwin'
   package 'cloudflared'
 else
   unsupported_platform! node[:platform]

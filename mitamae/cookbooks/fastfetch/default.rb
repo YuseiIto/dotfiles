@@ -13,9 +13,11 @@ elsif %w[ubuntu debian].include?(node[:platform])
   execute 'Install fastfetch' do
     user 'root'
     command <<~EOC
-      curl -fsSL -o /tmp/fastfetch.deb #{archive_url}
-      apt-get install -y /tmp/fastfetch.deb
-      rm /tmp/fastfetch.deb
+      set -eu
+      work_dir="$(mktemp -d)"
+      trap 'rm -rf "$work_dir"' EXIT
+      curl -fsSL -o "$work_dir/fastfetch.deb" #{archive_url}
+      apt-get install -y "$work_dir/fastfetch.deb"
     EOC
     not_if "fastfetch --version 2>/dev/null | grep -q '#{fastfetch_version}'"
   end

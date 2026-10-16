@@ -23,9 +23,11 @@ elsif %w[ubuntu debian].include?(node[:platform])
 
   execute 'Install kotlin-lsp' do
     command <<~CMD
-      curl -fsSL -o /tmp/#{archive} "#{url}" &&
-      tar -xzf /tmp/#{archive} -C /opt &&
-      rm -f /tmp/#{archive}
+      set -eu
+      work_dir="$(mktemp -d)"
+      trap 'rm -rf "$work_dir"' EXIT
+      curl -fsSL -o "$work_dir/#{archive}" "#{url}"
+      tar -xzf "$work_dir/#{archive}" -C /opt
     CMD
     user 'root'
     not_if "test -x #{install_dir}/kotlin-lsp.sh"

@@ -199,7 +199,8 @@ define :github_release_binary,
   asset = node[:os_arch] == 'arm64' ? params[:arm64_name] : params[:x86_64_name]
   url = "https://github.com/#{params[:repo]}/releases/download/v#{params[:version]}/#{asset}"
   dest = "/usr/local/bin/#{bin}"
-  tmp = "/tmp/#{asset}"
+  # Shell variable set by the command below; see the note there.
+  tmp = '"$work_dir/asset"'
 
   member = params[:archive_member] || bin
   zip = asset.end_with?('.zip')
@@ -226,10 +227,14 @@ define :github_release_binary,
   end
 
   execute "Install #{bin} from GitHub release" do
+    # NOTE: runs as root, so stage in a private mktemp dir rather than a fixed
+    # /tmp path another local user could pre-create as a symlink.
     command <<~EOC
+      set -eu
+      work_dir="$(mktemp -d)"
+      trap 'rm -rf "$work_dir"' EXIT
       curl -fsSL -o #{tmp} "#{url}"
       #{unpack}
-      rm -f #{tmp}
     EOC
     user 'root'
     not_if params[:not_if] if params[:not_if]

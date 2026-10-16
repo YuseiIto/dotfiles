@@ -11,10 +11,12 @@ elsif %w[ubuntu debian].include?(node[:platform])
 
   execute 'Install AWS CLI v2' do
     command <<~EOC
-      curl -fsSL "https://awscli.amazonaws.com/awscli-exe-linux-#{aws_arch}.zip" -o /tmp/awscliv2.zip
-      cd /tmp && unzip -qo awscliv2.zip
-      /tmp/aws/install --update
-      rm -rf /tmp/awscliv2.zip /tmp/aws
+      set -eu
+      work_dir="$(mktemp -d)"
+      trap 'rm -rf "$work_dir"' EXIT
+      curl -fsSL "https://awscli.amazonaws.com/awscli-exe-linux-#{aws_arch}.zip" -o "$work_dir/awscliv2.zip"
+      unzip -qo "$work_dir/awscliv2.zip" -d "$work_dir"
+      "$work_dir/aws/install" --update
     EOC
     user 'root'
     not_if 'command -v aws'

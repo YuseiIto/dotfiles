@@ -45,19 +45,4 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
       - name: Check that each role's variant equals its directory name
-        run: |
-          status=0
-          for dir in mitamae/roles/*/; do
-            role="$(basename "$dir")"
-            file="${dir}default.rb"
-            [ -f "$file" ] || continue
-            variant="$(sed -nE "s/^[[:space:]]*variant:[[:space:]]*'([^']*)'.*/\1/p" "$file")"
-            if [ -z "$variant" ]; then
-              echo "::error file=$file::no 'variant:' found"
-              status=1
-            elif [ "$variant" != "$role" ]; then
-              echo "::error file=$file::variant '$variant' does not match role name '$role'"
-              status=1
-            fi
-          done
-          exit $status
+        run: make check-role-variants

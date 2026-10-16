@@ -49,6 +49,14 @@ SHELLCHECK_EXTRA_FILES = \
 shellcheck:
 	shellcheck $$(git ls-files '*.sh') $(SHELLCHECK_EXTRA_FILES)
 
+.PHONY: check check-role-variants
+
+# Everything the Lint workflow checks. CI runs each target as its own job.
+check: lint shellcheck check-role-variants
+
+check-role-variants:
+	scripts/check-role-variants.sh
+
 .PHONY: audit audit-baseline
 
 # Report packages installed on this host that mitamae does not declare.

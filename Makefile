@@ -49,16 +49,22 @@ SHELLCHECK_EXTRA_FILES = \
 shellcheck:
 	shellcheck $$(git ls-files '*.sh') $(SHELLCHECK_EXTRA_FILES)
 
-.PHONY: check check-role-variants check-version-pins
+.PHONY: check check-role-variants check-version-pins actionlint zizmor
 
 # Everything the Lint workflow checks. CI runs each target as its own job.
-check: lint shellcheck check-role-variants check-version-pins
+check: lint shellcheck check-role-variants check-version-pins actionlint zizmor
 
 check-role-variants:
 	scripts/check-role-variants.sh
 
 check-version-pins:
 	scripts/check-version-pins.sh
+
+actionlint:
+	actionlint
+
+zizmor:
+	zizmor --offline .
 
 .PHONY: dry-run
 

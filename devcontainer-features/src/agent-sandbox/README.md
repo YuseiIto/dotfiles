@@ -52,7 +52,10 @@ images; the base needs apt and dnsmasq 2.87 or later (for `filter-AAAA`).
 The default allowlist lives in [`allowed-domains`](allowed-domains) and covers
 Claude Code, GitHub, npm, PyPI, crates.io, RubyGems, the Go module proxy,
 Ubuntu mirrors, VS Code, a few documentation sites, Google Fonts, Playwright
-browser downloads, Terraform and selected Google Cloud APIs.
+browser downloads, Terraform, selected Google Cloud APIs and the remote MCP
+servers of common Claude Code plugins. Write tools of those plugin servers do
+not prompt, since `connectorAskRules` covers only claude.ai connectors by
+default.
 
 ## Authentication
 

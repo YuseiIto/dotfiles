@@ -40,7 +40,7 @@ fi
 
 status=0
 while IFS=: read -r file line content; do
-	previous=""
+	previous="" tag=""
 	if ((line > 1)); then
 		previous="$(sed -n "$((line - 1))p" "$file")"
 	fi
@@ -62,11 +62,10 @@ while IFS=: read -r file line content; do
 	if ! [[ "$previous" =~ $annotation ]]; then
 		report "$file" "$line" "pin lacks a '# renovate:' annotation on the line above in the shape renovate.json reads"
 		status=1
-	elif [[ -z "${tag:-}" && "$previous" == *datasource=github-release-attachments* ]]; then
+	elif [[ -z "$tag" && "$previous" == *datasource=github-release-attachments* ]]; then
 		report "$file" "$line" "version pin is annotated with the digest datasource"
 		status=1
 	fi
-	unset tag
 done <<<"$pins"
 
 # Pins the search above cannot see, so Renovate would never update them.

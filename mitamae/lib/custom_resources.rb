@@ -177,7 +177,8 @@ end
 #   - anything else      -> treat the asset as the raw executable
 #
 # `arm64_sha256` / `x86_64_sha256` pin each asset as `'<tag>@<sha256>'`; the
-# download is rejected unless it matches. The tag is redundant with `version`
+# download is rejected unless it matches, and the run aborts when the host's
+# arch has no pin. The tag is redundant with `version`
 # but lets Renovate's github-release-attachments datasource recompute the
 # digest on a version bump, which needs the tag and the digest on one line.
 # Annotate each with a `# renovate:` comment so it is picked up.
@@ -185,17 +186,20 @@ end
 # Targets Debian/Ubuntu (installs curl via apt, writes as root). macOS variants
 # of these tools come from Homebrew, so call this only from the Linux branch.
 #
+#   # renovate: datasource=github-releases depName=jesseduffield/lazygit extractVersion=^v(?<version>.+)$
+#   lazygit_version = '1.2.3'
+#
 #   github_release_binary 'lazygit' do
 #     repo           'jesseduffield/lazygit'
-#     version        '0.59.0'
-#     arm64_name     "lazygit_0.59.0_Linux_arm64.tar.gz"
-#     x86_64_name    "lazygit_0.59.0_Linux_x86_64.tar.gz"
+#     version        lazygit_version
+#     arm64_name     "lazygit_#{lazygit_version}_Linux_arm64.tar.gz"
+#     x86_64_name    "lazygit_#{lazygit_version}_Linux_x86_64.tar.gz"
 #     archive_member 'lazygit'
 #     # renovate: datasource=github-release-attachments depName=jesseduffield/lazygit
-#     arm64_sha256   'v0.59.0@a334a6c125169f21942f1a8b02043932575547a6250a1a734d62111efd92aa8f'
+#     arm64_sha256   'v1.2.3@<sha256 of the arm64 asset>'
 #     # renovate: datasource=github-release-attachments depName=jesseduffield/lazygit
-#     x86_64_sha256  'v0.59.0@264283f40a40c899d702a338b20622f690221f753f03bac827c1f34e91f516c2'
-#     not_if         "lazygit --version 2>/dev/null | grep -q '0.59.0'"
+#     x86_64_sha256  'v1.2.3@<sha256 of the x86_64 asset>'
+#     not_if         "lazygit --version 2>/dev/null | grep -q '#{lazygit_version}'"
 #   end
 define :github_release_binary,
        repo: nil,

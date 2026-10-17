@@ -123,41 +123,49 @@ single binary, anything else is treated as the raw executable. `curl` (plus
 `unzip` for zip assets) is installed automatically. `not_if` guards the download
 (usually a version check).
 
-`arm64_sha256` / `x86_64_sha256` are required: each pins its asset as
-`'<tag>@<sha256>'`, and the install aborts on a mismatch. Put a
+Pin both `arm64_sha256` and `x86_64_sha256`, each as `'<tag>@<sha256>'`; the
+install aborts on a mismatch, and on a host whose arch has no pin. Put a
 `# renovate: datasource=github-release-attachments depName=<owner/repo>` line
-above each so Renovate refreshes the digests when it bumps the version. Take
-the digest from the upstream checksum file when one is published, otherwise
-hash the downloaded asset (`curl -fsSL <url> | sha256sum`). Raw `execute`
-downloads verify the same way with
+above each so Renovate refreshes the digests when it bumps the version, and
+keep the version in an annotated `<name>_version` constant (see below) rather
+than a literal, or Renovate bumps the digests without the version. Take the
+digest from the upstream checksum file when one is published, otherwise hash
+the downloaded asset (`curl -fsSL <url> | sha256sum`, or `shasum -a 256` on
+macOS). Raw `execute` downloads verify the same way with
 `echo "<sha256>  <file>" | sha256sum -c -` (`shasum -a 256 -c -` on macOS).
 
 ```ruby
 # Raw binary asset:
+# renovate: datasource=github-releases depName=goss-org/goss extractVersion=^v(?<version>.+)$
+goss_version = '1.2.3'
+
 github_release_binary 'goss' do
   repo 'goss-org/goss'
-  version '0.4.9'
+  version goss_version
   arm64_name 'goss-linux-arm64'
   x86_64_name 'goss-linux-amd64'
   # renovate: datasource=github-release-attachments depName=goss-org/goss
-  arm64_sha256 'v0.4.9@14fd24ac08236559f4809e6a627792d1b947ed98654bba1662ef1d6122d77e18'
+  arm64_sha256 'v1.2.3@<sha256 of goss-linux-arm64>'
   # renovate: datasource=github-release-attachments depName=goss-org/goss
-  x86_64_sha256 'v0.4.9@87dd36cfa1b8b50554e6e2ca29168272e26755b19ba5438341f7c66b36decc19'
-  not_if 'command -v goss'
+  x86_64_sha256 'v1.2.3@<sha256 of goss-linux-amd64>'
+  not_if "goss --version 2>/dev/null | grep -q '#{goss_version}'"
 end
 
 # .tar.gz / .zip asset — extract one member:
+# renovate: datasource=github-releases depName=jesseduffield/lazygit extractVersion=^v(?<version>.+)$
+lazygit_version = '1.2.3'
+
 github_release_binary 'lazygit' do
   repo 'jesseduffield/lazygit'
-  version '0.59.0'
-  arm64_name "lazygit_0.59.0_Linux_arm64.tar.gz"
-  x86_64_name "lazygit_0.59.0_Linux_x86_64.tar.gz"
+  version lazygit_version
+  arm64_name "lazygit_#{lazygit_version}_Linux_arm64.tar.gz"
+  x86_64_name "lazygit_#{lazygit_version}_Linux_x86_64.tar.gz"
   archive_member 'lazygit'
   # renovate: datasource=github-release-attachments depName=jesseduffield/lazygit
-  arm64_sha256 'v0.59.0@a334a6c125169f21942f1a8b02043932575547a6250a1a734d62111efd92aa8f'
+  arm64_sha256 'v1.2.3@<sha256 of the arm64 asset>'
   # renovate: datasource=github-release-attachments depName=jesseduffield/lazygit
-  x86_64_sha256 'v0.59.0@264283f40a40c899d702a338b20622f690221f753f03bac827c1f34e91f516c2'
-  not_if "lazygit --version 2>/dev/null | grep -q '0.59.0'"
+  x86_64_sha256 'v1.2.3@<sha256 of the x86_64 asset>'
+  not_if "lazygit --version 2>/dev/null | grep -q '#{lazygit_version}'"
 end
 ```
 

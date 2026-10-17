@@ -1,17 +1,28 @@
 {
-  "name": "yuseiito-dev (Bamboo)",
-  "image": "ghcr.io/yuseiito/yuseiito-dev:bamboo-latest",
+  "name": "yuseiito-dev (devcontainer)",
+  "image": "ghcr.io/yuseiito/yuseiito-dev:devcontainer-latest",
+  "features": {
+    "ghcr.io/yuseiito/dotfiles/agent-sandbox:1": {
+      "allowClaudeAiConnectors": true
+    }
+  },
   "remoteUser": "ubuntu",
   "containerUser": "ubuntu",
   "remoteEnv": {
-    "DOTFILES_ROLE": "bamboo"
+    "DOTFILES_ROLE": "devcontainer",
+    "GH_TOKEN": "${localEnv:GH_TOKEN}"
   },
-  "initializeCommand": "mkdir -p ${localEnv:HOME}/.ssh",
   "mounts": [
-    "source=dotfiles-zsh-history,target=/home/ubuntu/.local/share/zsh,type=volume",
-    "source=${localEnv:HOME}/.ssh,target=/home/ubuntu/.ssh,type=bind,consistency=cached,readonly=true",
-    "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
+    "source=dotfiles-zsh-history,target=/home/ubuntu/.local/share/zsh,type=volume"
   ],
+  // The git helper reads GH_TOKEN on each use, so creation succeeds without a
+  // token. --file keeps git config --global from writing through the
+  // symlinked ~/.config/git into the image's dotfiles copy.
+  "postCreateCommand": {
+    "claude-dotfiles": "/home/ubuntu/.local/bin/claude-dotfiles-link",
+    "git-credentials": "git config --file /home/ubuntu/.gitconfig credential.https://github.com.helper '!gh auth git-credential'"
+  },
+  "waitFor": "postStartCommand",
   "hostRequirements": {
     "gpu": "optional"
   },

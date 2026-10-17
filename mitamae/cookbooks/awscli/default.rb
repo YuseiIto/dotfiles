@@ -13,8 +13,9 @@ elsif %w[ubuntu debian].include?(node[:platform])
   aws_arch = node[:os_arch] == 'arm64' ? 'aarch64' : 'x86_64'
   installer_url = "https://awscli.amazonaws.com/awscli-exe-linux-#{aws_arch}.zip"
 
-  # NOTE: The installer is unversioned and signed rather than checksummed, so
-  # pin AWS's signing key (FB5D B77F D5C1 18B8 0511 ADA8 A631 0ACC 4672 475C).
+  # NOTE: This fetches the unversioned latest installer, for which AWS
+  # publishes a PGP signature but no checksum, so pin AWS's signing key
+  # (FB5D B77F D5C1 18B8 0511 ADA8 A631 0ACC 4672 475C) instead of a digest.
   # gpgv checks neither expiry (this copy expired on 2026-07-07) nor
   # revocation, so only a rotated key fails the install until this file is
   # replaced.

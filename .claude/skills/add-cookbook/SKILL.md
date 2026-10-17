@@ -382,8 +382,11 @@ and order shown below, so add no other key (`versioning=`, `packageName=`, ...);
   `make check-version-pins` sees any other spelling, so such a pin goes
   untracked without failing the check.
 - `'<tag>@<sha256>'` digest pins: use
-  `datasource=github-release-attachments depName=<owner/repo>`, so Renovate
-  recomputes the digest when it bumps the matching version.
+  `datasource=github-release-attachments depName=<owner/repo>`, and write
+  `<tag>` as the exact release tag (`v1.2.3`, not `1.2.3`, when upstream tags
+  with a `v`). Renovate looks that release up to find the pinned asset, so a
+  wrong tag fails the lookup, then hashes the same-named asset of the new
+  release.
 
 `make check-version-pins` fails on a missing annotation, a digest that is not
 `'<tag>@<lowercase sha256>'`, a digest whose tag matches no version constant in

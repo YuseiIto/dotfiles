@@ -201,10 +201,13 @@ end
 # `arm64_sha256` / `x86_64_sha256` pin each asset as `'<tag>@<sha256>'`; the
 # download is rejected unless it matches. A missing or malformed pin for the
 # host's arch aborts the whole run when the recipe is evaluated, even on hosts
-# where `not_if` would have skipped the install. The tag is redundant with
-# `version`, but Renovate's github-release-attachments datasource recomputes
-# the digest from it on a version bump; renovate.json's matchString expects
-# both in one string literal. Annotate each with a `# renovate:` comment.
+# where `not_if` would have skipped the install. The tag must be the exact
+# release tag, `v` included: Renovate's github-release-attachments datasource
+# looks that release up to find which asset the digest belongs to, then hashes
+# the same-named asset of the new release. If it finds none it silently keeps
+# the old digest, and the install then fails closed. renovate.json's
+# matchString reads tag and digest from one string literal. Annotate each with
+# a `# renovate:` comment.
 #
 # Targets Debian/Ubuntu (installs curl via apt, writes as root). macOS variants
 # of these tools come from Homebrew, so call this only from the Linux branch.
@@ -250,8 +253,9 @@ define :github_release_binary,
   zip = asset.end_with?('.zip')
 
   # Unpack into the work dir and install from there, so a failed extraction
-  # leaves the installed binary intact instead of truncating it. `install`
-  # also sets the exec bit that zip entries (FAT permissions) usually lack.
+  # leaves the installed binary intact instead of truncating it. Every branch
+  # leaves a file without the exec bit (a redirect or curl's own output), so
+  # `install -m 0755` is what makes it executable.
   unpack =
     if asset.end_with?('.tar.gz', '.tgz')
       # -O (and unzip's -p below) streams just the member to stdout, so other

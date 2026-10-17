@@ -9,9 +9,9 @@
 # shape renovate.json's matchStrings read, since any other key or key order
 # makes Renovate skip the pin while it still looks annotated. Digest pins must
 # also match the format renovate.json parses (lowercase hex, tag included), and
-# their tag must equal a version constant in the same file, because Renovate
-# recomputes the digest from that tag on the next bump. Versions must be
-# constants, not literals inside a resource, which no manager reads.
+# their tag, less a leading `v`, must equal a version constant in the same
+# file, because Renovate looks the digest up in that tag's release. Versions
+# must be constants, not literals inside a resource, which no manager reads.
 set -euo pipefail
 
 cd "$(dirname "$0")/.."

@@ -27,7 +27,8 @@ elsif %w[ubuntu debian].include?(node[:platform])
   # Prerequisites for rootless Docker: user-namespace mapping (uidmap),
   # a rootless overlay backend (fuse-overlayfs) and userspace networking
   # (slirp4netns). dbus-user-session lets the per-user session start cleanly.
-  %w[uidmap dbus-user-session fuse-overlayfs slirp4netns].each do |pkg|
+  # iproute2 is required for rootless networking.
+  %w[uidmap dbus-user-session fuse-overlayfs slirp4netns iproute2].each do |pkg|
     package pkg do
       user 'root'
     end

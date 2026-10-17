@@ -216,25 +216,27 @@ define :github_release_binary,
   sha256 = pin.split('@', 2).last
   url = "https://github.com/#{params[:repo]}/releases/download/v#{params[:version]}/#{asset}"
   dest = "/usr/local/bin/#{bin}"
-  # Shell variable set by the command below; see the note there.
+  # Paths inside the mktemp dir that the command below creates as $work_dir.
   tmp = '"$work_dir/asset"'
+  unpacked = '"$work_dir/bin"'
 
   member = params[:archive_member] || bin
   zip = asset.end_with?('.zip')
 
+  # Unpack into the work dir and install from there, so a failed extraction
+  # leaves the installed binary intact instead of truncating it. `install`
+  # also sets the exec bit that zip entries (FAT permissions) usually lack.
   unpack =
     if asset.end_with?('.tar.gz', '.tgz')
-      # -O (and unzip's -p below) streams the single member to stdout, so nothing
-      # but the binary lands on disk and there is no extracted tree to clean up.
-      "tar -xzf #{tmp} -O #{member} > #{dest} && chmod +x #{dest}"
+      # -O (and unzip's -p below) streams the single member to stdout, so there
+      # is no extracted tree to clean up.
+      "tar -xzf #{tmp} -O #{member} > #{unpacked}"
     elsif zip
-      # Zip entries routinely carry FAT permissions with no unix exec bit, so the
-      # chmod is what makes the binary runnable rather than a belt-and-braces call.
-      "unzip -p #{tmp} #{member} > #{dest} && chmod +x #{dest}"
+      "unzip -p #{tmp} #{member} > #{unpacked}"
     elsif asset.end_with?('.gz')
-      "gunzip -c #{tmp} > #{dest} && chmod +x #{dest}"
+      "gunzip -c #{tmp} > #{unpacked}"
     else
-      "install -m 0755 #{tmp} #{dest}"
+      "mv #{tmp} #{unpacked}"
     end
 
   (zip ? %w[curl unzip] : %w[curl]).each do |pkg|
@@ -253,6 +255,7 @@ define :github_release_binary,
       curl -fsSL -o #{tmp} "#{url}"
       echo "#{sha256}  #{tmp}" | sha256sum -c -
       #{unpack}
+      install -m 0755 #{unpacked} #{dest}
     EOC
     user 'root'
     not_if params[:not_if] if params[:not_if]

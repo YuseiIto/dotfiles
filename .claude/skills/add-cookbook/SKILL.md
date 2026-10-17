@@ -399,9 +399,9 @@ and order shown below, so add no other key (`versioning=`, `packageName=`, ...);
 - `'<tag>@<sha256>'` digest pins: use
   `datasource=github-release-attachments depName=<owner/repo>`, and write
   `<tag>` as the exact release tag (`v1.2.3`, not `1.2.3`, when upstream tags
-  with a `v`). Renovate looks that release up to find the pinned asset, so a
-  wrong tag fails the lookup, then hashes the same-named asset of the new
-  release.
+  with a `v`). Renovate finds the pinned asset in that release (a wrong tag
+  fails the lookup) and hashes the new release's asset whose name has the
+  version replaced.
 
 Run `make check-version-pins` after adding a pin; the header of
 `scripts/check-version-pins.sh` lists what it rejects.

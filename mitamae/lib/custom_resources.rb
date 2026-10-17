@@ -206,12 +206,13 @@ end
 # `arm64_sha256` / `x86_64_sha256` pin each asset as `'<tag>@<sha256>'`; the
 # download is rejected unless it matches; `ReleasePin` validates the pin. The
 # tag must be the exact release tag, `v` included: Renovate's
-# github-release-attachments datasource looks that release up to find which
-# asset the digest belongs to, then hashes the same-named asset of the new
-# release. If it finds none it silently keeps the old digest, and the install
-# then fails closed. renovate.json's
-# matchString reads tag and digest from one string literal. Annotate each with
-# a `# renovate:` comment.
+# github-release-attachments datasource finds the asset in that release whose
+# hash equals the digest, then hashes the new release's asset whose name has
+# the old version replaced by the new one. If no asset in the old release
+# matches, it silently keeps the old digest while bumping the tag, and the
+# install then fails closed; if the new release lacks the renamed asset, it
+# skips the update with a warning. renovate.json's matchString reads tag and
+# digest from one string literal. Annotate each with a `# renovate:` comment.
 #
 # Targets Debian/Ubuntu (installs curl via apt, writes as root). macOS variants
 # of these tools come from Homebrew, so call this only from the Linux branch.

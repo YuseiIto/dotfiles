@@ -33,9 +33,10 @@ else
   unsupported_platform! node[:platform]
 end
 
-# NOTE: node-build is never upgraded after the first install, so a Renovate
-# bump to a Node release newer than its definitions would fail `nodenv install`
-# on existing hosts. Refresh it only when the pinned version is unknown.
+# NOTE: The resources above install node-build once and never upgrade it, so a
+# Renovate bump to a Node release newer than its definitions would fail
+# `nodenv install` on existing hosts. Refresh it only when the pinned version
+# is unknown.
 execute 'Update node-build definitions' do
   command(node[:platform] == 'darwin' ? 'brew upgrade node-build' : "git -C #{nodenv_root}/plugins/node-build pull --ff-only")
   not_if "test -x #{nodenv_root}/versions/#{global_nodejs_version}/bin/node || " \

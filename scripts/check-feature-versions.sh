@@ -34,6 +34,12 @@ report() {
 	fi
 }
 
+status=0
+fail() {
+	report "$@"
+	status=1
+}
+
 # Reads a devcontainer-feature.json on stdin and prints its version. Fails when
 # the version is missing or not a string, which would otherwise compare as
 # "null" and sort above every real version.
@@ -51,7 +57,6 @@ changed="$(git diff --name-only --no-renames "$merge_base" -- "$src" "$exclude")
 untracked="$(git ls-files --others --exclude-standard -- "$src" "$exclude")"
 features="$(printf '%s\n%s\n' "$changed" "$untracked" | cut -d/ -f3 | sort -u)"
 
-status=0
 for feature in $features; do
 	file="$src/$feature/devcontainer-feature.json"
 	# A removed feature has nothing to publish.
@@ -59,21 +64,18 @@ for feature in $features; do
 	# A new feature has no version to compare against.
 	git cat-file -e "$merge_base:$file" 2>/dev/null || continue
 	if ! head="$(version <"$file")"; then
-		report "$file" "feature '$feature' changed but has no valid version"
-		status=1
+		fail "$file" "feature '$feature' changed but has no valid version"
 		continue
 	fi
 	if ! base="$(git show "$merge_base:$file" | version)"; then
-		report "$file" "feature '$feature' has no valid version at the merge base with $base_ref"
-		status=1
+		fail "$file" "feature '$feature' has no valid version at the merge base with $base_ref"
 		continue
 	fi
 	# NOTE: sort -V is not semver: it orders 1.0.0-rc.1 after 1.0.0. That is fine
 	# while features publish no prerelease versions.
 	newest="$(printf '%s\n%s\n' "$base" "$head" | sort -V | tail -n 1)"
 	if [ "$head" = "$base" ] || [ "$newest" != "$head" ]; then
-		report "$file" "feature '$feature' changed but its version $head is not higher than $base at the merge base with $base_ref"
-		status=1
+		fail "$file" "feature '$feature' changed but its version $head is not higher than $base at the merge base with $base_ref"
 	fi
 done
 exit "$status"

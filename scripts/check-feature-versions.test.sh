@@ -7,9 +7,10 @@ failures=0
 repo=
 trap 'rm -rf "$repo"' EXIT
 
-# Creates a repo whose main branch has feature `foo` at version 1.9.0, then
-# checks out a work branch.
+# Replaces the previous case's repo with one whose main branch has feature `foo`
+# at version 1.9.0, then checks out a work branch.
 setup() {
+	rm -rf "$repo"
 	repo="$(mktemp -d)"
 	git -C "$repo" init -q -b main
 	git -C "$repo" config user.email test@example.com
@@ -39,6 +40,13 @@ commit() {
 	git -C "$repo" commit -q -m change
 }
 
+# Commits on top of main as well, so the change is part of the merge base. Only
+# valid while work has not diverged from main.
+commit_base() {
+	commit
+	git -C "$repo" branch -q -f main
+}
+
 # expect NAME STATUS [PATTERN [ABSENT]]: runs the check against BASE (default:
 # main) and compares its exit status and, if given, requires PATTERN and
 # forbids ABSENT in its output.
@@ -54,7 +62,6 @@ expect() {
 	else
 		echo "ok   $name"
 	fi
-	rm -rf "$repo"
 }
 
 setup
@@ -114,20 +121,16 @@ commit
 expect "removed metadata of a kept feature fails" 1 "foo.*no valid version"
 
 setup
-git -C "$repo" checkout -q main
 printf '{\n  "id": "foo",\n}\n' > "$repo/devcontainer-features/src/foo/devcontainer-feature.json"
-commit
-git -C "$repo" checkout -q -B work
+commit_base
 change foo
 set_version foo 2.0.0
 commit
 expect "invalid version at the merge base fails" 1 "foo.*merge base"
 
 setup
-git -C "$repo" checkout -q main
 set_version bar 0.1.0
-commit
-git -C "$repo" checkout -q -B work
+commit_base
 change foo
 change bar
 set_version bar 0.2.0
@@ -135,10 +138,8 @@ commit
 expect "only the feature missing a bump is reported" 1 "foo" "bar"
 
 setup
-git -C "$repo" checkout -q main
 set_version bar 0.1.0
-commit
-git -C "$repo" checkout -q -B work
+commit_base
 git -C "$repo" mv devcontainer-features/src/foo/install.sh devcontainer-features/src/bar/install.sh
 set_version bar 0.2.0
 commit

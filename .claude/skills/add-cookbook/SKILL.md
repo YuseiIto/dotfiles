@@ -123,12 +123,11 @@ single binary, anything else is treated as the raw executable. `curl` (plus
 `unzip` for zip assets) is installed automatically. `not_if` guards the download
 (usually a version check).
 
-Pin both `arm64_sha256` and `x86_64_sha256`, each as `'<tag>@<sha256>'`; the
-install aborts on a mismatch, and on a host whose arch has no pin. Put a
-`# renovate: datasource=github-release-attachments depName=<owner/repo>` line
-above each so Renovate refreshes the digests when it bumps the version, and
-keep the version in an annotated `<name>_version` constant (see below) rather
-than a literal, or Renovate bumps the digests without the version. Take the
+Pin both `arm64_sha256` and `x86_64_sha256`, each as `'<tag>@<sha256>'` and
+annotated for Renovate (see [Renovate annotations](#renovate-annotations)). The
+install aborts on a digest mismatch. A missing or malformed pin for the host's
+arch aborts the whole mitamae run when the recipe is evaluated, even on hosts
+where `not_if` would have skipped the download. Take the
 digest from the upstream checksum file when one is published, otherwise hash
 the downloaded asset (`curl -fsSL <url> | sha256sum`, or `shasum -a 256` on
 macOS). Raw `execute` downloads verify the same way with
@@ -338,7 +337,7 @@ is a single executable — it resolves the arch and handles the download/unpack:
 
 ```ruby
 # renovate: datasource=github-releases depName=example/mytool extractVersion=^v(?<version>.+)$
-mytool_version = '1.2.3'  # Always verify this is the latest — check GitHub releases!
+mytool_version = '1.2.3'
 
 if node[:platform] == 'darwin'
   package 'mytool'
@@ -360,14 +359,25 @@ else
 end
 ```
 
-**When pinning a version:** always search the web to confirm the latest release before hardcoding it.
+**When first pinning a version:** search the web to confirm the latest
+release; Renovate keeps it current after that.
 
-Put a `# renovate:` annotation on the line directly above every
-`<name>_version = '...'` constant so Renovate keeps it current
-(`make check-version-pins` fails without it, and also when a digest pin's tag
-matches no version in its file). Name the datasource and the
-upstream as `depName`; add `extractVersion` when the release tag differs from
-the stored value (e.g. `^v(?<version>.+)$` for `v`-prefixed tags).
+### Renovate annotations
+
+Put a `# renovate:` annotation on the line directly above every pin so
+Renovate keeps it current:
+
+- `<name>_version = '...'` constants: name the datasource and the upstream as
+  `depName`; add `extractVersion` when the release tag differs from the stored
+  value (e.g. `^v(?<version>.+)$` for `v`-prefixed tags). Keep versions in
+  these constants, never as literals inside a resource, which no manager reads.
+- `'<tag>@<sha256>'` digest pins: use
+  `datasource=github-release-attachments depName=<owner/repo>`, so Renovate
+  recomputes the digest when it bumps the matching version.
+
+`make check-version-pins` fails on a missing annotation, a digest that is not
+`'<tag>@<lowercase sha256>'`, a digest whose tag matches no version constant in
+its file, and a literal `version '...'`.
 
 ---
 

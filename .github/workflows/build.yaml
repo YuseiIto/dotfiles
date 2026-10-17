@@ -73,15 +73,11 @@ jobs:
         with:
           large-packages: false
 
-      - name: Set lower username
-        id: owner
-        run: echo "name=${GITHUB_REPOSITORY_OWNER,,}" >> "$GITHUB_OUTPUT"
-
       - name: Set Image name
         id: image_name
-        env:
-          OWNER: ${{ steps.owner.outputs.name }}
-        run: echo "name=${OWNER}/${OWNER}-dev" >> "$GITHUB_OUTPUT"
+        run: |
+          owner="${GITHUB_REPOSITORY_OWNER,,}"
+          echo "name=${owner}/${owner}-dev" >> "$GITHUB_OUTPUT"
 
       - name: Docker metadata
         id: meta
@@ -163,15 +159,11 @@ jobs:
       matrix:
         variant: [pine, bamboo, plum, palm, devcontainer]
     steps:
-      - name: Set lower username
-        id: owner
-        run: echo "name=${GITHUB_REPOSITORY_OWNER,,}" >> "$GITHUB_OUTPUT"
-
       - name: Set Image name
         id: image_name
-        env:
-          OWNER: ${{ steps.owner.outputs.name }}
-        run: echo "name=${OWNER}/${OWNER}-dev" >> "$GITHUB_OUTPUT"
+        run: |
+          owner="${GITHUB_REPOSITORY_OWNER,,}"
+          echo "name=${owner}/${owner}-dev" >> "$GITHUB_OUTPUT"
 
       - name: Download digests
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
@@ -243,15 +235,11 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Set lowercase owner
-        id: owner
-        run: echo "name=${GITHUB_REPOSITORY_OWNER,,}" >> "$GITHUB_OUTPUT"
-
       - name: Set image name
         id: image_name
-        env:
-          OWNER: ${{ steps.owner.outputs.name }}
-        run: echo "name=${OWNER}/${OWNER}-dev-lxc" >> "$GITHUB_OUTPUT"
+        run: |
+          owner="${GITHUB_REPOSITORY_OWNER,,}"
+          echo "name=${owner}/${owner}-dev-lxc" >> "$GITHUB_OUTPUT"
 
       - name: Install build dependencies
         run: |
@@ -290,7 +278,6 @@ jobs:
           VARIANT: ${{ matrix.variant }}
           SHA: ${{ steps.vars.outputs.sha_short }}
         run: |
-
           oras push "${IMAGE_BASE}:${VARIANT}-latest" \
             "lxd-${VARIANT}.tar.xz:application/vnd.oci.image.layer.v1.tar+gzip" \
             "rootfs-${VARIANT}.squashfs:application/vnd.oci.image.layer.v1.tar+gzip"
@@ -306,7 +293,6 @@ jobs:
           VARIANT: ${{ matrix.variant }}
           BRANCH: ${{ steps.branch_name.outputs.branch }}
         run: |
-
           oras push "${IMAGE_BASE}:${VARIANT}-${BRANCH}" \
             "lxd-${VARIANT}.tar.xz:application/vnd.oci.image.layer.v1.tar+gzip" \
             "rootfs-${VARIANT}.squashfs:application/vnd.oci.image.layer.v1.tar+gzip"

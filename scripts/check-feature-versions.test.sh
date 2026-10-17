@@ -4,6 +4,8 @@ set -euo pipefail
 
 script="$(cd "$(dirname "$0")" && pwd)/check-feature-versions.sh"
 failures=0
+repo=
+trap 'rm -rf "$repo"' EXIT
 
 # Creates a repo whose main branch has feature `foo` at version 1.9.0, then
 # checks out a work branch.
@@ -12,6 +14,7 @@ setup() {
 	git -C "$repo" init -q -b main
 	git -C "$repo" config user.email test@example.com
 	git -C "$repo" config user.name test
+	git -C "$repo" config commit.gpgsign false
 	mkdir -p "$repo/scripts" "$repo/devcontainer-features/src/foo"
 	cp "$script" "$repo/scripts/"
 	set_version foo 1.9.0
@@ -27,17 +30,24 @@ set_version() {
 		> "$repo/devcontainer-features/src/$1/devcontainer-feature.json"
 }
 
+change() {
+	echo 'echo changed' > "$repo/devcontainer-features/src/$1/install.sh"
+}
+
 commit() {
 	git -C "$repo" add -A
 	git -C "$repo" commit -q -m change
 }
 
-# expect NAME STATUS [PATTERN]: runs the check against main and compares its
-# exit status and, if given, its output.
+# expect NAME STATUS [PATTERN [ABSENT]]: runs the check against BASE (default:
+# main) and compares its exit status and, if given, requires PATTERN and
+# forbids ABSENT in its output.
 expect() {
-	local name="$1" want="$2" pattern="${3:-}" got=0 output
-	output="$("$repo/scripts/check-feature-versions.sh" main 2>&1)" || got=$?
-	if [ "$got" != "$want" ] || { [ -n "$pattern" ] && ! grep -q "$pattern" <<<"$output"; }; then
+	local name="$1" want="$2" pattern="${3:-}" absent="${4:-}" got=0 output
+	output="$("$repo/scripts/check-feature-versions.sh" "${BASE:-main}" 2>&1)" || got=$?
+	if [ "$got" != "$want" ] ||
+		{ [ -n "$pattern" ] && ! grep -q "$pattern" <<<"$output"; } ||
+		{ [ -n "$absent" ] && grep -q "$absent" <<<"$output"; }; then
 		echo "FAIL $name (exit $got, want $want)"
 		printf '    %s\n' "$output"
 		failures=$((failures + 1))
@@ -48,25 +58,29 @@ expect() {
 }
 
 setup
-echo 'echo changed' > "$repo/devcontainer-features/src/foo/install.sh"
+change foo
 commit
 expect "change without bump fails" 1 "foo.*1\.9\.0"
 
 setup
-echo 'echo changed' > "$repo/devcontainer-features/src/foo/install.sh"
+change foo
 set_version foo 1.10.0
 commit
-expect "bump compares as semver" 0
+expect "bump compares numerically (1.9 < 1.10)" 0
 
 setup
-echo 'echo changed' > "$repo/devcontainer-features/src/foo/install.sh"
+change foo
 set_version foo 1.8.0
 commit
-expect "downgrade fails" 1 "foo"
+expect "downgrade fails" 1 "foo.*1\.8\.0.*1\.9\.0"
 
 setup
-echo 'echo changed' > "$repo/devcontainer-features/src/foo/install.sh"
-expect "uncommitted change without bump fails" 1 "foo"
+change foo
+expect "uncommitted change without bump fails" 1 "foo.*1\.9\.0"
+
+setup
+echo 'echo new' > "$repo/devcontainer-features/src/foo/new.sh"
+expect "untracked file without bump fails" 1 "foo.*1\.9\.0"
 
 setup
 echo '# foo, reworded' > "$repo/devcontainer-features/src/foo/README.md"
@@ -87,5 +101,63 @@ setup
 echo 'unrelated' > "$repo/other.txt"
 commit
 expect "no feature change passes" 0
+
+setup
+change foo
+printf '{\n  "id": "foo"\n}\n' > "$repo/devcontainer-features/src/foo/devcontainer-feature.json"
+commit
+expect "missing version fails" 1 "foo.*no valid version"
+
+setup
+git -C "$repo" rm -q devcontainer-features/src/foo/devcontainer-feature.json
+commit
+expect "removed metadata of a kept feature fails" 1 "foo.*no valid version"
+
+setup
+git -C "$repo" checkout -q main
+printf '{\n  "id": "foo",\n}\n' > "$repo/devcontainer-features/src/foo/devcontainer-feature.json"
+commit
+git -C "$repo" checkout -q -B work
+change foo
+set_version foo 2.0.0
+commit
+expect "invalid version at the merge base fails" 1 "foo.*merge base"
+
+setup
+git -C "$repo" checkout -q main
+set_version bar 0.1.0
+commit
+git -C "$repo" checkout -q -B work
+change foo
+change bar
+set_version bar 0.2.0
+commit
+expect "only the feature missing a bump is reported" 1 "foo" "bar"
+
+# The merge base, not the tip of main, is the baseline: a bump that landed on
+# main after branching must not fail an unrelated branch.
+setup
+echo 'unrelated' > "$repo/other.txt"
+commit
+git -C "$repo" checkout -q main
+change foo
+set_version foo 1.10.0
+commit
+git -C "$repo" checkout -q work
+expect "feature changed only on main passes" 0
+
+# Two branches bump foo to the same version; once both are merged, the push
+# check against the previous main tip catches the second one.
+setup
+change foo
+set_version foo 1.10.0
+commit
+git -C "$repo" checkout -q main
+echo 'echo other' > "$repo/devcontainer-features/src/foo/other.sh"
+set_version foo 1.10.0
+commit
+before="$(git -C "$repo" rev-parse HEAD)"
+git -C "$repo" merge -q --no-edit work
+BASE="$before" expect "merge that reuses a landed version fails" 1 "foo.*1\.10\.0"
 
 [ "$failures" = 0 ]

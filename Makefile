@@ -57,8 +57,8 @@ check: lint shellcheck check-role-variants
 check-role-variants:
 	scripts/check-role-variants.sh
 
-# Fail when a changed dev container feature keeps its version from origin/main.
-# The Dev Container Features workflow runs this on pull requests.
+# Fail when a dev container feature changed since the merge base with
+# origin/main does not raise its version. CI runs the same script.
 check-feature-versions:
 	scripts/check-feature-versions.sh
 

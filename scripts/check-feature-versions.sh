@@ -1,16 +1,27 @@
 #!/bin/bash
-# Check that every dev container feature changed since BASE_REF (default:
-# origin/main) has a higher version than on BASE_REF. Publishing skips a
-# version that already exists without failing, so a missed bump would leave
-# the change unpublished.
+# Check that every dev container feature changed since its merge base with
+# BASE_REF (default: origin/main) has a higher version than at that merge base.
+# Publishing skips a version that already exists without failing, so a missed
+# bump would leave the change unpublished.
+# NOTE: On a pull request HEAD is the merge ref, so the merge base is the tip of
+# the target branch. Locally it is the branch point, which misses bumps landed
+# on BASE_REF since then.
 # Usage: scripts/check-feature-versions.sh [BASE_REF]
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
 
+command -v jq >/dev/null || {
+	echo "jq is required" >&2
+	exit 2
+}
+
 base_ref="${1:-origin/main}"
 src=devcontainer-features/src
-merge_base="$(git merge-base "$base_ref" HEAD)"
+merge_base="$(git merge-base "$base_ref" HEAD)" || {
+	echo "no merge base between $base_ref and HEAD (shallow clone?)" >&2
+	exit 2
+}
 
 # Emit GitHub annotations in CI so failures point at the offending file.
 report() {
@@ -22,23 +33,43 @@ report() {
 	fi
 }
 
-# NOTE: Diffs against the working tree so uncommitted changes count locally.
-# README.md is excluded because it is read on GitHub, not from the package.
-features="$(git diff --name-only "$merge_base" -- "$src" |
-	grep -v '/README\.md$' |
-	cut -d/ -f3 |
-	sort -u)" || true
+# Reads a devcontainer-feature.json on stdin and prints its version. Fails when
+# the version is missing or not a string, which would otherwise compare as
+# "null" and sort above every real version.
+version() {
+	jq -er '.version | strings'
+}
+
+# NOTE: Diffs against the working tree and adds untracked files so uncommitted
+# changes count locally. README.md is excluded: it is packaged but unused at
+# install time, so a stale copy in the published version is harmless.
+exclude=":(exclude)$src/*/README.md"
+changed="$(git diff --name-only "$merge_base" -- "$src" "$exclude")"
+untracked="$(git ls-files --others --exclude-standard -- "$src" "$exclude")"
+features="$(printf '%s\n%s\n' "$changed" "$untracked" | cut -d/ -f3 | sort -u)"
 
 status=0
 for feature in $features; do
 	file="$src/$feature/devcontainer-feature.json"
-	# Removed features have nothing to publish; new ones have no base version.
-	[ -f "$file" ] || continue
-	base="$(git show "$merge_base:$file" 2>/dev/null | jq -r .version)" || continue
-	head="$(jq -r .version "$file")"
+	# A removed feature has nothing to publish.
+	[ -d "$src/$feature" ] || continue
+	# A new feature has no version to compare against.
+	git cat-file -e "$merge_base:$file" 2>/dev/null || continue
+	if ! head="$(version <"$file")"; then
+		report "$file" "feature '$feature' changed but has no valid version"
+		status=1
+		continue
+	fi
+	if ! base="$(git show "$merge_base:$file" | version)"; then
+		report "$file" "feature '$feature' has no valid version at the merge base with $base_ref"
+		status=1
+		continue
+	fi
+	# NOTE: sort -V is not semver: it orders 1.0.0-rc.1 after 1.0.0. That is fine
+	# while features publish no prerelease versions.
 	newest="$(printf '%s\n%s\n' "$base" "$head" | sort -V | tail -n 1)"
 	if [ "$head" = "$base" ] || [ "$newest" != "$head" ]; then
-		report "$file" "feature '$feature' changed but its version $head is not higher than $base on $base_ref"
+		report "$file" "feature '$feature' changed but its version $head is not higher than $base at the merge base with $base_ref"
 		status=1
 	fi
 done

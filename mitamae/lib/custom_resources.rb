@@ -258,6 +258,8 @@ define :github_release_binary,
   execute "Install #{bin} from GitHub release" do
     # NOTE: runs as root, so stage in a private mktemp dir rather than a fixed
     # /tmp path another local user could pre-create as a symlink.
+    # The `test -s` guard exists because `tar -O` exits 0 with no output when
+    # the member is a symlink or directory, which would install an empty file.
     command <<~EOC
       set -eu
       work_dir="$(mktemp -d)"
@@ -265,6 +267,10 @@ define :github_release_binary,
       curl -fsSL -o #{tmp} "#{url}"
       echo "#{sha256}  #{tmp}" | sha256sum -c -
       #{unpack}
+      test -s #{unpacked} || {
+        echo "#{bin}: '#{member}' unpacked empty from #{asset}" >&2
+        exit 1
+      }
       install -m 0755 #{unpacked} #{dest}
     EOC
     user 'root'

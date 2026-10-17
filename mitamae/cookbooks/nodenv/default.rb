@@ -33,6 +33,15 @@ else
   unsupported_platform! node[:platform]
 end
 
+# NOTE: node-build is never upgraded after the first install, so a Renovate
+# bump to a Node release newer than its definitions would fail `nodenv install`
+# on existing hosts. Refresh it only when the pinned version is unknown.
+execute 'Update node-build definitions' do
+  command(node[:platform] == 'darwin' ? 'brew upgrade node-build' : "git -C #{nodenv_root}/plugins/node-build pull --ff-only")
+  not_if "test -x #{nodenv_root}/versions/#{global_nodejs_version}/bin/node || " \
+         "nodenv install --list-all 2>/dev/null | grep -qxF '#{global_nodejs_version}'"
+end
+
 # Install and set the global Node version as two separate resources so a
 # half-configured environment (version installed but global unset) is repaired
 # on a subsequent run. Mirrors ruby/default.rb.

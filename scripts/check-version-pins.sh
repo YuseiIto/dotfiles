@@ -2,11 +2,12 @@
 # Check that every version and asset digest pinned in a cookbook is tracked by
 # Renovate.
 #
-# renovate.json picks up a `<name>_version = '...'` constant or a
-# `'<tag>@<sha256>'` digest pin only when the line directly above it is a
-# `# renovate:` annotation; without one the pin silently stops receiving
-# updates. A digest pin's tag must also name the release its cookbook installs,
-# because Renovate recomputes the digest from that tag on the next bump.
+# By convention each `<name>_version = '...'` constant and `'<tag>@<sha256>'`
+# digest pin carries a `# renovate:` annotation on the line directly above,
+# naming the datasource renovate.json expects for it; without one the pin
+# silently stops receiving updates. A digest pin's tag must also name the
+# release its cookbook installs, because Renovate recomputes the digest from
+# that tag on the next bump.
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
@@ -21,23 +22,42 @@ report() {
 	fi
 }
 
+version_pin="^[[:space:]]*[a-z0-9_]+_version = '"
+digest_pin="'[^'@]+@[0-9a-f]{64}'"
+
+# Collected up front rather than read through process substitution, whose
+# exit status `set -e` never sees: a failing or empty search would otherwise
+# check nothing and still pass.
+if ! pins="$(git grep -nE "${version_pin}|${digest_pin}" -- 'mitamae/cookbooks/*.rb')"; then
+	echo "no version pins found under mitamae/cookbooks" >&2
+	exit 1
+fi
+
 status=0
 while IFS=: read -r file line content; do
 	previous=""
 	if ((line > 1)); then
 		previous="$(sed -n "$((line - 1))p" "$file")"
 	fi
-	if ! [[ "$previous" =~ ^[[:space:]]*#\ renovate:\  ]]; then
-		report "$file" "$line" "pin lacks a '# renovate:' annotation on the line above"
-		status=1
-	fi
 
 	if [[ "$content" =~ \'([^\'@]+)@[0-9a-f]{64}\' ]]; then
 		tag="${BASH_REMATCH[1]}"
-		if ! grep -qE "^[[:space:]]*[a-z_]+_version = '${tag#v}'" "$file"; then
+		expected="github-release-attachments"
+		if ! grep -qE "${version_pin}${tag#v}'" "$file"; then
 			report "$file" "$line" "digest is pinned for '${tag}', which matches no version in this file"
 			status=1
 		fi
+	else
+		expected="[^[:space:]]+"
 	fi
-done < <(git grep -nE "^[[:space:]]*[a-z_]+_version = '|'[^'@]+@[0-9a-f]{64}'" -- 'mitamae/cookbooks/*.rb')
+
+	if ! [[ "$previous" =~ ^[[:space:]]*#\ renovate:\ datasource=${expected}\  ]]; then
+		report "$file" "$line" "pin lacks a matching '# renovate:' annotation on the line above"
+		status=1
+	elif [[ -z "${tag:-}" && "$previous" == *datasource=github-release-attachments* ]]; then
+		report "$file" "$line" "version pin is annotated with the digest datasource"
+		status=1
+	fi
+	unset tag
+done <<<"$pins"
 exit "$status"

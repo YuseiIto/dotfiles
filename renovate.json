@@ -19,12 +19,12 @@
     },
     {
       "customType": "regex",
-      "description": "Update goss version in cookbooks/goss/default.rb",
-      "managerFilePatterns": ["/^mitamae/cookbooks/goss/default.rb$/"],
-      "matchStrings": ["goss_version = '(?<currentValue>.*?)'"],
-      "depNameTemplate": "goss-org/goss",
-      "datasourceTemplate": "github-releases",
-      "extractVersionTemplate": "^v(?<version>.+)$"
+      "description": "Update versions and '<tag>@<sha256>' release asset digests annotated with a `# renovate:` comment in mitamae cookbooks",
+      "managerFilePatterns": ["/^mitamae/cookbooks/.+\\.rb$/"],
+      "matchStrings": [
+        "# renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)(?: extractVersion=(?<extractVersion>\\S+))?\\s+\\w+ = '(?<currentValue>[^'@]+)'",
+        "# renovate: datasource=(?<datasource>github-release-attachments) depName=(?<depName>\\S+)\\s+[^'\\n]*'(?<currentValue>[^'@]+)@(?<currentDigest>[0-9a-f]{64})'"
+      ]
     },
     {
       "customType": "regex",
@@ -35,18 +35,15 @@
       ],
       "depNameTemplate": "alacritty/alacritty",
       "datasourceTemplate": "github-release-attachments"
-    },
-    {
-      "customType": "regex",
-      "description": "Update kotlin-lsp version in cookbooks/kotlin-lsp/default.rb",
-      "managerFilePatterns": ["/^mitamae/cookbooks/kotlin-lsp/default.rb$/"],
-      "matchStrings": ["kotlin_lsp_version = '(?<currentValue>.*?)'"],
-      "depNameTemplate": "Kotlin/kotlin-lsp",
-      "datasourceTemplate": "github-releases",
-      "extractVersionTemplate": "^kotlin-lsp/v(?<version>.+)$"
     }
   ],
   "packageRules": [
+    {
+      "description": "Bump a cookbook's version pin and its asset digests in one PR, since a version without matching digests fails to install",
+      "matchManagers": ["custom.regex"],
+      "matchFileNames": ["mitamae/cookbooks/**"],
+      "groupName": "{{{depName}}}"
+    },
     {
       "description": "Group GitHub Actions updates",
       "matchManagers": ["github-actions"],

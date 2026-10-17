@@ -156,6 +156,33 @@ define :apt_repository, key_url: nil, repo: nil do
   end
 end
 
+# Release asset digests pinned as `'<tag>@<sha256>'` for Renovate's
+# github-release-attachments datasource.
+#
+# A module rather than a top-level `def`: mitamae evaluates each recipe file in
+# its own RecipeContext, so a method defined here would not reach cookbooks.
+module ReleasePin
+  # Returns the sha256 half of `pin`, or raises naming `label` unless the pin
+  # is `'<tag>@<64 lowercase hex>'`.
+  #
+  # NOTE: Called at evaluation time so a bad pin for the host's arch fails the
+  # run before any download, with a message naming the pin. Left to the shell,
+  # sha256sum would reject it only as "no properly formatted checksum lines",
+  # and macOS's `shasum -a 256 -c` picks the algorithm from the digest length,
+  # so a 40-hex value would pass as SHA-1. Lowercase is required because
+  # renovate.json's matchString reads only [0-9a-f].
+  def self.sha256(pin, label)
+    raise "#{label}: pin must be '<tag>@<64 lowercase hex>', got #{pin.inspect}" unless pin.to_s.match?(/\A[^@]+@[0-9a-f]{64}\z/)
+
+    pin.split('@', 2).last
+  end
+
+  # `sha256` of whichever pin matches `os_arch` (a normalized node[:os_arch]).
+  def self.for_arch(os_arch, label, arm64:, x86_64:)
+    sha256(os_arch == 'arm64' ? arm64 : x86_64, "#{label} #{os_arch}")
+  end
+end
+
 # Install a single executable from a GitHub release into /usr/local/bin.
 #
 # Collapses the "resolve arch -> build download URL -> curl -> unpack ->
@@ -176,16 +203,34 @@ end
 #   - `.gz`              -> gunzip a single compressed binary
 #   - anything else      -> treat the asset as the raw executable
 #
+# `arm64_sha256` / `x86_64_sha256` pin each asset as `'<tag>@<sha256>'`; the
+# download is rejected unless it matches; `ReleasePin` validates the pin. The
+# tag must be the exact release tag, `v` included: Renovate's
+# github-release-attachments datasource finds the asset in that release whose
+# hash equals the digest, then hashes the new release's asset whose name has
+# the old version replaced by the new one. If no asset in the old release
+# matches, it silently keeps the old digest while bumping the tag, and the
+# install then fails closed; if the new release lacks the renamed asset, it
+# skips the update with a warning. renovate.json's matchString reads tag and
+# digest from one string literal. Annotate each with a `# renovate:` comment.
+#
 # Targets Debian/Ubuntu (installs curl via apt, writes as root). macOS variants
 # of these tools come from Homebrew, so call this only from the Linux branch.
 #
+#   # renovate: datasource=github-releases depName=jesseduffield/lazygit extractVersion=^v(?<version>.+)$
+#   lazygit_version = '1.2.3'
+#
 #   github_release_binary 'lazygit' do
 #     repo           'jesseduffield/lazygit'
-#     version        '0.59.0'
-#     arm64_name     "lazygit_0.59.0_Linux_arm64.tar.gz"
-#     x86_64_name    "lazygit_0.59.0_Linux_x86_64.tar.gz"
+#     version        lazygit_version
+#     arm64_name     "lazygit_#{lazygit_version}_Linux_arm64.tar.gz"
+#     x86_64_name    "lazygit_#{lazygit_version}_Linux_x86_64.tar.gz"
 #     archive_member 'lazygit'
-#     not_if         "lazygit --version 2>/dev/null | grep -q '0.59.0'"
+#     # renovate: datasource=github-release-attachments depName=jesseduffield/lazygit
+#     arm64_sha256   'v1.2.3@<sha256 of the arm64 asset>'
+#     # renovate: datasource=github-release-attachments depName=jesseduffield/lazygit
+#     x86_64_sha256  'v1.2.3@<sha256 of the x86_64 asset>'
+#     not_if         "lazygit --version 2>/dev/null | grep -q '#{lazygit_version}'"
 #   end
 define :github_release_binary,
        repo: nil,
@@ -193,30 +238,38 @@ define :github_release_binary,
        bin_name: nil,
        arm64_name: nil,
        x86_64_name: nil,
+       arm64_sha256: nil,
+       x86_64_sha256: nil,
        archive_member: nil,
        not_if: nil do
   bin = params[:bin_name] || params[:name]
   asset = node[:os_arch] == 'arm64' ? params[:arm64_name] : params[:x86_64_name]
+  sha256 = ReleasePin.for_arch(node[:os_arch], "github_release_binary[#{bin}]",
+                               arm64: params[:arm64_sha256], x86_64: params[:x86_64_sha256])
   url = "https://github.com/#{params[:repo]}/releases/download/v#{params[:version]}/#{asset}"
   dest = "/usr/local/bin/#{bin}"
-  tmp = "/tmp/#{asset}"
+  # Paths inside the mktemp dir that the command below creates as $work_dir.
+  tmp = '$work_dir/asset'
+  unpacked = '$work_dir/bin'
 
   member = params[:archive_member] || bin
   zip = asset.end_with?('.zip')
 
+  # Unpack into the work dir and install from there, so a failed extraction
+  # leaves the installed binary intact instead of truncating it. Every branch
+  # leaves a file without the exec bit (a redirect or curl's own output), so
+  # `install -m 0755` is what makes it executable.
   unpack =
     if asset.end_with?('.tar.gz', '.tgz')
-      # -O (and unzip's -p below) streams the single member to stdout, so nothing
-      # but the binary lands on disk and there is no extracted tree to clean up.
-      "tar -xzf #{tmp} -O #{member} > #{dest} && chmod +x #{dest}"
+      # -O (and unzip's -p below) streams just the member to stdout, so other
+      # files in the archive are never written.
+      "tar -xzf \"#{tmp}\" -O #{member} > \"#{unpacked}\""
     elsif zip
-      # Zip entries routinely carry FAT permissions with no unix exec bit, so the
-      # chmod is what makes the binary runnable rather than a belt-and-braces call.
-      "unzip -p #{tmp} #{member} > #{dest} && chmod +x #{dest}"
+      "unzip -p \"#{tmp}\" #{member} > \"#{unpacked}\""
     elsif asset.end_with?('.gz')
-      "gunzip -c #{tmp} > #{dest} && chmod +x #{dest}"
+      "gunzip -c \"#{tmp}\" > \"#{unpacked}\""
     else
-      "install -m 0755 #{tmp} #{dest}"
+      "mv \"#{tmp}\" \"#{unpacked}\""
     end
 
   (zip ? %w[curl unzip] : %w[curl]).each do |pkg|
@@ -226,10 +279,22 @@ define :github_release_binary,
   end
 
   execute "Install #{bin} from GitHub release" do
+    # NOTE: runs as root, so stage in a private mktemp dir rather than a fixed
+    # /tmp path another local user could pre-create as a symlink.
+    # The `test -s` guard exists because `tar -O` exits 0 with no output when
+    # the member is a symlink or directory, which would install an empty file.
     command <<~EOC
-      curl -fsSL -o #{tmp} "#{url}"
+      set -eu
+      work_dir="$(mktemp -d)"
+      trap 'rm -rf "$work_dir"' EXIT
+      curl -fsSL -o "#{tmp}" "#{url}"
+      echo "#{sha256}  #{tmp}" | sha256sum -c -
       #{unpack}
-      rm -f #{tmp}
+      test -s "#{unpacked}" || {
+        echo "#{bin}: '#{member}' unpacked empty from #{asset}" >&2
+        exit 1
+      }
+      install -m 0755 "#{unpacked}" #{dest}
     EOC
     user 'root'
     not_if params[:not_if] if params[:not_if]

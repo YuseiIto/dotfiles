@@ -123,24 +123,53 @@ single binary, anything else is treated as the raw executable. `curl` (plus
 `unzip` for zip assets) is installed automatically. `not_if` guards the download
 (usually a version check).
 
+Pin both `arm64_sha256` and `x86_64_sha256`, each as `'<tag>@<sha256>'` and
+annotated for Renovate (see [Renovate annotations](#renovate-annotations)). The
+install aborts on a digest mismatch. A missing or malformed pin for the host's
+arch aborts the whole mitamae run when the recipe is evaluated, even on hosts
+where `not_if` would have skipped the download. Take the
+digest from the upstream checksum file when one is published, otherwise hash
+the downloaded asset (`curl -fsSL <url> | sha256sum`, or `shasum -a 256` on
+macOS). Raw `execute` downloads verify the same way: take the digest with
+`ReleasePin.for_arch(node[:os_arch], label, arm64: pin, x86_64: pin)` (or
+`ReleasePin.sha256(pin, label)` for a single pin, both from
+`lib/custom_resources.rb`), which aborts on a malformed pin, then check it with
+`echo "<sha256>  <file>" | sha256sum -c -` (`shasum -a 256 -c -` on macOS).
+Skipping `ReleasePin` on macOS lets a 40-hex pin pass as SHA-1, since `shasum`
+picks the algorithm from the digest length.
+
 ```ruby
 # Raw binary asset:
+# renovate: datasource=github-releases depName=goss-org/goss extractVersion=^v(?<version>.+)$
+goss_version = '1.2.3'
+
 github_release_binary 'goss' do
   repo 'goss-org/goss'
-  version '0.4.9'
+  version goss_version
   arm64_name 'goss-linux-arm64'
   x86_64_name 'goss-linux-amd64'
-  not_if 'command -v goss'
+  # renovate: datasource=github-release-attachments depName=goss-org/goss
+  arm64_sha256 'v1.2.3@<sha256 of goss-linux-arm64>'
+  # renovate: datasource=github-release-attachments depName=goss-org/goss
+  x86_64_sha256 'v1.2.3@<sha256 of goss-linux-amd64>'
+  not_if "goss --version 2>/dev/null | grep -q '#{goss_version}'"
 end
 
 # .tar.gz / .zip asset — extract one member:
+# renovate: datasource=github-releases depName=jesseduffield/lazygit extractVersion=^v(?<version>.+)$
+lazygit_version = '1.2.3'
+
 github_release_binary 'lazygit' do
   repo 'jesseduffield/lazygit'
-  version '0.59.0'
-  arm64_name "lazygit_0.59.0_Linux_arm64.tar.gz"
-  x86_64_name "lazygit_0.59.0_Linux_x86_64.tar.gz"
+  version lazygit_version
+  arm64_name "lazygit_#{lazygit_version}_Linux_arm64.tar.gz"
+  x86_64_name "lazygit_#{lazygit_version}_Linux_x86_64.tar.gz"
   archive_member 'lazygit'
-  not_if "lazygit --version 2>/dev/null | grep -q '0.59.0'"
+  # renovate: datasource=github-release-attachments depName=jesseduffield/lazygit
+  arm64_sha256 'v1.2.3@<sha256 of the arm64 asset>'
+  # renovate: datasource=github-release-attachments depName=jesseduffield/lazygit
+  x86_64_sha256 'v1.2.3@<sha256 of the x86_64 asset>'
+  not_if "lazygit --version 2>/dev/null | grep -q '#{lazygit_version}'"
 end
 ```
 
@@ -181,7 +210,9 @@ Automatically installs `rust` as a dependency.
 cargo_package 'eza'
 
 # When binary name differs from crate name:
-cargo_package 'bat', bin_name: 'bat'
+cargo_package 'ripgrep' do
+  bin_name 'rg'
+end
 ```
 
 ### `uv_tool_package` — Python CLI tools
@@ -192,7 +223,9 @@ Automatically installs `uv` as a dependency. Never use `pip`.
 uv_tool_package 'ruff'
 
 # When binary name differs from package name:
-uv_tool_package 'python-lsp-server', bin_name: 'pylsp'
+uv_tool_package 'python-lsp-server' do
+  bin_name 'pylsp'
+end
 ```
 
 ### `npm_global_package` — Node.js CLI tools
@@ -203,11 +236,21 @@ Automatically installs `nodenv` as a dependency and rehashes shims.
 npm_global_package 'prettier'
 
 # With pinned version:
-npm_global_package 'typescript-language-server', version: '4.3.3'
+# renovate: datasource=npm depName=typescript-language-server
+typescript_language_server_version = '4.3.3'
+
+npm_global_package 'typescript-language-server' do
+  version typescript_language_server_version
+end
 
 # When binary name differs from package name:
-npm_global_package 'opencode-ai', bin_name: 'opencode'
+npm_global_package 'opencode-ai' do
+  bin_name 'opencode'
+end
 ```
+
+Set attributes in the block: a definition takes only its name as an argument,
+so `npm_global_package 'x', version: '...'` raises.
 
 ### `dotfile` — symlink a file into $HOME
 
@@ -312,7 +355,8 @@ Reach for `github_release_binary` (see its idiom above) whenever the Linux asset
 is a single executable — it resolves the arch and handles the download/unpack:
 
 ```ruby
-mytool_version = '1.2.3'  # Always verify this is the latest — check GitHub releases!
+# renovate: datasource=github-releases depName=example/mytool extractVersion=^v(?<version>.+)$
+mytool_version = '1.2.3'
 
 if node[:platform] == 'darwin'
   package 'mytool'
@@ -323,6 +367,10 @@ elsif %w[ubuntu debian].include?(node[:platform])
     arm64_name "mytool-linux-arm64.tar.gz"
     x86_64_name "mytool-linux-x86_64.tar.gz"
     archive_member 'mytool'
+    # renovate: datasource=github-release-attachments depName=example/mytool
+    arm64_sha256 'v1.2.3@<sha256 of mytool-linux-arm64.tar.gz>'
+    # renovate: datasource=github-release-attachments depName=example/mytool
+    x86_64_sha256 'v1.2.3@<sha256 of mytool-linux-x86_64.tar.gz>'
     not_if "mytool --version 2>/dev/null | grep -q '#{mytool_version}'"
   end
 else
@@ -330,7 +378,33 @@ else
 end
 ```
 
-**When pinning a version:** always search the web to confirm the latest release before hardcoding it.
+**When first pinning a version:** search the web to confirm the latest
+release; Renovate keeps it current after that.
+
+### Renovate annotations
+
+Put a `# renovate:` annotation on the line directly above every pin so
+Renovate keeps it current. renovate.json's `matchStrings` read only the keys
+and order shown below, so add no other key (`versioning=`, `packageName=`, ...);
+`make check-version-pins` rejects any other shape:
+
+- `<name>_version = '...'` constants: name the datasource and the upstream as
+  `depName`; add `extractVersion` when the release tag differs from the stored
+  value (e.g. `^v(?<version>.+)$` for `v`-prefixed tags). Keep versions in
+  these constants, never as literals inside a resource, which no manager reads.
+  Write the constant exactly as `<name>_version = '...'` (lowercase name, one
+  space around `=`, single quotes): neither the matchString nor
+  `make check-version-pins` sees any other spelling, so such a pin goes
+  untracked without failing the check.
+- `'<tag>@<sha256>'` digest pins: use
+  `datasource=github-release-attachments depName=<owner/repo>`, and write
+  `<tag>` as the exact release tag (`v1.2.3`, not `1.2.3`, when upstream tags
+  with a `v`). Renovate finds the pinned asset in that release (a wrong tag
+  fails the lookup) and hashes the new release's asset whose name has the
+  version replaced.
+
+Run `make check-version-pins` after adding a pin; the header of
+`scripts/check-version-pins.sh` lists what it rejects.
 
 ---
 

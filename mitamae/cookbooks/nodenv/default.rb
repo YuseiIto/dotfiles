@@ -1,3 +1,4 @@
+# renovate: datasource=node-version depName=node
 global_nodejs_version = '24.14.0'
 
 home = ENV['HOME']
@@ -30,6 +31,16 @@ elsif %w[ubuntu debian].include?(node[:platform])
   end
 else
   unsupported_platform! node[:platform]
+end
+
+# NOTE: The resources above install node-build once and never upgrade it, so a
+# Renovate bump to a Node release newer than its definitions would fail
+# `nodenv install` on existing hosts. Refresh it only when the pinned version
+# is unknown.
+execute 'Update node-build definitions' do
+  command(node[:platform] == 'darwin' ? 'brew upgrade node-build' : "git -C #{nodenv_root}/plugins/node-build pull --ff-only")
+  not_if "test -x #{nodenv_root}/versions/#{global_nodejs_version}/bin/node || " \
+         "nodenv install --list-all 2>/dev/null | grep -qxF '#{global_nodejs_version}'"
 end
 
 # Install and set the global Node version as two separate resources so a

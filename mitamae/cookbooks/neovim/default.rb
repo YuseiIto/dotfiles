@@ -1,3 +1,4 @@
+# renovate: datasource=github-releases depName=neovim/neovim extractVersion=^v(?<version>.+)$
 nvim_version = '0.11.6'
 
 case node[:platform]
@@ -11,14 +12,24 @@ when 'ubuntu', 'debian'
   end
 
   nvim_release = "nvim-linux-#{node[:os_arch]}"
+  nvim_sha256 = ReleasePin.for_arch(
+    node[:os_arch], 'neovim',
+    # renovate: datasource=github-release-attachments depName=neovim/neovim
+    arm64: 'v0.11.6@8ddc0c101846145e830b17bbca50782ca9307eee4fab539d9e2ddaf8793c06f1',
+    # renovate: datasource=github-release-attachments depName=neovim/neovim
+    x86_64: 'v0.11.6@2fc90b962327f73a78afbfb8203fd19db8db9cdf4ee5e2bef84704339add89cc'
+  )
   nvim_archive = "#{nvim_release}.tar.gz"
   url = "https://github.com/neovim/neovim/releases/download/v#{nvim_version}/#{nvim_archive}"
 
   execute 'Install neovim binary' do
     command <<~EOC
-      curl -fsSL -o /tmp/#{nvim_archive} #{url}
-      tar -C /opt -xzf /tmp/#{nvim_archive}
-      rm /tmp/#{nvim_archive}
+      set -eu
+      work_dir="$(mktemp -d)"
+      trap 'rm -rf "$work_dir"' EXIT
+      curl -fsSL -o "$work_dir/#{nvim_archive}" #{url}
+      echo "#{nvim_sha256}  $work_dir/#{nvim_archive}" | sha256sum -c -
+      tar -C /opt -xzf "$work_dir/#{nvim_archive}"
     EOC
     user 'root'
     not_if "/opt/#{nvim_release}/bin/nvim --version | grep -q 'NVIM v#{nvim_version}'" # Skip if the correct version is already installed

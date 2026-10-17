@@ -3,6 +3,7 @@
 # Linux builds are published by JetBrains as a self-contained tarball that
 # bundles its own runtime, so the kotlin-lsp.sh launcher needs no system Java.
 
+# renovate: datasource=github-releases depName=Kotlin/kotlin-lsp extractVersion=^kotlin-lsp/v(?<version>.+)$
 kotlin_lsp_version = '263.6379.0'
 
 if node[:platform] == 'darwin'
@@ -13,6 +14,11 @@ if node[:platform] == 'darwin'
 elsif %w[ubuntu debian].include?(node[:platform])
   # NOTE: JetBrains removes older builds from the CDN, so a stale pin breaks
   # provisioning outright rather than just lagging behind.
+  # NOTE: No digest pin, unlike github_release_binary downloads: the asset is
+  # on JetBrains' CDN, which Renovate's github-release-attachments datasource
+  # cannot read, so a pin would go stale on every version bump. The `.sha256`
+  # file JetBrains publishes next to the archive is not checked either: it
+  # comes from the same host, so it would catch corruption but not tampering.
   arch_suffix = node[:os_arch] == 'arm64' ? '-aarch64' : ''
 
   archive = "kotlin-server-#{kotlin_lsp_version}#{arch_suffix}.tar.gz"
@@ -23,9 +29,16 @@ elsif %w[ubuntu debian].include?(node[:platform])
 
   execute 'Install kotlin-lsp' do
     command <<~CMD
-      curl -fsSL -o /tmp/#{archive} "#{url}" &&
-      tar -xzf /tmp/#{archive} -C /opt &&
-      rm -f /tmp/#{archive}
+      set -eu
+      work_dir="$(mktemp -d)"
+      # Staged on the same filesystem so the final mv is a rename: an
+      # interrupted extract never leaves a partial tree the guard accepts.
+      stage_dir="$(mktemp -d /opt/.kotlin-server.XXXXXX)"
+      trap 'rm -rf "$work_dir" "$stage_dir"' EXIT
+      curl -fsSL -o "$work_dir/#{archive}" "#{url}"
+      tar -xzf "$work_dir/#{archive}" -C "$stage_dir"
+      rm -rf "#{install_dir}"
+      mv "$stage_dir/kotlin-server-#{kotlin_lsp_version}" "#{install_dir}"
     CMD
     user 'root'
     not_if "test -x #{install_dir}/kotlin-lsp.sh"

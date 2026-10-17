@@ -5,11 +5,13 @@
 # By convention each `<name>_version = '...'` constant and `'<tag>@<sha256>'`
 # digest pin carries a `# renovate:` annotation on the line directly above,
 # naming the kind of datasource renovate.json expects for it; without one the
-# pin silently stops receiving updates. Digest pins must also match the
-# format renovate.json parses (lowercase hex, tag included), and their tag
-# must equal a version constant in the same file, because Renovate recomputes
-# the digest from that tag on the next bump. Versions must be constants, not
-# literals inside a resource, which no manager reads.
+# pin silently stops receiving updates. The annotation must have exactly the
+# shape renovate.json's matchStrings read, since any other key or key order
+# makes Renovate skip the pin while it still looks annotated. Digest pins must
+# also match the format renovate.json parses (lowercase hex, tag included), and
+# their tag must equal a version constant in the same file, because Renovate
+# recomputes the digest from that tag on the next bump. Versions must be
+# constants, not literals inside a resource, which no manager reads.
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
@@ -45,18 +47,20 @@ while IFS=: read -r file line content; do
 
 	if [[ "$content" =~ \'([^\'@]+)@[0-9a-f]{64}\' ]]; then
 		tag="${BASH_REMATCH[1]}"
-		expected="github-release-attachments"
+		# The digest matchString has no extractVersion group.
+		annotation="datasource=github-release-attachments depName=[^[:space:]]+"
 		version="${tag#v}"
 		if ! grep -qE "${version_pin}${version//./\\.}'" "$file"; then
 			report "$file" "$line" "digest is pinned for '${tag}', which matches no version in this file"
 			status=1
 		fi
 	else
-		expected="[^[:space:]]+"
+		annotation="datasource=[^[:space:]]+ depName=[^[:space:]]+( extractVersion=[^[:space:]]+)?"
 	fi
+	annotation="^[[:space:]]*# renovate: ${annotation}[[:space:]]*\$"
 
-	if ! [[ "$previous" =~ ^[[:space:]]*#\ renovate:\ datasource=${expected}\  ]]; then
-		report "$file" "$line" "pin lacks a matching '# renovate:' annotation on the line above"
+	if ! [[ "$previous" =~ $annotation ]]; then
+		report "$file" "$line" "pin lacks a '# renovate:' annotation on the line above in the shape renovate.json reads"
 		status=1
 	elif [[ -z "${tag:-}" && "$previous" == *datasource=github-release-attachments* ]]; then
 		report "$file" "$line" "version pin is annotated with the digest datasource"

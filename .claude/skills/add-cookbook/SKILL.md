@@ -365,7 +365,9 @@ release; Renovate keeps it current after that.
 ### Renovate annotations
 
 Put a `# renovate:` annotation on the line directly above every pin so
-Renovate keeps it current:
+Renovate keeps it current. renovate.json's `matchStrings` read only the keys
+and order shown below, so add no other key (`versioning=`, `packageName=`, ...);
+`make check-version-pins` rejects any other shape:
 
 - `<name>_version = '...'` constants: name the datasource and the upstream as
   `depName`; add `extractVersion` when the release tag differs from the stored

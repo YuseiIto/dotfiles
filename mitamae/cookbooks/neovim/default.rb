@@ -12,12 +12,13 @@ when 'ubuntu', 'debian'
   end
 
   nvim_release = "nvim-linux-#{node[:os_arch]}"
-  # renovate: datasource=github-release-attachments depName=neovim/neovim
-  nvim_arm64_sha256 = 'v0.11.6@8ddc0c101846145e830b17bbca50782ca9307eee4fab539d9e2ddaf8793c06f1'
-  # renovate: datasource=github-release-attachments depName=neovim/neovim
-  nvim_x86_64_sha256 = 'v0.11.6@2fc90b962327f73a78afbfb8203fd19db8db9cdf4ee5e2bef84704339add89cc'
-  nvim_sha256 = ReleasePin.sha256(node[:os_arch] == 'arm64' ? nvim_arm64_sha256 : nvim_x86_64_sha256,
-                                  "neovim #{node[:os_arch]}")
+  nvim_sha256 = ReleasePin.for_arch(
+    node[:os_arch], 'neovim',
+    # renovate: datasource=github-release-attachments depName=neovim/neovim
+    arm64: 'v0.11.6@8ddc0c101846145e830b17bbca50782ca9307eee4fab539d9e2ddaf8793c06f1',
+    # renovate: datasource=github-release-attachments depName=neovim/neovim
+    x86_64: 'v0.11.6@2fc90b962327f73a78afbfb8203fd19db8db9cdf4ee5e2bef84704339add89cc'
+  )
   nvim_archive = "#{nvim_release}.tar.gz"
   url = "https://github.com/neovim/neovim/releases/download/v#{nvim_version}/#{nvim_archive}"
 

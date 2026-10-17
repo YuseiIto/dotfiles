@@ -10,12 +10,13 @@ elsif %w[ubuntu debian].include?(node[:platform])
          end
 
   archive_url = "https://github.com/fastfetch-cli/fastfetch/releases/download/#{fastfetch_version}/fastfetch-linux-#{arch}.deb"
-  # renovate: datasource=github-release-attachments depName=fastfetch-cli/fastfetch
-  fastfetch_arm64_sha256 = '2.63.1@9e6f22ac5585383d724fdc4a330e12b3e117152705c26891752234c074c46ed5'
-  # renovate: datasource=github-release-attachments depName=fastfetch-cli/fastfetch
-  fastfetch_x86_64_sha256 = '2.63.1@d0239b79c2082f30c0d519ec9af8e80f965b3cb873f4abd99ac4d8db1c48adf3'
-  fastfetch_sha256 = ReleasePin.sha256(node[:os_arch] == 'arm64' ? fastfetch_arm64_sha256 : fastfetch_x86_64_sha256,
-                                       "fastfetch #{node[:os_arch]}")
+  fastfetch_sha256 = ReleasePin.for_arch(
+    node[:os_arch], 'fastfetch',
+    # renovate: datasource=github-release-attachments depName=fastfetch-cli/fastfetch
+    arm64: '2.63.1@9e6f22ac5585383d724fdc4a330e12b3e117152705c26891752234c074c46ed5',
+    # renovate: datasource=github-release-attachments depName=fastfetch-cli/fastfetch
+    x86_64: '2.63.1@d0239b79c2082f30c0d519ec9af8e80f965b3cb873f4abd99ac4d8db1c48adf3'
+  )
 
   execute 'Install fastfetch' do
     user 'root'

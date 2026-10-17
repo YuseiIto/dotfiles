@@ -5,12 +5,13 @@ goss_version = '0.4.10'
 goss_arch = node[:os_arch] == 'arm64' ? 'arm64' : 'x86_64'
 
 if node[:platform] == 'darwin'
-  # renovate: datasource=github-release-attachments depName=goss-org/goss
-  goss_darwin_arm64_sha256 = 'v0.4.10@3e5b0ff38ef1b005ee8c5e048cf8d44d700ae7529628f210bd60bff2adaf3e34'
-  # renovate: datasource=github-release-attachments depName=goss-org/goss
-  goss_darwin_x86_64_sha256 = 'v0.4.10@71d12ae057a929d278146ba38ca80aa1cf7159daf055d1b0065e49bb7f5d6b4a'
-  goss_sha256 = ReleasePin.sha256(goss_arch == 'arm64' ? goss_darwin_arm64_sha256 : goss_darwin_x86_64_sha256,
-                                  "goss darwin-#{goss_arch}")
+  goss_sha256 = ReleasePin.for_arch(
+    node[:os_arch], 'goss darwin',
+    # renovate: datasource=github-release-attachments depName=goss-org/goss
+    arm64: 'v0.4.10@3e5b0ff38ef1b005ee8c5e048cf8d44d700ae7529628f210bd60bff2adaf3e34',
+    # renovate: datasource=github-release-attachments depName=goss-org/goss
+    x86_64: 'v0.4.10@71d12ae057a929d278146ba38ca80aa1cf7159daf055d1b0065e49bb7f5d6b4a'
+  )
 
   goss_archive = "goss_#{goss_version}_darwin_#{goss_arch}.tar.gz"
 

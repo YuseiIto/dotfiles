@@ -176,6 +176,11 @@ module ReleasePin
 
     pin.split('@', 2).last
   end
+
+  # `sha256` of whichever pin matches `os_arch` (a normalized node[:os_arch]).
+  def self.for_arch(os_arch, label, arm64:, x86_64:)
+    sha256(os_arch == 'arm64' ? arm64 : x86_64, "#{label} #{os_arch}")
+  end
 end
 
 # Install a single executable from a GitHub release into /usr/local/bin.
@@ -238,10 +243,9 @@ define :github_release_binary,
        archive_member: nil,
        not_if: nil do
   bin = params[:bin_name] || params[:name]
-  arm64 = node[:os_arch] == 'arm64'
-  asset = arm64 ? params[:arm64_name] : params[:x86_64_name]
-  sha256 = ReleasePin.sha256(arm64 ? params[:arm64_sha256] : params[:x86_64_sha256],
-                             "github_release_binary[#{bin}] #{node[:os_arch]}")
+  asset = node[:os_arch] == 'arm64' ? params[:arm64_name] : params[:x86_64_name]
+  sha256 = ReleasePin.for_arch(node[:os_arch], "github_release_binary[#{bin}]",
+                               arm64: params[:arm64_sha256], x86_64: params[:x86_64_sha256])
   url = "https://github.com/#{params[:repo]}/releases/download/v#{params[:version]}/#{asset}"
   dest = "/usr/local/bin/#{bin}"
   # Paths inside the mktemp dir that the command below creates as $work_dir.

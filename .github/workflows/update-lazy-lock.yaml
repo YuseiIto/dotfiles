@@ -39,7 +39,7 @@ jobs:
         id: versions
         run: |
           nvim_version=$(sed -nE "s/^nvim_version = '([^']+)'.*/\1/p" mitamae/cookbooks/neovim/default.rb)
-          nvim_sha256=$(sed -nE "s/^ *nvim_x86_64_sha256 = '[^@]+@([0-9a-f]{64})'.*/\1/p" mitamae/cookbooks/neovim/default.rb)
+          nvim_sha256=$(sed -nE "s/^ *x86_64: '[^@]+@([0-9a-f]{64})'.*/\1/p" mitamae/cookbooks/neovim/default.rb)
           ts_version=$(sed -nE "s/^tree_sitter_version = '([^']+)'.*/\1/p" mitamae/cookbooks/tree-sitter/default.rb)
           ts_sha256=$(sed -nE "s/^ *x86_64_sha256 '[^@]+@([0-9a-f]{64})'.*/\1/p" mitamae/cookbooks/tree-sitter/default.rb)
           {

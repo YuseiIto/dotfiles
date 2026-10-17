@@ -131,8 +131,9 @@ where `not_if` would have skipped the download. Take the
 digest from the upstream checksum file when one is published, otherwise hash
 the downloaded asset (`curl -fsSL <url> | sha256sum`, or `shasum -a 256` on
 macOS). Raw `execute` downloads verify the same way: take the digest with
-`ReleasePin.sha256(pin, label)` (from `lib/custom_resources.rb`), which aborts
-on a malformed pin, then check it with
+`ReleasePin.for_arch(node[:os_arch], label, arm64: pin, x86_64: pin)` (or
+`ReleasePin.sha256(pin, label)` for a single pin, both from
+`lib/custom_resources.rb`), which aborts on a malformed pin, then check it with
 `echo "<sha256>  <file>" | sha256sum -c -` (`shasum -a 256 -c -` on macOS).
 Skipping `ReleasePin` on macOS lets a 40-hex pin pass as SHA-1, since `shasum`
 picks the algorithm from the digest length.

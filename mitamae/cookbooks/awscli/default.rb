@@ -15,7 +15,8 @@ elsif %w[ubuntu debian].include?(node[:platform])
 
   # NOTE: The installer is unversioned and signed rather than checksummed, so
   # pin AWS's signing key (FB5D B77F D5C1 18B8 0511 ADA8 A631 0ACC 4672 475C).
-  # gpgv ignores key expiry; a rotated key fails the install until replaced.
+  # This copy expired on 2026-07-07, which gpgv ignores; only a rotated key
+  # fails the install, until this file is replaced.
   # Ref: https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
   public_key = File.join(File.dirname(__FILE__), 'files', 'aws-cli-team.asc')
 

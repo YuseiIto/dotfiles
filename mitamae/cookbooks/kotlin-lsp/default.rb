@@ -14,6 +14,9 @@ if node[:platform] == 'darwin'
 elsif %w[ubuntu debian].include?(node[:platform])
   # NOTE: JetBrains removes older builds from the CDN, so a stale pin breaks
   # provisioning outright rather than just lagging behind.
+  # NOTE: Unlike the other release downloads this carries no digest pin: the
+  # asset is on JetBrains' CDN, not a GitHub release, so Renovate's
+  # github-release-attachments datasource cannot refresh one on a bump.
   arch_suffix = node[:os_arch] == 'arm64' ? '-aarch64' : ''
 
   archive = "kotlin-server-#{kotlin_lsp_version}#{arch_suffix}.tar.gz"

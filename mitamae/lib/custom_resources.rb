@@ -204,13 +204,12 @@ end
 #   - anything else      -> treat the asset as the raw executable
 #
 # `arm64_sha256` / `x86_64_sha256` pin each asset as `'<tag>@<sha256>'`; the
-# download is rejected unless it matches. A missing or malformed pin for the
-# host's arch aborts the whole run when the recipe is evaluated, even on hosts
-# where `not_if` would have skipped the install. The tag must be the exact
-# release tag, `v` included: Renovate's github-release-attachments datasource
-# looks that release up to find which asset the digest belongs to, then hashes
-# the same-named asset of the new release. If it finds none it silently keeps
-# the old digest, and the install then fails closed. renovate.json's
+# download is rejected unless it matches; `ReleasePin` validates the pin. The
+# tag must be the exact release tag, `v` included: Renovate's
+# github-release-attachments datasource looks that release up to find which
+# asset the digest belongs to, then hashes the same-named asset of the new
+# release. If it finds none it silently keeps the old digest, and the install
+# then fails closed. renovate.json's
 # matchString reads tag and digest from one string literal. Annotate each with
 # a `# renovate:` comment.
 #

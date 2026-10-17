@@ -32,7 +32,7 @@ jobs:
           # The check diffs against the merge base with BASE_REF.
           fetch-depth: 0
       - name: Test the check
-        run: scripts/check-feature-versions.test.sh
+        run: make test-feature-versions
       - name: Check changed features bump their version
         env:
           # NOTE: A pull request is checked against the target branch as of the
@@ -41,7 +41,7 @@ jobs:
           # the one merged second. That is only a signal: publish does not wait
           # for this job and skips the reused version.
           BASE_REF: ${{ github.event_name == 'pull_request' && format('origin/{0}', github.base_ref) || github.event.before }}
-        run: scripts/check-feature-versions.sh "$BASE_REF"
+        run: make check-feature-versions
 
   test:
     name: Test 🧪 [${{ matrix.feature }}]

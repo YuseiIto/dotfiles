@@ -4,10 +4,12 @@
 #
 # By convention each `<name>_version = '...'` constant and `'<tag>@<sha256>'`
 # digest pin carries a `# renovate:` annotation on the line directly above,
-# naming the datasource renovate.json expects for it; without one the pin
-# silently stops receiving updates. A digest pin's tag must also name the
-# release its cookbook installs, because Renovate recomputes the digest from
-# that tag on the next bump.
+# naming the kind of datasource renovate.json expects for it; without one the
+# pin silently stops receiving updates. Digest pins must also match the
+# format renovate.json parses (lowercase hex, tag included), and their tag
+# must equal a version constant in the same file, because Renovate recomputes
+# the digest from that tag on the next bump. Versions must be constants, not
+# literals inside a resource, which no manager reads.
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
@@ -22,13 +24,14 @@ report() {
 	fi
 }
 
+cookbooks='mitamae/cookbooks/*.rb'
 version_pin="^[[:space:]]*[a-z0-9_]+_version = '"
 digest_pin="'[^'@]+@[0-9a-f]{64}'"
 
 # Collected up front rather than read through process substitution, whose
 # exit status `set -e` never sees: a failing or empty search would otherwise
 # check nothing and still pass.
-if ! pins="$(git grep -nE "${version_pin}|${digest_pin}" -- 'mitamae/cookbooks/*.rb')"; then
+if ! pins="$(git grep -nE "${version_pin}|${digest_pin}" -- "$cookbooks")"; then
 	echo "no version pins found under mitamae/cookbooks" >&2
 	exit 1
 fi
@@ -43,7 +46,8 @@ while IFS=: read -r file line content; do
 	if [[ "$content" =~ \'([^\'@]+)@[0-9a-f]{64}\' ]]; then
 		tag="${BASH_REMATCH[1]}"
 		expected="github-release-attachments"
-		if ! grep -qE "${version_pin}${tag#v}'" "$file"; then
+		version="${tag#v}"
+		if ! grep -qE "${version_pin}${version//./\\.}'" "$file"; then
 			report "$file" "$line" "digest is pinned for '${tag}', which matches no version in this file"
 			status=1
 		fi
@@ -60,4 +64,19 @@ while IFS=: read -r file line content; do
 	fi
 	unset tag
 done <<<"$pins"
+
+# Pins the search above cannot see, so Renovate would never update them.
+# alacritty_dmg_sha256 is exempt: its own manager in renovate.json reads a
+# bare digest.
+while IFS=: read -r file line _; do
+	report "$file" "$line" "digest is not pinned as '<tag>@<lowercase sha256>'"
+	status=1
+done < <(git grep -nE "_sha256[[:space:]=]*'" -- "$cookbooks" |
+	grep -vE "${digest_pin}|alacritty_dmg_sha256 = '[0-9a-f]{64}'" || true)
+
+while IFS=: read -r file line _; do
+	report "$file" "$line" "version is a literal; pin it in an annotated <name>_version constant"
+	status=1
+done < <(git grep -nE "^[[:space:]]*version[[:space:]]+['\"]" -- "$cookbooks" || true)
+
 exit "$status"

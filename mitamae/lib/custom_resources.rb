@@ -226,6 +226,7 @@ define :github_release_binary,
   url = "https://github.com/#{params[:repo]}/releases/download/v#{params[:version]}/#{asset}"
   dest = "/usr/local/bin/#{bin}"
   # Paths inside the mktemp dir that the command below creates as $work_dir.
+  # NOTE: The values carry their own double quotes; interpolate them bare.
   tmp = '"$work_dir/asset"'
   unpacked = '"$work_dir/bin"'
 
@@ -237,8 +238,8 @@ define :github_release_binary,
   # also sets the exec bit that zip entries (FAT permissions) usually lack.
   unpack =
     if asset.end_with?('.tar.gz', '.tgz')
-      # -O (and unzip's -p below) streams the single member to stdout, so there
-      # is no extracted tree to clean up.
+      # -O (and unzip's -p below) streams just the member to stdout, so other
+      # files in the archive are never written.
       "tar -xzf #{tmp} -O #{member} > #{unpacked}"
     elsif zip
       "unzip -p #{tmp} #{member} > #{unpacked}"

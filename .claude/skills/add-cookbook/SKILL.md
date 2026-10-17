@@ -373,6 +373,10 @@ and order shown below, so add no other key (`versioning=`, `packageName=`, ...);
   `depName`; add `extractVersion` when the release tag differs from the stored
   value (e.g. `^v(?<version>.+)$` for `v`-prefixed tags). Keep versions in
   these constants, never as literals inside a resource, which no manager reads.
+  Write the constant exactly as `<name>_version = '...'` (lowercase name, one
+  space around `=`, single quotes): neither the matchString nor
+  `make check-version-pins` sees any other spelling, so such a pin goes
+  untracked without failing the check.
 - `'<tag>@<sha256>'` digest pins: use
   `datasource=github-release-attachments depName=<owner/repo>`, so Renovate
   recomputes the digest when it bumps the matching version.

@@ -8,6 +8,9 @@ if node[:platform] == 'darwin'
   # renovate: datasource=github-release-attachments depName=goss-org/goss
   goss_darwin_amd64_sha256 = 'v0.4.9@e0c1b22360ced9f5394e64244877dfe1d3488aee9de75c56b9e02ae72c3fe4ff'
   goss_sha256 = (goss_arch == 'arm64' ? goss_darwin_arm64_sha256 : goss_darwin_amd64_sha256).split('@', 2).last
+  # NOTE: `shasum -c` picks the algorithm from the digest length, so a
+  # 40-hex value would be checked as SHA-1 instead of being rejected.
+  raise "goss: darwin-#{goss_arch} pin is not a SHA-256 digest" unless goss_sha256.match?(/\A[0-9a-f]{64}\z/)
 
   # macOS provisioning runs unprivileged, so this path shells out to sudo for
   # the /usr/local/bin write and cannot use the github_release_binary helper

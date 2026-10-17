@@ -177,11 +177,12 @@ end
 #   - anything else      -> treat the asset as the raw executable
 #
 # `arm64_sha256` / `x86_64_sha256` pin each asset as `'<tag>@<sha256>'`; the
-# download is rejected unless it matches, and the run aborts when the host's
-# arch has no pin. The tag is redundant with `version`
-# but lets Renovate's github-release-attachments datasource recompute the
-# digest on a version bump, which needs the tag and the digest on one line.
-# Annotate each with a `# renovate:` comment so it is picked up.
+# download is rejected unless it matches. A missing or malformed pin for the
+# host's arch aborts the whole run when the recipe is evaluated, even on hosts
+# where `not_if` would have skipped the install. The tag is redundant with
+# `version`, but Renovate's github-release-attachments datasource recomputes
+# the digest from it on a version bump; renovate.json's matchString expects
+# both in one string literal. Annotate each with a `# renovate:` comment.
 #
 # Targets Debian/Ubuntu (installs curl via apt, writes as root). macOS variants
 # of these tools come from Homebrew, so call this only from the Linux branch.
@@ -215,7 +216,11 @@ define :github_release_binary,
   arm64 = node[:os_arch] == 'arm64'
   asset = arm64 ? params[:arm64_name] : params[:x86_64_name]
   pin = arm64 ? params[:arm64_sha256] : params[:x86_64_sha256]
-  raise "github_release_binary[#{bin}]: no sha256 pinned for #{node[:os_arch]}" unless pin
+  # NOTE: Validated here because sha256sum would report a malformed digest as
+  # a bare mismatch, and an empty one as a missing checksum line.
+  unless pin.to_s.match?(/\A[^@]+@[0-9a-f]{64}\z/)
+    raise "github_release_binary[#{bin}]: #{node[:os_arch]} pin must be '<tag>@<64 lowercase hex>', got #{pin.inspect}"
+  end
 
   sha256 = pin.split('@', 2).last
   url = "https://github.com/#{params[:repo]}/releases/download/v#{params[:version]}/#{asset}"

@@ -19,17 +19,10 @@
     },
     {
       "customType": "regex",
-      "description": "Update versions annotated with a `# renovate:` comment in mitamae cookbooks",
+      "description": "Update versions and '<tag>@<sha256>' release asset digests annotated with a `# renovate:` comment in mitamae cookbooks",
       "managerFilePatterns": ["/^mitamae/cookbooks/.+\\.rb$/"],
       "matchStrings": [
-        "# renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)(?: extractVersion=(?<extractVersion>\\S+))?\\s+\\w+ = '(?<currentValue>[^'@]+)'"
-      ]
-    },
-    {
-      "customType": "regex",
-      "description": "Update release asset digests pinned as '<tag>@<sha256>' in mitamae cookbooks",
-      "managerFilePatterns": ["/^mitamae/cookbooks/.+\\.rb$/"],
-      "matchStrings": [
+        "# renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)(?: extractVersion=(?<extractVersion>\\S+))?\\s+\\w+ = '(?<currentValue>[^'@]+)'",
         "# renovate: datasource=(?<datasource>github-release-attachments) depName=(?<depName>\\S+)\\s+[^'\\n]*'(?<currentValue>[^'@]+)@(?<currentDigest>[0-9a-f]{64})'"
       ]
     },

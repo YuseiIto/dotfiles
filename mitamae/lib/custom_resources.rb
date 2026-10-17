@@ -249,9 +249,8 @@ define :github_release_binary,
   url = "https://github.com/#{params[:repo]}/releases/download/v#{params[:version]}/#{asset}"
   dest = "/usr/local/bin/#{bin}"
   # Paths inside the mktemp dir that the command below creates as $work_dir.
-  # NOTE: The values carry their own double quotes; interpolate them bare.
-  tmp = '"$work_dir/asset"'
-  unpacked = '"$work_dir/bin"'
+  tmp = '$work_dir/asset'
+  unpacked = '$work_dir/bin'
 
   member = params[:archive_member] || bin
   zip = asset.end_with?('.zip')
@@ -264,13 +263,13 @@ define :github_release_binary,
     if asset.end_with?('.tar.gz', '.tgz')
       # -O (and unzip's -p below) streams just the member to stdout, so other
       # files in the archive are never written.
-      "tar -xzf #{tmp} -O #{member} > #{unpacked}"
+      "tar -xzf \"#{tmp}\" -O #{member} > \"#{unpacked}\""
     elsif zip
-      "unzip -p #{tmp} #{member} > #{unpacked}"
+      "unzip -p \"#{tmp}\" #{member} > \"#{unpacked}\""
     elsif asset.end_with?('.gz')
-      "gunzip -c #{tmp} > #{unpacked}"
+      "gunzip -c \"#{tmp}\" > \"#{unpacked}\""
     else
-      "mv #{tmp} #{unpacked}"
+      "mv \"#{tmp}\" \"#{unpacked}\""
     end
 
   (zip ? %w[curl unzip] : %w[curl]).each do |pkg|
@@ -288,14 +287,14 @@ define :github_release_binary,
       set -eu
       work_dir="$(mktemp -d)"
       trap 'rm -rf "$work_dir"' EXIT
-      curl -fsSL -o #{tmp} "#{url}"
+      curl -fsSL -o "#{tmp}" "#{url}"
       echo "#{sha256}  #{tmp}" | sha256sum -c -
       #{unpack}
-      test -s #{unpacked} || {
+      test -s "#{unpacked}" || {
         echo "#{bin}: '#{member}' unpacked empty from #{asset}" >&2
         exit 1
       }
-      install -m 0755 #{unpacked} #{dest}
+      install -m 0755 "#{unpacked}" #{dest}
     EOC
     user 'root'
     not_if params[:not_if] if params[:not_if]

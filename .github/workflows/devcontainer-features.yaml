@@ -61,8 +61,11 @@ jobs:
     name: Publish 📦
     needs: test
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    # Serializes publishing across pushes. A pending run replaced by a newer one
-    # loses nothing: the newer tree contains its features.
+    # NOTE: Serializes publishing across pushes. The job queued last replaces the
+    # pending one, and queue order follows test completion, not push order. An
+    # older push can thus replace a newer one and leave its bump unpublished
+    # until the next feature change; rerun the publish job of the latest main run
+    # to recover.
     concurrency:
       group: ${{ github.workflow }}-publish
     runs-on: ubuntu-24.04

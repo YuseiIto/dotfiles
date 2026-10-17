@@ -1,6 +1,6 @@
 {
   "id": "agent-sandbox",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "name": "Agent sandbox",
   "description": "Egress allowlist firewall, restricted sudo and persistent Claude Code state for running coding agents with permission prompts disabled.",
   "documentationURL": "https://github.com/YuseiIto/dotfiles/tree/main/devcontainer-features/src/agent-sandbox",

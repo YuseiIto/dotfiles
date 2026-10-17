@@ -109,6 +109,7 @@ include_recipe '../../cookbooks/stoplight-studio'
 include_recipe '../../cookbooks/flatcam'
 include_recipe '../../cookbooks/affinity'
 include_recipe '../../cookbooks/typora'
+include_recipe '../../cookbooks/bruno'
 
 # Development Tools & LSPs
 include_recipe '../../cookbooks/llvm'

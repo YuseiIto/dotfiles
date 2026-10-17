@@ -49,7 +49,8 @@ SHELLCHECK_EXTRA_FILES = \
 shellcheck:
 	shellcheck $$(git ls-files '*.sh') $(SHELLCHECK_EXTRA_FILES)
 
-.PHONY: check check-role-variants check-version-pins actionlint zizmor gitleaks
+.PHONY: check check-role-variants check-version-pins actionlint zizmor gitleaks \
+	check-feature-versions test-feature-versions
 
 # Everything the Lint workflow checks. CI runs each target as its own job.
 check: lint shellcheck check-role-variants check-version-pins actionlint zizmor gitleaks
@@ -68,6 +69,15 @@ zizmor:
 
 gitleaks:
 	gitleaks git --redact --no-banner .
+
+# Not part of check: the Dev Container Features workflow runs these, not Lint.
+# BASE_REF (CI sets it in the environment) defaults to origin/main, so fetch it
+# first.
+check-feature-versions:
+	scripts/check-feature-versions.sh "$(BASE_REF)"
+
+test-feature-versions:
+	scripts/check-feature-versions.test.sh
 
 .PHONY: dry-run
 

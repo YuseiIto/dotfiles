@@ -2,7 +2,7 @@ if node[:platform] == 'darwin'
   package 'lua-language-server'
 elsif %w[ubuntu debian].include?(node[:platform])
   # renovate: datasource=github-releases depName=LuaLS/lua-language-server
-  lls_version = '3.13.5'
+  lls_version = '3.19.2'
 
   arch = case node[:os_arch]
          when 'arm64' then 'linux-arm64'
@@ -13,9 +13,9 @@ elsif %w[ubuntu debian].include?(node[:platform])
   lls_sha256 = ReleasePin.for_arch(
     node[:os_arch], 'lua-language-server',
     # renovate: datasource=github-release-attachments depName=LuaLS/lua-language-server
-    arm64: '3.13.5@ae3a05a1c6746e3ce9f29a9abd4e10b8a450c72ece53612343f4ac5fd11c6046',
+    arm64: '3.19.2@17b8e401a874440adeb649e5024c364f2bb9d15156c74a40e56d1ae9a1b2e4f2',
     # renovate: datasource=github-release-attachments depName=LuaLS/lua-language-server
-    x86_64: '3.13.5@5d4316291b8c79b145002318fbb7cc294a327c314e2711e590609b178478eb59'
+    x86_64: '3.19.2@93ad326b10f6c00911dd8c450fa098332dbd8f9f45d1052f5636a2d54479b947'
   )
   url = "https://github.com/LuaLS/lua-language-server/releases/download/#{lls_version}/#{lls_archive}"
 

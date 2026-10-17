@@ -16,7 +16,9 @@ elsif %w[ubuntu debian].include?(node[:platform])
   # provisioning outright rather than just lagging behind.
   # NOTE: No digest pin, unlike github_release_binary downloads: the asset is
   # on JetBrains' CDN, which Renovate's github-release-attachments datasource
-  # cannot read, so a pin would go stale on every version bump.
+  # cannot read, so a pin would go stale on every version bump. The `.sha256`
+  # file JetBrains publishes next to the archive is not checked either: it
+  # comes from the same host, so it would catch corruption but not tampering.
   arch_suffix = node[:os_arch] == 'arm64' ? '-aarch64' : ''
 
   archive = "kotlin-server-#{kotlin_lsp_version}#{arch_suffix}.tar.gz"

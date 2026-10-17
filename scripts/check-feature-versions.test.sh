@@ -134,6 +134,16 @@ set_version bar 0.2.0
 commit
 expect "only the feature missing a bump is reported" 1 "foo" "bar"
 
+setup
+git -C "$repo" checkout -q main
+set_version bar 0.1.0
+commit
+git -C "$repo" checkout -q -B work
+git -C "$repo" mv devcontainer-features/src/foo/install.sh devcontainer-features/src/bar/install.sh
+set_version bar 0.2.0
+commit
+expect "file moved to another feature fails its source" 1 "foo.*1\.9\.0" "bar"
+
 # The merge base, not the tip of main, is the baseline: a bump that landed on
 # main after branching must not fail an unrelated branch.
 setup

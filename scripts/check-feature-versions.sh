@@ -43,8 +43,10 @@ version() {
 # NOTE: Diffs against the working tree and adds untracked files so uncommitted
 # changes count locally. README.md is excluded: it is packaged but unused at
 # install time, so a stale copy in the published version is harmless.
+# --no-renames keeps the source side of a file moved between features, which
+# rename detection would hide.
 exclude=":(exclude)$src/*/README.md"
-changed="$(git diff --name-only "$merge_base" -- "$src" "$exclude")"
+changed="$(git diff --name-only --no-renames "$merge_base" -- "$src" "$exclude")"
 untracked="$(git ls-files --others --exclude-standard -- "$src" "$exclude")"
 features="$(printf '%s\n%s\n' "$changed" "$untracked" | cut -d/ -f3 | sort -u)"
 

@@ -15,7 +15,6 @@ env:
 
 permissions:
   contents: read
-  packages: write
 
 jobs:
   # Evaluates every recipe in seconds, so a recipe error (bad include path,
@@ -43,6 +42,9 @@ jobs:
     name: Docker 🐳 [${{ matrix.variant }}/${{ matrix.arch }}]
     needs: dry-run
     runs-on: ${{ matrix.runner }}
+    permissions:
+      contents: read
+      packages: write
     strategy:
       fail-fast: false
       matrix:
@@ -58,6 +60,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
 
       # Free up runner disk before building. The images carry full toolchains
       # (and now prowler's large dependency tree), so exporting/loading them can
@@ -71,11 +75,13 @@ jobs:
 
       - name: Set lower username
         id: owner
-        run: echo "name=$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
+        run: echo "name=${GITHUB_REPOSITORY_OWNER,,}" >> "$GITHUB_OUTPUT"
 
       - name: Set Image name
         id: image_name
-        run: echo "name=${{ steps.owner.outputs.name }}/${{ steps.owner.outputs.name }}-dev" >> $GITHUB_OUTPUT
+        env:
+          OWNER: ${{ steps.owner.outputs.name }}
+        run: echo "name=${OWNER}/${OWNER}-dev" >> "$GITHUB_OUTPUT"
 
       - name: Docker metadata
         id: meta
@@ -131,9 +137,10 @@ jobs:
           cache-to: type=gha,mode=max,scope=${{ matrix.variant }}-${{ matrix.arch }}
 
       - name: Export digest
+        env:
+          digest: ${{ steps.build.outputs.digest }}
         run: |
           mkdir -p "${RUNNER_TEMP}/digests"
-          digest="${{ steps.build.outputs.digest }}"
           touch "${RUNNER_TEMP}/digests/${digest#sha256:}"
 
       - name: Upload digest
@@ -148,6 +155,9 @@ jobs:
     name: Docker manifest 📦 [${{ matrix.variant }}]
     needs: docker-build
     runs-on: ubuntu-26.04
+    permissions:
+      contents: read
+      packages: write
     strategy:
       fail-fast: false
       matrix:
@@ -155,11 +165,13 @@ jobs:
     steps:
       - name: Set lower username
         id: owner
-        run: echo "name=$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
+        run: echo "name=${GITHUB_REPOSITORY_OWNER,,}" >> "$GITHUB_OUTPUT"
 
       - name: Set Image name
         id: image_name
-        run: echo "name=${{ steps.owner.outputs.name }}/${{ steps.owner.outputs.name }}-dev" >> $GITHUB_OUTPUT
+        env:
+          OWNER: ${{ steps.owner.outputs.name }}
+        run: echo "name=${OWNER}/${OWNER}-dev" >> "$GITHUB_OUTPUT"
 
       - name: Download digests
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8
@@ -219,20 +231,27 @@ jobs:
     name: LXC 🐧 [${{ matrix.variant }}]
     needs: dry-run
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     strategy:
       matrix:
         variant: [plum, bamboo, pine]
     steps:
       - name: Checkout repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
 
       - name: Set lowercase owner
         id: owner
-        run: echo "name=$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
+        run: echo "name=${GITHUB_REPOSITORY_OWNER,,}" >> "$GITHUB_OUTPUT"
 
       - name: Set image name
         id: image_name
-        run: echo "name=${{ steps.owner.outputs.name }}/${{ steps.owner.outputs.name }}-dev-lxc" >> $GITHUB_OUTPUT
+        env:
+          OWNER: ${{ steps.owner.outputs.name }}
+        run: echo "name=${OWNER}/${OWNER}-dev-lxc" >> "$GITHUB_OUTPUT"
 
       - name: Install build dependencies
         run: |
@@ -254,22 +273,23 @@ jobs:
       - name: Extract short commit SHA
         id: vars
         if: github.ref == 'refs/heads/main'
-        run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+        run: echo "sha_short=$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
 
       - name: Sanitize branch name
         id: branch_name
         if: github.ref != 'refs/heads/main'
-        run: echo "branch=${GITHUB_REF_NAME//\//-}" >> $GITHUB_OUTPUT
+        run: echo "branch=${GITHUB_REF_NAME//\//-}" >> "$GITHUB_OUTPUT"
 
       - name: Build LXC image
         run: sudo scripts/build-lxc.sh ${{ matrix.variant }}
 
       - name: Push to GHCR (main)
         if: github.ref == 'refs/heads/main'
+        env:
+          IMAGE_BASE: ${{ env.REGISTRY }}/${{ steps.image_name.outputs.name }}
+          VARIANT: ${{ matrix.variant }}
+          SHA: ${{ steps.vars.outputs.sha_short }}
         run: |
-          IMAGE_BASE="${{ env.REGISTRY }}/${{ steps.image_name.outputs.name }}"
-          VARIANT="${{ matrix.variant }}"
-          SHA="${{ steps.vars.outputs.sha_short }}"
 
           oras push "${IMAGE_BASE}:${VARIANT}-latest" \
             "lxd-${VARIANT}.tar.xz:application/vnd.oci.image.layer.v1.tar+gzip" \
@@ -281,10 +301,11 @@ jobs:
 
       - name: Push to GHCR (branch)
         if: github.ref != 'refs/heads/main'
+        env:
+          IMAGE_BASE: ${{ env.REGISTRY }}/${{ steps.image_name.outputs.name }}
+          VARIANT: ${{ matrix.variant }}
+          BRANCH: ${{ steps.branch_name.outputs.branch }}
         run: |
-          IMAGE_BASE="${{ env.REGISTRY }}/${{ steps.image_name.outputs.name }}"
-          VARIANT="${{ matrix.variant }}"
-          BRANCH="${{ steps.branch_name.outputs.branch }}"
 
           oras push "${IMAGE_BASE}:${VARIANT}-${BRANCH}" \
             "lxd-${VARIANT}.tar.xz:application/vnd.oci.image.layer.v1.tar+gzip" \

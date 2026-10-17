@@ -1,0 +1,7 @@
+self-hosted-runner:
+  # NOTE: GitHub-hosted labels newer than actionlint's built-in list. Drop each
+  # once a release recognizes it (ubuntu-26.04 went GA on 2026-09-17, after
+  # actionlint v1.7.12).
+  # Ref: https://github.blog/changelog/2026-09-17-ubuntu-26-generally-available-and-latest-migration
+  labels:
+    - ubuntu-26.04

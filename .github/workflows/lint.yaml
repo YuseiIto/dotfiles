@@ -19,8 +19,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
       - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
+        uses: ruby/setup-ruby@651ff0d62c5c79bed6d53ec518387aae20e72c1a # v1.329.0
         with:
           bundler-cache: true
           working-directory: mitamae
@@ -33,6 +35,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
       # Use the Makefile target as the single source of truth so local
       # `make shellcheck` and CI always lint the same set of files.
       # shellcheck is preinstalled on GitHub-hosted ubuntu runners.
@@ -44,6 +48,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
       - name: Check that each role's variant equals its directory name
         run: make check-role-variants
 
@@ -52,5 +58,65 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
       - name: Check that each cookbook version pin has a Renovate annotation
         run: make check-version-pins
+
+  actionlint:
+    name: actionlint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      # The official image bundles shellcheck, which actionlint uses to lint
+      # `run:` scripts, and is pinned by digest so Renovate can update it.
+      - name: Run actionlint
+        uses: docker://rhysd/actionlint:1.7.12@sha256:b1934ee5f1c509618f2508e6eb47ee0d3520686341fec936f3b79331f9315667
+        with:
+          args: -color
+
+  zizmor:
+    name: zizmor
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - name: Run zizmor
+        uses: zizmorcore/zizmor-action@85b2b9fb8e3325e7a23d7d0a9d7ba5ae0f999e3e # v0.7.1
+        with:
+          # Report through annotations and a failing job instead of uploading
+          # SARIF, which would need security-events: write.
+          advanced-security: false
+          annotations: true
+          # NOTE: online audits (e.g. known-vulnerable-actions) are off to keep
+          # the result reproducible with `make zizmor`, which runs offline.
+          online-audits: false
+
+  gitleaks:
+    name: gitleaks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+          # Scan every commit, not just the tip: a secret removed in a later
+          # commit is still published in the history of a public repository.
+          fetch-depth: 0
+      # NOTE: the CLI image rather than gitleaks/gitleaks-action, whose license
+      # moved off MIT in v2 and which wants pull-requests: write to comment.
+      - name: Scan history for secrets
+        uses: docker://ghcr.io/gitleaks/gitleaks:v8.30.1@sha256:c00b6bd0aeb3071cbcb79009cb16a60dd9e0a7c60e2be9ab65d25e6bc8abbb7f
+        # NOTE: the container runs as root over a workspace owned by the runner
+        # user, and the image's safe.directory setting lives in /root/.gitconfig
+        # while the step's HOME is /github/home. git then refuses the repository
+        # and gitleaks scans 0 commits yet still exits 0, so pass the setting as
+        # command-scope config instead.
+        env:
+          GIT_CONFIG_COUNT: "1"
+          GIT_CONFIG_KEY_0: safe.directory
+          GIT_CONFIG_VALUE_0: "*"
+        with:
+          args: git --redact --no-banner --verbose .

@@ -402,9 +402,8 @@ and order shown below, so add no other key (`versioning=`, `packageName=`, ...);
   wrong tag fails the lookup, then hashes the same-named asset of the new
   release.
 
-`make check-version-pins` fails on a missing annotation, a digest that is not
-`'<tag>@<lowercase sha256>'`, a digest whose tag matches no version constant in
-its file, and a literal `version '...'`.
+Run `make check-version-pins` after adding a pin; the header of
+`scripts/check-version-pins.sh` lists what it rejects.
 
 ---
 

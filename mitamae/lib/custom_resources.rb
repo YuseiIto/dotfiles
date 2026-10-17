@@ -165,12 +165,12 @@ module ReleasePin
   # Returns the sha256 half of `pin`, or raises naming `label` unless the pin
   # is `'<tag>@<64 lowercase hex>'`.
   #
-  # NOTE: Called at evaluation time so a bad pin fails every host before any
-  # download, with a message naming the pin. Left to the shell, sha256sum would
-  # reject it only as "no properly formatted checksum lines", and macOS's
-  # `shasum -a 256 -c` picks the algorithm from the digest length, so a 40-hex
-  # value would pass as SHA-1. Lowercase is required because renovate.json's
-  # matchString reads only [0-9a-f].
+  # NOTE: Called at evaluation time so a bad pin for the host's arch fails the
+  # run before any download, with a message naming the pin. Left to the shell,
+  # sha256sum would reject it only as "no properly formatted checksum lines",
+  # and macOS's `shasum -a 256 -c` picks the algorithm from the digest length,
+  # so a 40-hex value would pass as SHA-1. Lowercase is required because
+  # renovate.json's matchString reads only [0-9a-f].
   def self.sha256(pin, label)
     raise "#{label}: pin must be '<tag>@<64 lowercase hex>', got #{pin.inspect}" unless pin.to_s.match?(/\A[^@]+@[0-9a-f]{64}\z/)
 

@@ -14,7 +14,8 @@ elsif %w[ubuntu debian].include?(node[:platform])
   lls_arm64_sha256 = '3.13.5@ae3a05a1c6746e3ce9f29a9abd4e10b8a450c72ece53612343f4ac5fd11c6046'
   # renovate: datasource=github-release-attachments depName=LuaLS/lua-language-server
   lls_x86_64_sha256 = '3.13.5@5d4316291b8c79b145002318fbb7cc294a327c314e2711e590609b178478eb59'
-  lls_sha256 = (node[:os_arch] == 'arm64' ? lls_arm64_sha256 : lls_x86_64_sha256).split('@', 2).last
+  lls_sha256 = ReleasePin.sha256(node[:os_arch] == 'arm64' ? lls_arm64_sha256 : lls_x86_64_sha256,
+                                 "lua-language-server #{node[:os_arch]}")
   url = "https://github.com/LuaLS/lua-language-server/releases/download/#{lls_version}/#{lls_archive}"
 
   directory '/opt/lua-language-server' do

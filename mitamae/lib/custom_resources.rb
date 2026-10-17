@@ -156,6 +156,28 @@ define :apt_repository, key_url: nil, repo: nil do
   end
 end
 
+# Release asset digests pinned as `'<tag>@<sha256>'` for Renovate's
+# github-release-attachments datasource.
+#
+# A module rather than a top-level `def`: mitamae evaluates each recipe file in
+# its own RecipeContext, so a method defined here would not reach cookbooks.
+module ReleasePin
+  # Returns the sha256 half of `pin`, or raises naming `label` unless the pin
+  # is `'<tag>@<64 lowercase hex>'`.
+  #
+  # NOTE: Called at evaluation time so a bad pin fails every host before any
+  # download, with a message naming the pin. Left to the shell, sha256sum would
+  # reject it only as "no properly formatted checksum lines", and macOS's
+  # `shasum -a 256 -c` picks the algorithm from the digest length, so a 40-hex
+  # value would pass as SHA-1. Lowercase is required because renovate.json's
+  # matchString reads only [0-9a-f].
+  def self.sha256(pin, label)
+    raise "#{label}: pin must be '<tag>@<64 lowercase hex>', got #{pin.inspect}" unless pin.to_s.match?(/\A[^@]+@[0-9a-f]{64}\z/)
+
+    pin.split('@', 2).last
+  end
+end
+
 # Install a single executable from a GitHub release into /usr/local/bin.
 #
 # Collapses the "resolve arch -> build download URL -> curl -> unpack ->
@@ -215,14 +237,8 @@ define :github_release_binary,
   bin = params[:bin_name] || params[:name]
   arm64 = node[:os_arch] == 'arm64'
   asset = arm64 ? params[:arm64_name] : params[:x86_64_name]
-  pin = arm64 ? params[:arm64_sha256] : params[:x86_64_sha256]
-  # NOTE: Validated here because sha256sum would report a malformed digest as
-  # a bare mismatch, and an empty one as a missing checksum line.
-  unless pin.to_s.match?(/\A[^@]+@[0-9a-f]{64}\z/)
-    raise "github_release_binary[#{bin}]: #{node[:os_arch]} pin must be '<tag>@<64 lowercase hex>', got #{pin.inspect}"
-  end
-
-  sha256 = pin.split('@', 2).last
+  sha256 = ReleasePin.sha256(arm64 ? params[:arm64_sha256] : params[:x86_64_sha256],
+                             "github_release_binary[#{bin}] #{node[:os_arch]}")
   url = "https://github.com/#{params[:repo]}/releases/download/v#{params[:version]}/#{asset}"
   dest = "/usr/local/bin/#{bin}"
   # Paths inside the mktemp dir that the command below creates as $work_dir.

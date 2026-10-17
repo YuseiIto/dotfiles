@@ -49,13 +49,18 @@ SHELLCHECK_EXTRA_FILES = \
 shellcheck:
 	shellcheck $$(git ls-files '*.sh') $(SHELLCHECK_EXTRA_FILES)
 
-.PHONY: check check-role-variants
+.PHONY: check check-role-variants check-feature-versions
 
 # Everything the Lint workflow checks. CI runs each target as its own job.
 check: lint shellcheck check-role-variants
 
 check-role-variants:
 	scripts/check-role-variants.sh
+
+# Fail when a changed dev container feature keeps its version from origin/main.
+# The Dev Container Features workflow runs this on pull requests.
+check-feature-versions:
+	scripts/check-feature-versions.sh
 
 .PHONY: dry-run
 

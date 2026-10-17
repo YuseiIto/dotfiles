@@ -11,6 +11,7 @@ on:
     paths:
       - devcontainer-features/**
       - .github/workflows/devcontainer-features.yaml
+      - scripts/check-feature-versions*
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -20,6 +21,22 @@ permissions:
   contents: read
 
 jobs:
+  version:
+    name: Version bump 🔖
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          # The check diffs against the merge base with the target branch.
+          fetch-depth: 0
+      - name: Test the check
+        run: scripts/check-feature-versions.test.sh
+      - name: Check changed features bump their version
+        env:
+          BASE_REF: origin/${{ github.base_ref }}
+        run: scripts/check-feature-versions.sh "$BASE_REF"
+
   test:
     name: Test 🧪 [${{ matrix.feature }}]
     runs-on: ubuntu-24.04

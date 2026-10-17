@@ -209,7 +209,9 @@ Automatically installs `rust` as a dependency.
 cargo_package 'eza'
 
 # When binary name differs from crate name:
-cargo_package 'bat', bin_name: 'bat'
+cargo_package 'ripgrep' do
+  bin_name 'rg'
+end
 ```
 
 ### `uv_tool_package` — Python CLI tools
@@ -220,7 +222,9 @@ Automatically installs `uv` as a dependency. Never use `pip`.
 uv_tool_package 'ruff'
 
 # When binary name differs from package name:
-uv_tool_package 'python-lsp-server', bin_name: 'pylsp'
+uv_tool_package 'python-lsp-server' do
+  bin_name 'pylsp'
+end
 ```
 
 ### `npm_global_package` — Node.js CLI tools
@@ -231,11 +235,21 @@ Automatically installs `nodenv` as a dependency and rehashes shims.
 npm_global_package 'prettier'
 
 # With pinned version:
-npm_global_package 'typescript-language-server', version: '4.3.3'
+# renovate: datasource=npm depName=typescript-language-server
+typescript_language_server_version = '4.3.3'
+
+npm_global_package 'typescript-language-server' do
+  version typescript_language_server_version
+end
 
 # When binary name differs from package name:
-npm_global_package 'opencode-ai', bin_name: 'opencode'
+npm_global_package 'opencode-ai' do
+  bin_name 'opencode'
+end
 ```
+
+Set attributes in the block: a definition takes only its name as an argument,
+so `npm_global_package 'x', version: '...'` raises.
 
 ### `dotfile` — symlink a file into $HOME
 

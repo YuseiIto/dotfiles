@@ -4,7 +4,7 @@
 # bundles its own runtime, so the kotlin-lsp.sh launcher needs no system Java.
 
 # renovate: datasource=github-releases depName=Kotlin/kotlin-lsp extractVersion=^kotlin-lsp/v(?<version>.+)$
-kotlin_lsp_version = '263.6379.0'
+kotlin_lsp_version = '263.7084.0'
 
 if node[:platform] == 'darwin'
   # JetBrains publishes this through their own tap as a formula, but

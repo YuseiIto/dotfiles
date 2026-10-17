@@ -3,9 +3,10 @@
 # BASE_REF (default: origin/main) has a higher version than at that merge base.
 # Publishing skips a version that already exists without failing, so a missed
 # bump would leave the change unpublished.
-# NOTE: On a pull request HEAD is the merge ref, so the merge base is the tip of
-# the target branch. Locally it is the branch point, which misses bumps landed
-# on BASE_REF since then.
+# NOTE: On a pull request HEAD is the merge commit, so the merge base is the
+# target tip the merge ref was built on. On a push BASE_REF is the previous tip,
+# so the merge base is BASE_REF itself. Locally it is the last common ancestor,
+# which misses bumps landed on BASE_REF since then.
 # Usage: scripts/check-feature-versions.sh [BASE_REF]
 set -euo pipefail
 

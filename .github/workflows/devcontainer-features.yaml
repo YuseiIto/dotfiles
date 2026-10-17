@@ -13,8 +13,10 @@ on:
       - .github/workflows/devcontainer-features.yaml
       - scripts/check-feature-versions*
 
+# NOTE: A push gets its own group because the version check covers only that
+# push's range; a cancelled or replaced run would leave its range unchecked.
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.event_name == 'push' && github.sha || github.ref }}
   cancel-in-progress: true
 
 permissions:
@@ -35,8 +37,9 @@ jobs:
         env:
           # NOTE: A pull request is checked against the target branch as of the
           # event, so two pull requests can each pass with the same new version.
-          # Checking each push to main against the previous tip catches the one
-          # merged second.
+          # Checking each push to main against the previous tip fails the run of
+          # the one merged second. That is only a signal: publish does not wait
+          # for this job and skips the reused version.
           BASE_REF: ${{ github.event_name == 'pull_request' && format('origin/{0}', github.base_ref) || github.event.before }}
         run: scripts/check-feature-versions.sh "$BASE_REF"
 
@@ -58,6 +61,10 @@ jobs:
     name: Publish 📦
     needs: test
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    # Serializes publishing across pushes. A pending run replaced by a newer one
+    # loses nothing: the newer tree contains its features.
+    concurrency:
+      group: ${{ github.workflow }}-publish
     runs-on: ubuntu-24.04
     permissions:
       contents: read

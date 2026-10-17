@@ -14,9 +14,9 @@ if node[:platform] == 'darwin'
 elsif %w[ubuntu debian].include?(node[:platform])
   # NOTE: JetBrains removes older builds from the CDN, so a stale pin breaks
   # provisioning outright rather than just lagging behind.
-  # NOTE: Unlike the other release downloads this carries no digest pin: the
-  # asset is on JetBrains' CDN, not a GitHub release, so Renovate's
-  # github-release-attachments datasource cannot refresh one on a bump.
+  # NOTE: No digest pin, unlike github_release_binary downloads: the asset is
+  # on JetBrains' CDN, which Renovate's github-release-attachments datasource
+  # cannot read, so a pin would go stale on every version bump.
   arch_suffix = node[:os_arch] == 'arm64' ? '-aarch64' : ''
 
   archive = "kotlin-server-#{kotlin_lsp_version}#{arch_suffix}.tar.gz"
@@ -29,9 +29,14 @@ elsif %w[ubuntu debian].include?(node[:platform])
     command <<~CMD
       set -eu
       work_dir="$(mktemp -d)"
-      trap 'rm -rf "$work_dir"' EXIT
+      # Staged on the same filesystem so the final mv is a rename: an
+      # interrupted extract never leaves a partial tree the guard accepts.
+      stage_dir="$(mktemp -d /opt/.kotlin-server.XXXXXX)"
+      trap 'rm -rf "$work_dir" "$stage_dir"' EXIT
       curl -fsSL -o "$work_dir/#{archive}" "#{url}"
-      tar -xzf "$work_dir/#{archive}" -C /opt
+      tar -xzf "$work_dir/#{archive}" -C "$stage_dir"
+      rm -rf "#{install_dir}"
+      mv "$stage_dir/kotlin-server-#{kotlin_lsp_version}" "#{install_dir}"
     CMD
     user 'root'
     not_if "test -x #{install_dir}/kotlin-lsp.sh"

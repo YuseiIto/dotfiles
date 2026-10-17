@@ -1,22 +1,16 @@
 if %w[ubuntu debian].include?(node[:platform])
-
-  arch = case node[:os_arch]
-         when 'x86_64' then 'amd64'
-         when 'arm64' then 'arm64'
-         end
-
-  archive_url = "https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-#{arch}.deb"
-
-  execute 'Install cloudflared' do
-    user 'root'
-    command <<~EOC
-      curl -L -o /tmp/cloudflared.deb #{archive_url}
-      apt-get install -y /tmp/cloudflared.deb
-      rm /tmp/cloudflared.deb
-    EOC
-    not_if 'command -v cloudflared'
+  # Ref: https://github.com/cloudflare/cloudflare-docs/blob/production/src/content/partials/cloudflare-one/tunnel/cloudflared-debian-install.mdx
+  # The `any` suite is upstream's codename-independent channel, so this works
+  # on both Ubuntu and Debian without substituting the release codename.
+  apt_repository 'cloudflared' do
+    key_url 'https://pkg.cloudflare.com/cloudflare-main.gpg'
+    repo 'https://pkg.cloudflare.com/cloudflared any main'
   end
-elsif %w[darwin arch].include?(node[:platform])
+
+  package 'cloudflared' do
+    user 'root'
+  end
+elsif node[:platform] == 'darwin'
   package 'cloudflared'
 else
   unsupported_platform! node[:platform]

@@ -1,16 +1,20 @@
 # renovate: datasource=github-releases depName=goss-org/goss extractVersion=^v(?<version>.+)$
-goss_version = '0.4.9'
-goss_arch = node[:os_arch] == 'arm64' ? 'arm64' : 'amd64'
+goss_version = '0.4.10'
+# Since v0.4.10 upstream releases through GoReleaser, which ships tarballs that
+# spell amd64 as x86_64 instead of the former raw goss-<os>-<arch> binaries.
+goss_arch = node[:os_arch] == 'arm64' ? 'arm64' : 'x86_64'
 
 if node[:platform] == 'darwin'
   # renovate: datasource=github-release-attachments depName=goss-org/goss
-  goss_darwin_arm64_sha256 = 'v0.4.9@111d2ada89f8787838d176011de2fd0cfe8959c64c2698ce28feb587337d01fc'
+  goss_darwin_arm64_sha256 = 'v0.4.10@3e5b0ff38ef1b005ee8c5e048cf8d44d700ae7529628f210bd60bff2adaf3e34'
   # renovate: datasource=github-release-attachments depName=goss-org/goss
-  goss_darwin_amd64_sha256 = 'v0.4.9@e0c1b22360ced9f5394e64244877dfe1d3488aee9de75c56b9e02ae72c3fe4ff'
-  goss_sha256 = (goss_arch == 'arm64' ? goss_darwin_arm64_sha256 : goss_darwin_amd64_sha256).split('@', 2).last
+  goss_darwin_x86_64_sha256 = 'v0.4.10@71d12ae057a929d278146ba38ca80aa1cf7159daf055d1b0065e49bb7f5d6b4a'
+  goss_sha256 = (goss_arch == 'arm64' ? goss_darwin_arm64_sha256 : goss_darwin_x86_64_sha256).split('@', 2).last
   # NOTE: `shasum -c` picks the algorithm from the digest length, so a
   # 40-hex value would be checked as SHA-1 instead of being rejected.
   raise "goss: darwin-#{goss_arch} pin is not a SHA-256 digest" unless goss_sha256.match?(/\A[0-9a-f]{64}\z/)
+
+  goss_archive = "goss_#{goss_version}_darwin_#{goss_arch}.tar.gz"
 
   # macOS provisioning runs unprivileged, so this path shells out to sudo for
   # the /usr/local/bin write and cannot use the github_release_binary helper
@@ -20,8 +24,9 @@ if node[:platform] == 'darwin'
       set -eu
       work_dir="$(mktemp -d)"
       trap 'rm -rf "$work_dir"' EXIT
-      curl -fsSL -o "$work_dir/goss" "https://github.com/goss-org/goss/releases/download/v#{goss_version}/goss-darwin-#{goss_arch}"
-      echo "#{goss_sha256}  $work_dir/goss" | shasum -a 256 -c -
+      curl -fsSL -o "$work_dir/#{goss_archive}" "https://github.com/goss-org/goss/releases/download/v#{goss_version}/#{goss_archive}"
+      echo "#{goss_sha256}  $work_dir/#{goss_archive}" | shasum -a 256 -c -
+      tar -xzf "$work_dir/#{goss_archive}" -C "$work_dir" goss
       sudo install -d /usr/local/bin
       sudo install -m 0755 "$work_dir/goss" /usr/local/bin/goss
     EOC
@@ -31,12 +36,12 @@ elsif %w[ubuntu debian].include?(node[:platform])
   github_release_binary 'goss' do
     repo 'goss-org/goss'
     version goss_version
-    arm64_name 'goss-linux-arm64'
-    x86_64_name 'goss-linux-amd64'
+    arm64_name "goss_#{goss_version}_linux_arm64.tar.gz"
+    x86_64_name "goss_#{goss_version}_linux_x86_64.tar.gz"
     # renovate: datasource=github-release-attachments depName=goss-org/goss
-    arm64_sha256 'v0.4.9@14fd24ac08236559f4809e6a627792d1b947ed98654bba1662ef1d6122d77e18'
+    arm64_sha256 'v0.4.10@90a59612b4d67d9f1a9038634c000790136bb82526a69de1e81ac075c2f6d2c6'
     # renovate: datasource=github-release-attachments depName=goss-org/goss
-    x86_64_sha256 'v0.4.9@87dd36cfa1b8b50554e6e2ca29168272e26755b19ba5438341f7c66b36decc19'
+    x86_64_sha256 'v0.4.10@26e365428946294bcec0c61d867bb3c8349f39feb3d0e6f59084e98632785cc7'
     not_if "goss --version 2>/dev/null | grep -q '#{goss_version}'"
   end
 else

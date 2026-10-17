@@ -4,6 +4,9 @@ command:
     timeout: 30000
   CLAUDE_CONFIG_DIR=/tmp/claude-link-test claude-dotfiles-link && test -L /tmp/claude-link-test/settings.json && test -L /tmp/claude-link-test/rules:
     exit-status: 0
+  # Required by the claude-security plugin.
+  python3 -c 'import sys; sys.exit(sys.version_info < (3, 9))':
+    exit-status: 0
 file:
   "{{.Env.HOME}}/.claude/settings.json":
     exists: true

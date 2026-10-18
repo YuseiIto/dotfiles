@@ -40,7 +40,8 @@ include_recipe '../../cookbooks/llvm'
 include_recipe '../../cookbooks/binutils'
 
 # Development Tools & LSPs
-include_recipe '../../cookbooks/pylsp'
+include_recipe '../../cookbooks/ruff'
+include_recipe '../../cookbooks/pyrefly'
 include_recipe '../../cookbooks/typescript-language-server'
 include_recipe '../../cookbooks/lua-language-server'
 include_recipe '../../cookbooks/terraform-ls'

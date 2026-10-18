@@ -35,7 +35,8 @@ gossfile:
   ../../cookbooks/llvm/goss.yaml: {}
   ../../cookbooks/terraform-ls/goss.yaml: {}
   ../../cookbooks/tflint/goss.yaml: {}
-  ../../cookbooks/pylsp/goss.yaml: {}
+  ../../cookbooks/ruff/goss.yaml: {}
+  ../../cookbooks/pyrefly/goss.yaml: {}
   ../../cookbooks/typescript-language-server/goss.yaml: {}
   ../../cookbooks/biome/goss.yaml: {}
   ../../cookbooks/prisma-language-server/goss.yaml: {}

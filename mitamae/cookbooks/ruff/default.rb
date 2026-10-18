@@ -1,9 +1,7 @@
 if node[:platform] == 'darwin'
-  package 'python-lsp-server'
+  package 'ruff'
 elsif %w[ubuntu debian].include?(node[:platform])
-  uv_tool_package 'python-lsp-server' do
-    bin_name 'pylsp'
-  end
+  uv_tool_package 'ruff'
 else
   unsupported_platform! node[:platform]
 end

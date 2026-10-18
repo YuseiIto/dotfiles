@@ -22,9 +22,19 @@ vim.lsp.enable('clangd')
 -- terraformls
 vim.lsp.enable('terraformls')
 
--- python-lsp-server
--- https://github.com/python-lsp/python-lsp-server
-vim.lsp.enable('pylsp')
+-- Pyrefly (type checking, completion, navigation)
+-- https://pyrefly.org/
+vim.lsp.enable('pyrefly')
+
+-- Ruff (lint, format, organize imports)
+-- https://docs.astral.sh/ruff/editors/setup/#neovim
+-- NOTE: Ruff's hover only documents noqa codes; leave hover to pyrefly.
+vim.lsp.config('ruff', {
+  on_attach = function(client, bufnr)
+    client.server_capabilities.hoverProvider = false
+  end,
+})
+vim.lsp.enable('ruff')
 
 -- ts_ls
 -- Disable formatting for ts_ls (Leave it to biome)

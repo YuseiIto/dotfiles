@@ -319,7 +319,10 @@
     "yuseiito-dev@cc-plugins-private": true,
     "ultraresearch@cc-plugins": true,
     "ja-proofread@cc-plugins": true,
-    "planning-poker@cc-plugins": true
+    "planning-poker@cc-plugins": true,
+    "aws-agents-for-devsecops@agent-toolkit-for-aws": true,
+    "aws-core@agent-toolkit-for-aws": true,
+    "aws-startup-advisor@agent-toolkit-for-aws": true
   },
   "extraKnownMarketplaces": {
     "pm-skills": {
@@ -344,6 +347,12 @@
       "source": {
         "source": "github",
         "repo": "YuseiIto/cc-plugins-private"
+      }
+    },
+    "agent-toolkit-for-aws": {
+      "source": {
+        "source": "github",
+        "repo": "aws/agent-toolkit-for-aws"
       }
     }
   },

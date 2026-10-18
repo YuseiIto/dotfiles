@@ -22,7 +22,7 @@ if [ -d "$HOME/.cargo/bin" ]; then
   export PATH="$HOME/.cargo/bin:${PATH}"
 fi
 
-# uv-based tools and other user-local binaries (uv, aider, hf, pylsp, etc.)
+# uv-based tools and other user-local binaries (uv, aider, hf, ruff, etc.)
 if [ -d "$HOME/.local/bin" ]; then
   export PATH="$HOME/.local/bin:${PATH}"
 fi

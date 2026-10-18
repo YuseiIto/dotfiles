@@ -25,6 +25,8 @@ return {
         ["<C-d>"] = { "scroll_documentation_down", "fallback" },
         ["<C-f>"] = { "scroll_documentation_up", "fallback" },
         ["<C-e>"] = { "hide", "fallback" },
+        -- NOTE: The preset's <C-Space> is taken by macOS input source switching.
+        ["<C-l>"] = { "show", "fallback" },
       },
       sources = {
         default = { "lsp", "path", "buffer" },

@@ -1,5 +1,5 @@
 # renovate: datasource=node-version depName=node
-global_nodejs_version = '24.14.0'
+global_nodejs_version = '24.22.1'
 
 home = ENV['HOME']
 nodenv_root = "#{home}/.nodenv"

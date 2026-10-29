@@ -11,12 +11,24 @@ end
 -- Build an LSP `cmd` that prefers `<root_dir>/.venv/bin/<bin>` over the one on PATH,
 -- so a project that pins the tool as a dev dependency gets the same results as its CI.
 -- Venvs outside the project (e.g. Pipenv's default) are still reached via PATH once activated.
+-- NOTE: `vim.fn.executable()` only checks the exec bit, so a `.venv` built in a devcontainer
+-- (Linux binaries) passes it. Spawn the binary to make sure it runs on this host.
+local function is_valid_executable(exe)
+  if vim.fn.executable(exe) ~= 1 then
+    return false
+  end
+  local ok, result = pcall(function()
+    return vim.system({ exe, '--version' }):wait(2000)
+  end)
+  return ok and result.code == 0
+end
+
 local function venv_first_cmd(bin, args)
   return function(dispatchers, config)
     local exe = bin
     if config.root_dir then
       local venv_bin = vim.fs.joinpath(config.root_dir, '.venv', 'bin', bin)
-      if vim.fn.executable(venv_bin) == 1 then
+      if is_valid_executable(venv_bin) then
         exe = venv_bin
       end
     end

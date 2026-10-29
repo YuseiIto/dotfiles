@@ -11,6 +11,26 @@ if node[:platform] == 'darwin'
   # homebrew-cask carries the same build at the same version, so use the
   # official tap and skip the third-party one.
   brew_cask 'kotlin-lsp'
+
+  # HACK: The build is not notarized, so Gatekeeper blocks it while quarantined.
+  # Clear the attribute only after checking every Mach-O is JetBrains-signed.
+  # Ref: https://github.com/Kotlin/kotlin-lsp/issues/194
+  execute 'Clear Gatekeeper quarantine on kotlin-lsp' do
+    command <<~CMD
+      set -eu
+      dir="$(brew --caskroom)/kotlin-lsp"
+      find "$dir" -type f -exec sh -c '
+        for f; do
+          case "$(file -b "$f")" in
+            Mach-O*) codesign --verify --strict -R "$0" "$f" || exit 1 ;;
+          esac
+        done
+      ' '=anchor apple generic and certificate leaf[subject.OU] = "2ZEFAR8TH3"' {} +
+      # -s: symlinks carry their own attribute
+      xattr -drs com.apple.quarantine "$dir"
+    CMD
+    only_if 'find "$(brew --caskroom)/kotlin-lsp" -xattrname com.apple.quarantine -print -quit | grep -q .'
+  end
 elsif %w[ubuntu debian].include?(node[:platform])
   # NOTE: JetBrains removes older builds from the CDN, so a stale pin breaks
   # provisioning outright rather than just lagging behind.

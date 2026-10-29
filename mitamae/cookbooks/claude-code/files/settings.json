@@ -290,7 +290,6 @@
     "skill-creator@claude-plugins-official": true,
     "claude-code-setup@claude-plugins-official": true,
     "claude-md-management@claude-plugins-official": true,
-    "superpowers@claude-plugins-official": true,
     "code-review@claude-plugins-official": true,
     "security-guidance@claude-plugins-official": true,
     "claude-security@claude-plugins-official": true,
@@ -321,8 +320,7 @@
     "ja-proofread@cc-plugins": true,
     "planning-poker@cc-plugins": true,
     "aws-agents-for-devsecops@agent-toolkit-for-aws": true,
-    "aws-core@agent-toolkit-for-aws": true,
-    "aws-startup-advisor@agent-toolkit-for-aws": true
+    "aws-core@agent-toolkit-for-aws": true
   },
   "extraKnownMarketplaces": {
     "pm-skills": {

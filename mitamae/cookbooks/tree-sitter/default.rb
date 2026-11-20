@@ -1,5 +1,5 @@
 # renovate: datasource=github-releases depName=tree-sitter/tree-sitter extractVersion=^v(?<version>.+)$
-tree_sitter_version = '0.25.10'
+tree_sitter_version = '0.27.2'
 
 case node[:platform]
 when 'darwin'
@@ -11,9 +11,9 @@ when 'ubuntu', 'debian'
     arm64_name 'tree-sitter-linux-arm64.gz'
     x86_64_name 'tree-sitter-linux-x64.gz'
     # renovate: datasource=github-release-attachments depName=tree-sitter/tree-sitter
-    arm64_sha256 'v0.25.10@07fbff8ae0eeb0d3e496e14fc1a30dcc730cc2c97d70e601e5357f2e51958af5'
+    arm64_sha256 'v0.27.2@34fcc5c4fa7bdd2058a2a45a03b6eb9a49b03a93b6d52ec750f99b1516d98d33'
     # renovate: datasource=github-release-attachments depName=tree-sitter/tree-sitter
-    x86_64_sha256 'v0.25.10@8283ddba69253c698f6e987ba0e2f9285e079c8db4d36ebe1394b5bb3a0ebdfd'
+    x86_64_sha256 'v0.27.2@7ed56d152c52437397b9fcaa43cf341f49933cecc1ca291843f0d347c6e2cb3a'
     not_if "tree-sitter --version 2>/dev/null | grep -q '#{tree_sitter_version}'"
   end
 else

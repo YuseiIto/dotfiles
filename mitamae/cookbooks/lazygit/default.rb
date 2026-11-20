@@ -2,7 +2,7 @@ if node[:platform] == 'darwin'
   package 'lazygit'
 elsif %w[ubuntu debian].include?(node[:platform])
   # renovate: datasource=github-releases depName=jesseduffield/lazygit extractVersion=^v(?<version>.+)$
-  lazygit_version = '0.59.0'
+  lazygit_version = '0.66.2'
 
   github_release_binary 'lazygit' do
     repo 'jesseduffield/lazygit'
@@ -11,9 +11,9 @@ elsif %w[ubuntu debian].include?(node[:platform])
     x86_64_name "lazygit_#{lazygit_version}_Linux_x86_64.tar.gz"
     archive_member 'lazygit'
     # renovate: datasource=github-release-attachments depName=jesseduffield/lazygit
-    arm64_sha256 'v0.59.0@a334a6c125169f21942f1a8b02043932575547a6250a1a734d62111efd92aa8f'
+    arm64_sha256 'v0.66.2@79a3161eeb642f0473e23db6341f7baabd4a5933e921a9c1167c5d5c765c41a4'
     # renovate: datasource=github-release-attachments depName=jesseduffield/lazygit
-    x86_64_sha256 'v0.59.0@264283f40a40c899d702a338b20622f690221f753f03bac827c1f34e91f516c2'
+    x86_64_sha256 'v0.66.2@158efc9ddfa1241fab5fb3526bb442c8dc6c4b1904d73213b9e4e93e03c52034'
     not_if "lazygit --version 2>/dev/null | grep -q '#{lazygit_version}'"
   end
 else

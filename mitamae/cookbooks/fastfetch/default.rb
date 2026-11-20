@@ -2,7 +2,7 @@ if node[:platform] == 'darwin'
   package 'fastfetch'
 elsif %w[ubuntu debian].include?(node[:platform])
   # renovate: datasource=github-releases depName=fastfetch-cli/fastfetch
-  fastfetch_version = '2.63.1'
+  fastfetch_version = '2.70.0'
 
   arch = case node[:os_arch]
          when 'x86_64' then 'amd64'
@@ -13,9 +13,9 @@ elsif %w[ubuntu debian].include?(node[:platform])
   fastfetch_sha256 = ReleasePin.for_arch(
     node[:os_arch], 'fastfetch',
     # renovate: datasource=github-release-attachments depName=fastfetch-cli/fastfetch
-    arm64: '2.63.1@9e6f22ac5585383d724fdc4a330e12b3e117152705c26891752234c074c46ed5',
+    arm64: '2.70.0@25053651486d97b8731dd6bc59e725944e39adcdcd903741334c1c3282a7281d',
     # renovate: datasource=github-release-attachments depName=fastfetch-cli/fastfetch
-    x86_64: '2.63.1@d0239b79c2082f30c0d519ec9af8e80f965b3cb873f4abd99ac4d8db1c48adf3'
+    x86_64: '2.70.0@06e9a1be9a863dc815f8a31a6b1abec7b29967be30084ffcc29c1bca072d801b'
   )
 
   execute 'Install fastfetch' do

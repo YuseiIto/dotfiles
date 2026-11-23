@@ -1,5 +1,5 @@
 # renovate: datasource=github-releases depName=neovim/neovim extractVersion=^v(?<version>.+)$
-nvim_version = '0.11.6'
+nvim_version = '0.12.6'
 
 case node[:platform]
 when 'darwin'
@@ -15,9 +15,9 @@ when 'ubuntu', 'debian'
   nvim_sha256 = ReleasePin.for_arch(
     node[:os_arch], 'neovim',
     # renovate: datasource=github-release-attachments depName=neovim/neovim
-    arm64: 'v0.11.6@8ddc0c101846145e830b17bbca50782ca9307eee4fab539d9e2ddaf8793c06f1',
+    arm64: 'v0.12.6@8f1f64a0bdb97247034038c3823c6cbad5bdf9ecd5751b85494b71c3ee04c815',
     # renovate: datasource=github-release-attachments depName=neovim/neovim
-    x86_64: 'v0.11.6@2fc90b962327f73a78afbfb8203fd19db8db9cdf4ee5e2bef84704339add89cc'
+    x86_64: 'v0.12.6@474430d53e6264f6d6dd18db42d6dc9df3a1b56ca9e88a325bbf860e1a811d87'
   )
   nvim_archive = "#{nvim_release}.tar.gz"
   url = "https://github.com/neovim/neovim/releases/download/v#{nvim_version}/#{nvim_archive}"
